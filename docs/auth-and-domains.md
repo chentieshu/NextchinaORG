@@ -64,7 +64,7 @@ https://nextchina.org/zh-TW/auth/callback/
 
 1. **Branding**：App name 改为 `NextChina.org`；User support email 选择站长已验证邮箱。
 2. App home page 填 `https://nextchina.org`。
-3. Privacy policy 填 `https://nextchina.org/zh-CN/about/#privacy`；Terms of service 填 `https://nextchina.org/zh-CN/about/#terms`。
+3. Privacy policy 填 `https://nextchina.org/zh-CN/privacy/`；Terms of service 填 `https://nextchina.org/zh-CN/terms/`。
 4. Authorized domains 添加 `nextchina.org`（不带协议或路径）。保留当前 Supabase 回调域相关配置；Google 如提示域名所有权验证，按页面要求在 Search Console 验证根域。
 5. **Clients**：打开现有 Web application OAuth 客户端。Authorized JavaScript origins 添加 `https://nextchina.org` 和 `https://www.nextchina.org`。
 6. Authorized redirect URIs 保持上方 Supabase 完整回调地址。

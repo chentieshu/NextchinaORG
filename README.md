@@ -6,6 +6,8 @@
 
 域名迁移、Google / X / GitHub、Supabase 与 Resend 的逐项填写指南见 [登录与域名配置](docs/auth-and-domains.md)。可直接复制的品牌邮件模板见 [magic-link.html](supabase/templates/magic-link.html)。
 
+Google 品牌审核的修复说明及准确填写值见 [品牌验证指南](docs/google-brand-verification.md)。
+
 ## 本地运行
 
 ```sh
@@ -32,7 +34,10 @@ npm run build
 - `/{locale}/news/` 新闻、筛选、搜索；`?id={article_uuid}` 阅读详情
 - `/{locale}/community/` 围绕新闻的讨论，当前不开放普通用户发帖
 - `/{locale}/bookmarks/` 私人收藏
-- `/{locale}/about/` 组织理念、社区公约、隐私说明与使用条款
+- `/` 完整公开首页，不依赖 JavaScript 跳转或登录
+- `/{locale}/about/` 组织理念、社区公约及政策入口
+- `/{locale}/privacy/` 五语言独立隐私政策
+- `/{locale}/terms/` 五语言独立使用条款
 - `/{locale}/admin/` 管理后台
 - `/{locale}/auth/callback/` OAuth 和邮箱登录回调
 
@@ -107,8 +112,8 @@ UGC 模块与 `omni_submissions` 审核表已预留，当前无写入授权，`u
 | 应用名称 | NextChina.org |
 | 网站 | `https://nextchina.org` |
 | Google / GitHub / X 服务商回调 | `https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback` |
-| 隐私说明 | `https://nextchina.org/zh-CN/about/#privacy` |
-| 使用条款 | `https://nextchina.org/zh-CN/about/#terms` |
+| 隐私说明 | `https://nextchina.org/zh-CN/privacy/` |
+| 使用条款 | `https://nextchina.org/zh-CN/terms/` |
 | Supabase Site URL | `https://nextchina.org` |
 
 Google 选择 Web application；X 使用 OAuth 2.0 的 Web App，只申请登录所需权限。不要把客户端密钥放入 GitHub、前端或聊天。凭据直接填入 Supabase 的对应 Provider。Supabase Redirect URLs 需要覆盖 Cloudflare 和 Sites 下五个 `/{locale}/auth/callback/` 地址。设置固定域名的 `/**` 可以覆盖五种语言，生产环境也可收窄为十个完整回调 URL。

@@ -1,3 +1,5 @@
-import Link from 'next/link';
-import {RootRedirect} from '@/components/RootRedirect';
-export default function Page(){return <><RootRedirect/><main className="empty-state"><h1>NextChina.org</h1><p>New perspectives. Shared possibilities.</p><Link className="button primary" href="/zh-CN/">进入网站 / Explore</Link></main></>;}
+import {Provider} from '@/components/Provider';
+import {Shell} from '@/components/Shell';
+import {Home} from '@/modules/news/NewsExperience';
+export const metadata={alternates:{canonical:'/'}};
+export default function Page(){return <Provider locale="zh-CN"><Shell><Home/></Shell></Provider>;}
