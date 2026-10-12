@@ -1,6 +1,10 @@
-# OmniRemix
+# NextChina.org
 
 科技新闻与社区官网。Next.js 16 App Router、React 19、Tailwind CSS v4、React Icons、Supabase。
+
+正式网站：[NextChina.org](https://nextchina.org)。`www.nextchina.org` 自动跳转主域并保留路径及查询参数。
+
+域名迁移、Google / X / GitHub、Supabase 与 Resend 的逐项填写指南见 [登录与域名配置](docs/auth-and-domains.md)。可直接复制的品牌邮件模板见 [magic-link.html](supabase/templates/magic-link.html)。
 
 ## 本地运行
 
@@ -40,7 +44,7 @@ UI 文案与演示文章具有五种语言版本。真实文章按语言编辑�
 
 1. 按顺序应用 `supabase/migrations/` 内的迁移。目标项目已通过 Supabase 插件执行两个迁移；文件版本与远端迁移记录一致，不要重复执行。它们创建 `omni_` 前缀的表、RLS、受控 RPC、注册触发器、评论节流、审计日志和首次管理员预约。内部提权函数位于不对 API 暴露的 `omni_private` schema；公开入口使用显式授权的 invoker 函数。
 2. 将项目 URL 与 **Publishable key 或 legacy anon key** 设置为 `NEXT_PUBLIC_SUPABASE_URL` 和 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`。它们用于浏览器；绝对不要填入 `service_role`、数据库密码或 OAuth client secret。
-3. Supabase Authentication 设置 Site URL 为正式站点源地址；Redirect URLs 添加五个语言的完整回调地址，例如 `https://omniremix.pages.dev/zh-CN/auth/callback/`。其他部署域名和本地地址也需逐个加入允许列表。
+3. Supabase Authentication 设置 Site URL 为正式站点源地址；Redirect URLs 添加五个语言的完整回调地址，例如 `https://nextchina.org/zh-CN/auth/callback/`。其他部署域名和本地地址也需逐个加入允许列表。
 4. 在 Providers 中启用 Google、GitHub、**X OAuth 2.0（provider: x）** 和 Email。分别在服务商控制台配置 OAuth 应用，把 client ID / secret 放入 Supabase 提供商设置。提供商回调为 `https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback`。
 5. 邮箱使用一次性登录链接。正式开放注册前配置自己的 SMTP，并检查 Supabase 的邮件发送限制；默认邮件服务不能替代正式 SMTP 配置。
 6. 当前项目已根据站长明确指定的邮箱，在不公开的 `omni_private.owner_claim` 中设置一次性预约。只有该准确邮箱通过 Supabase 验证后才能领取总管理员权限；用户元数据里的验证标记无效。领取后预约删除，其他注册者保持普通用户。新部署可由数据库管理者设置自己的预约邮箱，或在注册后按准确 UUID 授权，不要使用“第一个注册者自动成为管理员”的逻辑。
@@ -60,7 +64,7 @@ where id = 'VERIFIED-USER-UUID';
 
 仓库：`https://github.com/chentieshu/NextchinaORG`。
 
-已为 Cloudflare Pages 项目 `omniremix` 配置 GitHub 源、`main` 生产分支、`npm run build` 构建命令和 `out` 输出目录。正式站点源地址为 `https://omniremix.pages.dev`。实际部署是否成功请以 Cloudflare deployment 状态为准。
+已为 Cloudflare Pages 项目 `omniremix` 配置 GitHub 源、`main` 生产分支、`npm run build` 构建命令和 `out` 输出目录。正式站点源地址为 `https://nextchina.org`。实际部署是否成功请以 Cloudflare deployment 状态为准。
 
 在 Pages 的 production build 环境设置上面的两个 Supabase 公开变量；变量在构建时写入前端，所以变更后需要重新构建。项目中的 `.env.example` 只是示例，不包含真实公钥。没有公钥的构建会明确使用演示模式。
 
@@ -94,18 +98,18 @@ UGC 模块与 `omni_submissions` 审核表已预留，当前无写入授权，`u
 
 2026-10-12 上线复查时邮箱、Google、GitHub 已启用；Google、GitHub、X 三个授权入口均返回正确的服务商跳转。当前项目的公开 Auth settings 没有返回 `x` 字段，因此在验证 X OAuth 2.0 授权入口后，设置 `NEXT_PUBLIC_SUPABASE_X_ENABLED=true` 作为该字段缺失时的显示回退。服务端明确返回 `x:false` 时仍禁用按钮。网站登录面板读取提供商状态，未启用项显示“暂未开放”。
 
-OAuth 应用实际创建过程未通过本项目工具完成，不能据此宣称服务商审核或完整用户登录已成功。邮件 SMTP、登录重定向设置以及用户完成授权后的会话仍需要真实联调。
+站长已在原 Cloudflare Pages 域名完成 Google 登录并确认进入管理中心。2026-10-12 迁移到 NextChina.org 后，需要按配置指南保存新的 Auth 返回地址，并在新域名重新登录。GitHub / X 完整授权与 Resend SMTP 真实收件仍需联调；服务商入口可访问不代表完整授权已验证。
 
 ### OAuth 应用配置值
 
 | 项目 | 值 |
 | --- | --- |
-| 应用名称 | OmniRemix |
-| 网站 | `https://omniremix.pages.dev` |
+| 应用名称 | NextChina.org |
+| 网站 | `https://nextchina.org` |
 | Google / GitHub / X 服务商回调 | `https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback` |
-| 隐私说明 | `https://omniremix.pages.dev/zh-CN/about/#privacy` |
-| 使用条款 | `https://omniremix.pages.dev/zh-CN/about/#terms` |
-| Supabase Site URL | `https://omniremix.pages.dev` |
+| 隐私说明 | `https://nextchina.org/zh-CN/about/#privacy` |
+| 使用条款 | `https://nextchina.org/zh-CN/about/#terms` |
+| Supabase Site URL | `https://nextchina.org` |
 
 Google 选择 Web application；X 使用 OAuth 2.0 的 Web App，只申请登录所需权限。不要把客户端密钥放入 GitHub、前端或聊天。凭据直接填入 Supabase 的对应 Provider。Supabase Redirect URLs 需要覆盖 Cloudflare 和 Sites 下五个 `/{locale}/auth/callback/` 地址。设置固定域名的 `/**` 可以覆盖五种语言，生产环境也可收窄为十个完整回调 URL。
 

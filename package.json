@@ -1,5 +1,5 @@
 {
-  "name": "omniremix",
+  "name": "nextchina-org",
   "version": "1.0.0",
   "private": true,
   "scripts": {"dev":"next dev --webpack --hostname 127.0.0.1", "build":"next build --webpack", "typecheck":"tsc --noEmit", "test":"node --test tests/*.test.mjs", "test:browser":"playwright test"},
