@@ -1,12 +1,12 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {readFile} from 'node:fs/promises';
+import {readFile,readdir} from 'node:fs/promises';
 import {PGlite} from '@electric-sql/pglite';
 
 test('database enforces member, editor and owner permissions',async()=>{
  const db=new PGlite();
- await db.exec(`create role anon; create role authenticated; create schema auth; create table auth.users(id uuid primary key,raw_user_meta_data jsonb default '{}'); create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$; grant usage on schema auth,public to anon,authenticated; grant execute on function auth.uid() to anon,authenticated;`);
- await db.exec(await readFile('supabase/migrations/202610120001_omniremix.sql','utf8'));
+ await db.exec(`create role anon; create role authenticated; create schema auth; create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb default '{}'); create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$; grant usage on schema auth,public to anon,authenticated; grant execute on function auth.uid() to anon,authenticated; alter default privileges in schema public grant execute on functions to anon,authenticated;`);
+ for(const file of (await readdir('supabase/migrations')).filter(f=>f.endsWith('.sql')).sort()) await db.exec(await readFile(`supabase/migrations/${file}`,'utf8'));
  const owner='00000000-0000-4000-8000-000000000001',editor='00000000-0000-4000-8000-000000000002',member='00000000-0000-4000-8000-000000000003',other='00000000-0000-4000-8000-000000000004';
  await db.exec(`insert into auth.users(id,raw_user_meta_data) values('${owner}','{}'),('${editor}','{}'),('${member}','{"role":"super_admin"}'),('${other}','{}'); update omni_profiles set role='super_admin' where id='${owner}'; update omni_profiles set role='editor' where id='${editor}';`);
  async function as(id,sql){await db.exec(`reset role; set role authenticated; select set_config('request.jwt.claim.sub','${id}',false);`);return db.exec(sql);}
@@ -18,6 +18,7 @@ test('database enforces member, editor and owner permissions',async()=>{
  const article=(await as(editor,`insert into omni_articles(category,original_locale,translations,author_id,status) values(${data},'${editor}','published') returning id`))[0].rows[0].id;
  const draft=(await as(editor,`insert into omni_articles(category,original_locale,translations,author_id) values(${data},'${editor}') returning id`))[0].rows[0].id;
  await db.exec("reset role;set role anon;select set_config('request.jwt.claim.sub','',false);");
+ assert.equal((await db.query("select has_function_privilege('anon','public.omni_manage_user(uuid,text,boolean)','EXECUTE') as allowed")).rows[0].allowed,false,'anonymous cannot execute member administration');
  assert.equal((await db.query('select * from omni_articles')).rows.length,1,'anonymous cannot read drafts');
  await as(member,`insert into omni_likes(article_id,user_id) values('${article}','${member}');insert into omni_bookmarks(article_id,user_id) values('${article}','${member}');insert into omni_comments(article_id,user_id,body) values('${article}','${member}','Hello');`);
  await assert.rejects(as(member,`insert into omni_comments(article_id,user_id,body) values('${article}','${member}','Too soon')`));
@@ -35,5 +36,18 @@ test('database enforces member, editor and owner permissions',async()=>{
  await assert.rejects(as(member,`insert into omni_comments(article_id,user_id,body) values('${article}','${member}','Blocked')`));
  await assert.rejects(as(member,`insert into omni_submissions(user_id,content) values('${member}','{}')`));
  assert.ok((await as(owner,'select * from omni_audit'))[0].rows.length>=4);
+ await db.exec("reset role;select set_config('request.jwt.claim.sub','',false);update omni_profiles set role='member' where role='super_admin';insert into omni_private.owner_claim(email) values('owner@example.test');");
+ const reserved='00000000-0000-4000-8000-000000000005';
+ await db.exec(`insert into auth.users(id,email,raw_user_meta_data) values('${reserved}','owner@example.test','{"email_verified":true,"role":"super_admin"}');`);
+ assert.equal((await db.query(`select role from omni_profiles where id='${reserved}'`)).rows[0].role,'member','unverified email and metadata cannot claim ownership');
+ await assert.rejects(as(other,"select * from omni_private.owner_claim"));
+ await assert.rejects(as(other,"insert into omni_private.owner_claim(email) values('attacker@example.test')"));
+ await db.exec(`reset role;select set_config('request.jwt.claim.sub','',false);update auth.users set email_confirmed_at=now() where id='${other}';`);
+ assert.equal((await db.query('select count(*) as n from omni_private.owner_claim')).rows[0].n,1,'unrelated verified user does not consume claim');
+ await db.exec(`update auth.users set email_confirmed_at=now() where id='${reserved}';`);
+ assert.equal((await db.query(`select role from omni_profiles where id='${reserved}'`)).rows[0].role,'super_admin');
+ assert.equal((await db.query('select count(*) as n from omni_private.owner_claim')).rows[0].n,0,'owner reservation consumed once');
+ await db.exec(`update omni_profiles set role='member' where id='${reserved}';update auth.users set email_confirmed_at=now() where id='${reserved}';`);
+ assert.equal((await db.query(`select role from omni_profiles where id='${reserved}'`)).rows[0].role,'member','claim cannot grant ownership twice');
  await db.close();
 });

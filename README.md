@@ -20,7 +20,7 @@ npm run build
 
 构建输出为 `out/`。使用 Next.js 官方静态导出；数据读取与权限操作由 Supabase 完成，不需要 Node 服务。Webpack 构建避免部分 Windows 环境的 Turbopack 子进程问题。
 
-浏览器验证：安装 Playwright Chromium 后执行 `npm run test:browser`。当前用例验证演示模式；真实 OAuth 需在已配置的提供商项目中联调。
+浏览器验证：安装 Playwright Chromium 后执行 `npm run test:browser`。演示构建验证示例文章；已接入 Supabase 的构建请设置 `LIVE_SUPABASE=1`，验证真实数据读取、后台保护、登录选项、五语言布局和邮箱回调参数。邮箱提交测试拦截请求，不发送邮件；真实 OAuth 需在已配置的提供商项目中联调。
 
 ## 路由与国际化
 
@@ -38,12 +38,12 @@ UI 文案与演示文章具有五种语言版本。真实文章按语言编辑�
 
 目标项目：`cznhnupwojmydttdattb`。
 
-1. 在目标项目执行 `supabase/migrations/202610120001_omniremix.sql`。脚本在事务内创建 `omni_` 前缀的表、RLS、受控 RPC、注册触发器、评论节流与审计日志。通过 Supabase migrations 管理运行记录，不要重复执行同一迁移。
+1. 按顺序应用 `supabase/migrations/` 内的迁移。目标项目已通过 Supabase 插件执行两个迁移；文件版本与远端迁移记录一致，不要重复执行。它们创建 `omni_` 前缀的表、RLS、受控 RPC、注册触发器、评论节流、审计日志和首次管理员预约。内部提权函数位于不对 API 暴露的 `omni_private` schema；公开入口使用显式授权的 invoker 函数。
 2. 将项目 URL 与 **Publishable key 或 legacy anon key** 设置为 `NEXT_PUBLIC_SUPABASE_URL` 和 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`。它们用于浏览器；绝对不要填入 `service_role`、数据库密码或 OAuth client secret。
 3. Supabase Authentication 设置 Site URL 为正式站点源地址；Redirect URLs 添加五个语言的完整回调地址，例如 `https://omniremix.pages.dev/zh-CN/auth/callback/`。其他部署域名和本地地址也需逐个加入允许列表。
 4. 在 Providers 中启用 Google、GitHub、**X OAuth 2.0（provider: x）** 和 Email。分别在服务商控制台配置 OAuth 应用，把 client ID / secret 放入 Supabase 提供商设置。提供商回调为 `https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback`。
 5. 邮箱使用一次性登录链接。正式开放注册前配置自己的 SMTP，并检查 Supabase 的邮件发送限制；默认邮件服务不能替代正式 SMTP 配置。
-6. 首位站长先完成注册，再在 Supabase SQL Editor 中按准确的用户 UUID 授予总管理员。不要按邮箱模糊匹配，不要使用“第一个注册者自动成为管理员”的逻辑。
+6. 当前项目已根据站长明确指定的邮箱，在不公开的 `omni_private.owner_claim` 中设置一次性预约。只有该准确邮箱通过 Supabase 验证后才能领取总管理员权限；用户元数据里的验证标记无效。领取后预约删除，其他注册者保持普通用户。新部署可由数据库管理者设置自己的预约邮箱，或在注册后按准确 UUID 授权，不要使用“第一个注册者自动成为管理员”的逻辑。
 
 ```sql
 -- Replace the placeholder with the verified user's UUID from Authentication > Users.
@@ -63,6 +63,8 @@ where id = 'VERIFIED-USER-UUID';
 已为 Cloudflare Pages 项目 `omniremix` 配置 GitHub 源、`main` 生产分支、`npm run build` 构建命令和 `out` 输出目录。正式站点源地址为 `https://omniremix.pages.dev`。实际部署是否成功请以 Cloudflare deployment 状态为准。
 
 在 Pages 的 production build 环境设置上面的两个 Supabase 公开变量；变量在构建时写入前端，所以变更后需要重新构建。项目中的 `.env.example` 只是示例，不包含真实公钥。没有公钥的构建会明确使用演示模式。
+
+当前生产环境已配置 Supabase URL 和 Publishable key。Sites 使用本地 `.env.local` 构建出的同一静态产物；`NEXT_PUBLIC_*` 是构建变量，不能用 Sites 的运行时变量代替。重新构建前确保本地或构建平台已配置这两个公开变量。
 
 `main` 推送自动触发 Pages 部署。GitHub Actions 同时执行类型检查、数据库权限测试和构建。自动部署与 CI 并行；需要合并门禁时，在 GitHub branch protection 中把 Quality checks 设为必须通过。
 
@@ -88,6 +90,21 @@ UGC 模块与 `omni_submissions` 审核表已预留，当前无写入授权，`u
 
 `npm test` 在嵌入式 PostgreSQL (PGlite) 中实际执行迁移与权限场景，覆盖匿名草稿隔离、用户元数据提权阻断、发布限制、收藏隐私、互动身份、评论节流、停用账号、编辑者与总管理员边界、UGC 禁写及审计。
 
-这些测试不代表已在目标 Supabase 项目执行迁移；项目接入和四种登录方式的真实联调，需要该项目的授权、公开 key 和 OAuth/邮件配置。
+2026-10-12 已在目标 Supabase 项目执行迁移，并在自动回滚的事务中验证：子管理员发布、普通用户禁止发布及提权、点赞/收藏/评论和公开聚合。测试未留下账号或文章。安全检查无 ERROR/WARN；私有管理员预约表无客户端策略为有意拒绝所有访问。新数据库的索引尚未使用属于 INFO。
+
+邮箱服务已启用；Google、GitHub、X 在接入时尚未启用。网站登录面板实时读取提供商状态，未启用项显示“暂未开放”。OAuth 应用凭据、邮件 SMTP 和登录重定向配置需要在服务商与 Supabase 控制台完成；完成邮箱和 OAuth 真实登录前，不应把它们标为已联调。
+
+### OAuth 应用配置值
+
+| 项目 | 值 |
+| --- | --- |
+| 应用名称 | OmniRemix |
+| 网站 | `https://omniremix.pages.dev` |
+| Google / GitHub / X 服务商回调 | `https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback` |
+| 隐私说明 | `https://omniremix.pages.dev/zh-CN/about/#privacy` |
+| 使用条款 | `https://omniremix.pages.dev/zh-CN/about/#terms` |
+| Supabase Site URL | `https://omniremix.pages.dev` |
+
+Google 选择 Web application；X 使用 OAuth 2.0 的 Web App，只申请登录所需权限。不要把客户端密钥放入 GitHub、前端或聊天。凭据直接填入 Supabase 的对应 Provider。Supabase Redirect URLs 需要覆盖 Cloudflare 和 Sites 下五个 `/{locale}/auth/callback/` 地址。设置固定域名的 `/**` 可以覆盖五种语言，生产环境也可收窄为十个完整回调 URL。
 
 技术依据：[Cloudflare 静态 Next.js](https://developers.cloudflare.com/pages/framework-guides/nextjs/deploy-a-static-nextjs-site/)、[Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security)、[Supabase X OAuth 2.0](https://supabase.com/docs/guides/auth/social-login/auth-twitter)、[Tailwind CSS v4](https://tailwindcss.com/docs/installation/framework-guides/nextjs)。

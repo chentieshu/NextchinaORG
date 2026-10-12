@@ -5,6 +5,8 @@ import {useEffect,useRef,useState,type ReactNode} from 'react';
 import {FiArrowUpRight,FiArrowRight,FiSearch,FiMoon,FiSun,FiGlobe,FiChevronDown,FiX,FiMenu,FiBookmark,FiLogOut,FiSettings,FiMail} from 'react-icons/fi';
 import {FaGithub,FaGoogle,FaXTwitter} from 'react-icons/fa6';
 import {languageNames,locales} from '@/lib/i18n';
+import {getAuthProviders,type AuthProviders} from '@/lib/supabase';
+import {authCopy} from '@/lib/auth-copy';
 import {useApp} from './Provider';
 
 export function Logo({small=false}:{small?:boolean}){return <span className={`brand ${small?'small':''}`}><span className="brand-mark" aria-hidden="true"><i/><i/><i/></span><span>Omni<span className="brand-remix">Remix</span></span></span>;}
@@ -24,7 +26,25 @@ export function Shell({children}:{children:ReactNode}){
 }
 function AuthDialog(){
  const {locale,t,db,setAuthOpen,notify}=useApp();const [email,setEmail]=useState(''),[busy,setBusy]=useState(false),[sent,setSent]=useState(false),[error,setError]=useState('');
+ const copy=authCopy[locale];
+ const [providers,setProviders]=useState<AuthProviders|null>(null),[providerError,setProviderError]=useState(false),[attempt,setAttempt]=useState(0);
+ useEffect(()=>{
+  if(!db)return;
+  const controller=new AbortController();let active=true;
+  const timeout=setTimeout(()=>controller.abort(),10000);
+  setProviderError(false);
+  getAuthProviders(controller.signal).then(value=>{if(active)setProviders(value);}).catch(()=>{if(active)setProviderError(true);}).finally(()=>clearTimeout(timeout));
+  return()=>{active=false;controller.abort();clearTimeout(timeout);};
+ },[db,attempt]);
  async function oauth(provider:'google'|'github'|'x'){if(!db){setError(t.setup);return;}setBusy(true);setError('');const{error}=await db.auth.signInWithOAuth({provider,options:{redirectTo:`${location.origin}/${locale}/auth/callback/`}});if(error){setError(t.error);setBusy(false);}}
  async function send(e:React.FormEvent){e.preventDefault();if(!db){setError(t.setup);return;}setBusy(true);setError('');const{error}=await db.auth.signInWithOtp({email,options:{emailRedirectTo:`${location.origin}/${locale}/auth/callback/`}});setBusy(false);if(error)setError(t.error);else{setSent(true);notify(t.emailSent);}}
- return <Modal title={t.welcome} onClose={()=>setAuthOpen(false)}><Logo small/><h2>{t.welcome}</h2><p className="muted">{t.welcomeSub}</p><div className="oauth-buttons">{([['google','Google',FaGoogle],['github','GitHub',FaGithub],['x','X',FaXTwitter]] as const).map(([key,label,Icon])=><button key={key} disabled={busy||!db} onClick={()=>oauth(key)}><Icon/>{t.with} {label}<FiArrowUpRight/></button>)}</div><div className="or"><span>{t.or}</span></div><form onSubmit={send}><label htmlFor="auth-email">{t.email}</label><div className="input-icon"><FiMail/><input id="auth-email" type="email" value={email} required maxLength={254} placeholder={t.emailPlaceholder} onChange={e=>setEmail(e.target.value)}/></div><button className="button primary full" disabled={busy||sent||!db}>{busy?t.loading:sent?t.emailSent:t.sendLink}<FiArrowRight/></button></form>{(!db||error)&&<p role="status" className="form-note">{error||t.setup}</p>}<p className="auth-terms"><Link onClick={()=>setAuthOpen(false)} href={`/${locale}/about/#terms`}>{t.terms}</Link> · <Link onClick={()=>setAuthOpen(false)} href={`/${locale}/about/#privacy`}>{t.privacy}</Link><br/>{t.authTerms}</p></Modal>;
+ return <Modal title={t.welcome} onClose={()=>setAuthOpen(false)}>
+  <Logo small/><h2>{t.welcome}</h2><p className="muted">{t.welcomeSub}</p>
+  <div className="oauth-buttons">{([['google','Google',FaGoogle],['github','GitHub',FaGithub],['x','X',FaXTwitter]] as const).map(([key,label,Icon])=><button key={key} disabled={busy||!providers?.[key]} onClick={()=>oauth(key)}><Icon/>{t.with} {label}{providers&&!providers[key]&&<small>{copy.unavailable}</small>}<FiArrowUpRight/></button>)}</div>
+  {providerError&&<p className="form-note" role="status">{copy.loadError} <button type="button" onClick={()=>setAttempt(n=>n+1)}>{t.retry}</button></p>}
+  <div className="or"><span>{t.or}</span></div>
+  <form onSubmit={send}><label htmlFor="auth-email">{t.email}</label><div className="input-icon"><FiMail/><input id="auth-email" type="email" value={email} required maxLength={254} placeholder={t.emailPlaceholder} onChange={e=>{setEmail(e.target.value);setSent(false);}}/></div><button className="button primary full" disabled={busy||sent||!providers?.email}>{busy?t.loading:sent?t.emailSent:t.sendLink}<FiArrowRight/></button></form>
+  {(!db||error)&&<p role="status" className="form-note">{error||t.setup}</p>}
+  <p className="auth-terms"><Link onClick={()=>setAuthOpen(false)} href={`/${locale}/about/#terms`}>{t.terms}</Link> · <Link onClick={()=>setAuthOpen(false)} href={`/${locale}/about/#privacy`}>{t.privacy}</Link><br/>{t.authTerms}</p>
+ </Modal>;
 }

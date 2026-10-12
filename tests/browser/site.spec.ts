@@ -1,5 +1,6 @@
 import {test,expect} from '@playwright/test';
 test('five languages, search, detail, persistent bookmarks and keyboard dialogs',async({page})=>{
+ test.skip(!!process.env.LIVE_SUPABASE,'This scenario uses the demo article fixtures.');
  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
  for(const locale of ['zh-CN','en','ja','es','zh-TW']){await page.goto(`/${locale}/`);await expect(page.locator('html')).toHaveAttribute('lang',locale);await expect(page.locator('h1')).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
  await page.goto('/zh-CN/news/?q=开源');await expect(page.locator('.news-grid .article-card')).toHaveCount(1);await page.locator('.card-content h3 a').click();await expect(page.locator('.article-heading h1')).toContainText('开源');await expect(page.locator('.article-body')).toContainText('贡献');
@@ -8,12 +9,13 @@ test('five languages, search, detail, persistent bookmarks and keyboard dialogs'
  await page.keyboard.press('Control+k');await expect(page.getByRole('dialog')).toBeVisible();await page.keyboard.press('Escape');expect(errors).toEqual([]);
 });
 test('desktop, dark mode and mobile layout',async({page})=>{
- await page.setViewportSize({width:1440,height:1000});await page.goto('/zh-CN/');await expect(page.locator('.hero h1')).toBeVisible();await page.screenshot({path:process.env.SCREENSHOT_DIR?`${process.env.SCREENSHOT_DIR}/omniremix-desktop.png`:'test-results/desktop.png',fullPage:true});
+ await page.setViewportSize({width:1440,height:1000});await page.goto('/zh-CN/');await expect(page.locator('.hero h1')).toBeVisible();await expect(page.locator('.empty-state[role="status"]')).toHaveCount(0);await page.screenshot({path:process.env.SCREENSHOT_DIR?`${process.env.SCREENSHOT_DIR}/omniremix-desktop.png`:'test-results/desktop.png',fullPage:true});
  await page.getByRole('button',{name:'切换明暗主题'}).click();await expect(page.locator('html')).toHaveAttribute('data-theme','dark');await page.reload();await expect(page.locator('html')).toHaveAttribute('data-theme','dark');await page.getByRole('button',{name:'切换明暗主题'}).click();
  await page.setViewportSize({width:390,height:844});
  for(const locale of ['zh-CN','en','ja','es','zh-TW']){await page.goto(`/${locale}/`);await expect(page.locator('html')).toHaveAttribute('lang',locale);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
- await page.goto('/zh-CN/');await page.screenshot({path:process.env.SCREENSHOT_DIR?`${process.env.SCREENSHOT_DIR}/omniremix-mobile.png`:'test-results/mobile.png',fullPage:true});await page.getByRole('button',{name:'菜单',exact:true}).click();await expect(page.locator('.mobile-nav')).toBeVisible();await page.locator('.mobile-nav').getByRole('link',{name:'科技新闻',exact:true}).click();await expect(page.locator('.page-title')).toContainText('科技新闻');
+ await page.goto('/zh-CN/');await expect(page.locator('.empty-state[role="status"]')).toHaveCount(0);await page.screenshot({path:process.env.SCREENSHOT_DIR?`${process.env.SCREENSHOT_DIR}/omniremix-mobile.png`:'test-results/mobile.png',fullPage:true});await page.getByRole('button',{name:'菜单',exact:true}).click();await expect(page.locator('.mobile-nav')).toBeVisible();await page.locator('.mobile-nav').getByRole('link',{name:'科技新闻',exact:true}).click();await expect(page.locator('.page-title')).toContainText('科技新闻');
 });
 test('admin preview includes working multilingual editor and protected settings',async({page})=>{
+ test.skip(!!process.env.LIVE_SUPABASE,'Live mode requires a real administrator account.');
  await page.goto('/zh-CN/admin/');await expect(page.locator('.admin-content')).toContainText('管理中心预览');await page.getByRole('button',{name:'新建文章',exact:true}).click();await expect(page.getByRole('dialog')).toBeVisible();await page.getByRole('button',{name:'English',exact:true}).click();await page.getByRole('textbox',{name:'标题',exact:true}).fill('A multilingual draft');await page.getByRole('button',{name:'简体中文',exact:true}).click();await expect(page.getByRole('textbox',{name:'标题',exact:true})).toHaveValue('');await page.getByRole('button',{name:'English',exact:true}).click();await expect(page.getByRole('textbox',{name:'标题',exact:true})).toHaveValue('A multilingual draft');await expect(page.getByRole('button',{name:'保存',exact:true})).toBeDisabled();await page.keyboard.press('Escape');await page.getByRole('button',{name:'全站设置',exact:true}).click();await expect(page.locator('.settings-form textarea')).toBeDisabled();
 });
