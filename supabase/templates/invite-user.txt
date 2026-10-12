@@ -1,0 +1,18 @@
+NextChina.org
+你收到了 NextChina.org 邀请
+You are invited to NextChina.org
+
+你受邀在 NextChina.org 创建账户。若你愿意加入，请点击下方按钮接受邀请。具体权限由站点管理员单独设置，接受邀请不会自动获得管理员权限。
+You have been invited to create an account on NextChina.org. Accept the invitation to join. Site administrators manage roles separately; accepting an invitation does not grant administrator access.
+
+接受邀请 · Accept invitation
+{{ .ConfirmationURL }}
+
+此邀请链接只能使用一次。若已失效，请联系邀请你的管理员重新发送。
+This invitation link can only be used once. If it has expired, ask the inviting administrator to send a new one.
+如果你不认识此邀请，可以忽略邮件。
+If you do not recognize this invitation, you can ignore this email.
+
+支持 / Support: chentieshu520@gmail.com
+https://nextchina.org/
+隐私政策 / Privacy: https://nextchina.org/zh-CN/privacy/

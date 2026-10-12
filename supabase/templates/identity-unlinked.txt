@@ -1,0 +1,17 @@
+NextChina.org
+一个登录方式已移除
+A sign-in method was removed
+
+以下登录方式已从你的 NextChina.org 账户中移除。请确认你仍可通过其他已关联方式登录。
+This sign-in method was removed from your NextChina.org account. Make sure you can still sign in with another linked method.
+
+登录服务商 / Sign-in provider: {{ .Provider }}
+账户邮箱 / Account email: {{ .Email }}
+
+
+如果这是你本人的操作，无需回复。若非本人操作，请立即联系支持，并检查关联邮箱与登录服务商的账户安全。请勿发送密码、验证码或登录链接。
+If you made this change, no reply is needed. Otherwise, contact support immediately and secure your email and linked sign-in accounts. Never send passwords, verification codes, or sign-in links.
+
+支持 / Support: chentieshu520@gmail.com
+https://nextchina.org/
+隐私政策 / Privacy: https://nextchina.org/zh-CN/privacy/

@@ -1,0 +1,376 @@
+[
+  {
+    "id": "confirmation",
+    "file": "confirm-signup",
+    "label": "确认注册",
+    "en": "Confirm signup",
+    "title": "验证邮箱，加入 NextChina.org",
+    "titleEn": "Confirm your email address",
+    "subject": "NextChina.org · 确认注册 / Confirm signup",
+    "preview": "完成邮箱验证，开始参与科技社区。",
+    "zh": "欢迎加入 NextChina.org。请点击下方按钮验证邮箱并完成注册。你可以阅读科技新闻，并在登录后点赞、收藏和参与评论。",
+    "english": "Welcome to NextChina.org. Confirm your email to complete signup, then like, bookmark, and comment on technology news.",
+    "button": "验证邮箱 · Confirm email",
+    "note": [
+      "请在发起操作的同一个浏览器中打开链接。链接只能使用一次；若已失效，请回到网站重新发起操作。",
+      "Open the link in the same browser where you started. It can only be used once. If it has expired, return to the website and request a new one."
+    ],
+    "caution": [
+      "如果你没有发起此操作，请忽略这封邮件，不要转发链接。",
+      "If you did not request this, ignore this email and do not forward the link."
+    ],
+    "usage": "当前邮箱首次注册会使用此模板。确认注册与登录链接应分别保存。",
+    "group": "验证邮件",
+    "subjectKey": "mailer_subjects_confirmation",
+    "bodyKey": "mailer_templates_confirmation_content",
+    "enabledKey": null
+  },
+  {
+    "id": "invite",
+    "file": "invite-user",
+    "label": "邀请用户",
+    "en": "Invite user",
+    "title": "你收到了 NextChina.org 邀请",
+    "titleEn": "You are invited to NextChina.org",
+    "subject": "NextChina.org · 账户邀请 / Your invitation",
+    "preview": "接受邀请，创建你的社区账户。",
+    "zh": "你受邀在 NextChina.org 创建账户。若你愿意加入，请点击下方按钮接受邀请。具体权限由站点管理员单独设置，接受邀请不会自动获得管理员权限。",
+    "english": "You have been invited to create an account on NextChina.org. Accept the invitation to join. Site administrators manage roles separately; accepting an invitation does not grant administrator access.",
+    "button": "接受邀请 · Accept invitation",
+    "note": [
+      "此邀请链接只能使用一次。若已失效，请联系邀请你的管理员重新发送。",
+      "This invitation link can only be used once. If it has expired, ask the inviting administrator to send a new one."
+    ],
+    "caution": [
+      "如果你不认识此邀请，可以忽略邮件。",
+      "If you do not recognize this invitation, you can ignore this email."
+    ],
+    "usage": "管理员邀请时使用。当前网站没有自助邀请入口；使用前需确认邀请回调与后续账户流程。",
+    "group": "验证邮件",
+    "subjectKey": "mailer_subjects_invite",
+    "bodyKey": "mailer_templates_invite_content",
+    "enabledKey": null
+  },
+  {
+    "id": "magic_link",
+    "file": "magic-link",
+    "label": "魔法链接或一次性密码",
+    "en": "Magic link or OTP",
+    "title": "登录 NextChina.org",
+    "titleEn": "Your sign-in link",
+    "subject": "NextChina.org · 登录链接 / Sign in",
+    "preview": "点击一次性链接，安全返回你的科技社区。",
+    "zh": "我们收到了你的登录请求。点击下方按钮，即可登录 NextChina.org。无需在邮件中输入密码。",
+    "english": "We received your sign-in request. Use the button below to sign in to NextChina.org. You do not need to enter a password in this email.",
+    "button": "登录账户 · Sign in",
+    "note": [
+      "请在发起操作的同一个浏览器中打开链接。链接只能使用一次；若已失效，请回到网站重新发起操作。",
+      "Open the link in the same browser where you started. It can only be used once. If it has expired, return to the website and request a new one."
+    ],
+    "caution": [
+      "如果你没有发起此操作，请忽略这封邮件，不要转发链接。",
+      "If you did not request this, ignore this email and do not forward the link."
+    ],
+    "usage": "保持魔法链接模式。本站目前没有验证码输入框，因此此模板不展示 OTP，避免收到代码却无处填写。",
+    "group": "验证邮件",
+    "subjectKey": "mailer_subjects_magic_link",
+    "bodyKey": "mailer_templates_magic_link_content",
+    "enabledKey": null
+  },
+  {
+    "id": "email_change",
+    "file": "change-email",
+    "label": "更改电子邮件地址",
+    "en": "Change email address",
+    "title": "确认更换账户邮箱",
+    "titleEn": "Confirm your email change",
+    "subject": "NextChina.org · 确认更换邮箱 / Confirm email change",
+    "preview": "请核对此次邮箱变更，并完成确认。",
+    "zh": "我们收到了更换 NextChina.org 账户邮箱的请求。请核对下方新邮箱，确认是你本人操作后再继续。",
+    "english": "We received a request to change your NextChina.org account email. Check the new address below and continue only if you requested this change.",
+    "details": [
+      [
+        "新的邮箱 / New email",
+        "{{ .NewEmail }}"
+      ]
+    ],
+    "button": "确认变更 · Confirm change",
+    "note": [
+      "若启用了双重邮箱确认，请分别按照旧邮箱和新邮箱收到的邮件完成确认，之后变更才会生效。",
+      "If secure email change is enabled, complete the confirmations sent to both your current and new email addresses before the change takes effect."
+    ],
+    "caution": [
+      "如果你没有发起此操作，请忽略这封邮件，不要转发链接。",
+      "If you did not request this, ignore this email and do not forward the link."
+    ],
+    "usage": "保留 {{ .NewEmail }} 和 {{ .ConfirmationURL }}。当前网站尚无用户自助更换邮箱界面。",
+    "group": "验证邮件",
+    "subjectKey": "mailer_subjects_email_change",
+    "bodyKey": "mailer_templates_email_change_content",
+    "enabledKey": null
+  },
+  {
+    "id": "recovery",
+    "file": "reset-password",
+    "label": "重置密码",
+    "en": "Reset password",
+    "title": "重置你的账户密码",
+    "titleEn": "Reset your password",
+    "subject": "NextChina.org · 重置密码 / Reset password",
+    "preview": "通过专属链接继续密码重置操作。",
+    "zh": "我们收到了你的 NextChina.org 密码重置请求。点击下方按钮继续。只有你完成后续设置后，新密码才会生效。",
+    "english": "We received a request to reset your NextChina.org password. Follow the link to continue. Your password changes only after you complete the next steps.",
+    "button": "继续重置 · Continue reset",
+    "note": [
+      "请在发起操作的同一个浏览器中打开链接。链接只能使用一次；若已失效，请回到网站重新发起操作。",
+      "Open the link in the same browser where you started. It can only be used once. If it has expired, return to the website and request a new one."
+    ],
+    "caution": [
+      "如果你没有发起此操作，请忽略这封邮件，不要转发链接。",
+      "If you did not request this, ignore this email and do not forward the link."
+    ],
+    "usage": "预备模板：网站目前使用魔法链接，尚未实现设置新密码页面。开放密码登录前，必须实现 recovery 回调、设置密码表单与 updateUser({ password })。仅保存邮件不能补全该流程。",
+    "group": "验证邮件",
+    "subjectKey": "mailer_subjects_recovery",
+    "bodyKey": "mailer_templates_recovery_content",
+    "enabledKey": null
+  },
+  {
+    "id": "reauthentication",
+    "file": "reauthentication",
+    "label": "重新认证",
+    "en": "Reauthentication",
+    "title": "验证是你本人操作",
+    "titleEn": "Verify your identity",
+    "subject": "NextChina.org · 身份验证码 / Verification code",
+    "preview": "返回发起操作的页面，输入本次验证码。",
+    "zh": "为继续账户敏感操作，请返回发起操作的页面，输入下方验证码。",
+    "english": "To continue a sensitive account action, return to the page where you started and enter this verification code.",
+    "otp": true,
+    "note": [
+      "验证码仅供本次操作使用。请勿分享给任何人，支持人员不会索要此代码。如果已失效，请重新发起验证。",
+      "Use this code only for the action you requested. Do not share it with anyone; support will never ask for it. If it has expired, request a new code."
+    ],
+    "caution": [
+      "如果你没有发起此操作，请忽略邮件。",
+      "If you did not request this action, ignore this email."
+    ],
+    "usage": "必须使用 {{ .Token }}，不能用确认链接代替。当前网站尚无重新认证验证码输入界面。",
+    "group": "验证邮件",
+    "subjectKey": "mailer_subjects_reauthentication",
+    "bodyKey": "mailer_templates_reauthentication_content",
+    "enabledKey": null
+  },
+  {
+    "id": "password_changed_notification",
+    "event": "password_changed",
+    "file": "password-changed",
+    "label": "密码已更改",
+    "en": "Password changed",
+    "title": "你的账户密码已更改",
+    "titleEn": "Your password was changed",
+    "subject": "NextChina.org · 密码已更改 / Password changed",
+    "preview": "账户安全通知：密码发生了变更。",
+    "zh": "你的 NextChina.org 账户密码已更改。如果这是你本人的操作，无需进一步确认。",
+    "english": "The password for your NextChina.org account was changed. No confirmation is needed if you made this change.",
+    "details": [
+      [
+        "账户邮箱 / Account email",
+        "{{ .Email }}"
+      ]
+    ],
+    "group": "安全通知",
+    "note": [
+      "如果这是你本人的操作，无需回复。若非本人操作，请立即联系支持，并检查关联邮箱与登录服务商的账户安全。请勿发送密码、验证码或登录链接。",
+      "If you made this change, no reply is needed. Otherwise, contact support immediately and secure your email and linked sign-in accounts. Never send passwords, verification codes, or sign-in links."
+    ],
+    "usage": "建议开启此安全通知。只在实际发生对应账户变更时发送；开启通知不会自动启用电话登录、密码登录或 MFA 功能。",
+    "subjectKey": "mailer_subjects_password_changed_notification",
+    "bodyKey": "mailer_templates_password_changed_notification_content",
+    "enabledKey": "mailer_notifications_password_changed_enabled"
+  },
+  {
+    "id": "email_changed_notification",
+    "event": "email_changed",
+    "file": "email-changed",
+    "label": "电子邮件地址已更改",
+    "en": "Email address changed",
+    "title": "你的账户邮箱已更改",
+    "titleEn": "Your email address was changed",
+    "subject": "NextChina.org · 邮箱已更改 / Email changed",
+    "preview": "账户安全通知：邮箱变更已生效。",
+    "zh": "你的 NextChina.org 账户邮箱已完成变更，请核对以下信息。",
+    "english": "The email address for your NextChina.org account was changed. Review the details below.",
+    "details": [
+      [
+        "原邮箱 / Previous email",
+        "{{ .OldEmail }}"
+      ],
+      [
+        "新邮箱 / New email",
+        "{{ .Email }}"
+      ]
+    ],
+    "group": "安全通知",
+    "note": [
+      "如果这是你本人的操作，无需回复。若非本人操作，请立即联系支持，并检查关联邮箱与登录服务商的账户安全。请勿发送密码、验证码或登录链接。",
+      "If you made this change, no reply is needed. Otherwise, contact support immediately and secure your email and linked sign-in accounts. Never send passwords, verification codes, or sign-in links."
+    ],
+    "usage": "建议开启此安全通知。只在实际发生对应账户变更时发送；开启通知不会自动启用电话登录、密码登录或 MFA 功能。",
+    "subjectKey": "mailer_subjects_email_changed_notification",
+    "bodyKey": "mailer_templates_email_changed_notification_content",
+    "enabledKey": "mailer_notifications_email_changed_enabled"
+  },
+  {
+    "id": "phone_changed_notification",
+    "event": "phone_changed",
+    "file": "phone-changed",
+    "label": "电话号码已更改",
+    "en": "Phone number changed",
+    "title": "你的账户电话已更改",
+    "titleEn": "Your phone number was changed",
+    "subject": "NextChina.org · 电话已更改 / Phone changed",
+    "preview": "账户安全通知：电话号码发生了变更。",
+    "zh": "你的 NextChina.org 账户电话号码已更改，请核对此次变更。",
+    "english": "The phone number for your NextChina.org account was changed. Review this change below.",
+    "details": [
+      [
+        "原号码 / Previous number",
+        "{{ .OldPhone }}"
+      ],
+      [
+        "新号码 / New number",
+        "{{ .Phone }}"
+      ]
+    ],
+    "group": "安全通知",
+    "note": [
+      "如果这是你本人的操作，无需回复。若非本人操作，请立即联系支持，并检查关联邮箱与登录服务商的账户安全。请勿发送密码、验证码或登录链接。",
+      "If you made this change, no reply is needed. Otherwise, contact support immediately and secure your email and linked sign-in accounts. Never send passwords, verification codes, or sign-in links."
+    ],
+    "usage": "建议开启此安全通知。只在实际发生对应账户变更时发送；开启通知不会自动启用电话登录、密码登录或 MFA 功能。",
+    "subjectKey": "mailer_subjects_phone_changed_notification",
+    "bodyKey": "mailer_templates_phone_changed_notification_content",
+    "enabledKey": "mailer_notifications_phone_changed_enabled"
+  },
+  {
+    "id": "identity_linked_notification",
+    "event": "identity_linked",
+    "file": "identity-linked",
+    "label": "已链接的登录方式",
+    "en": "Sign-in method linked",
+    "title": "已关联新的登录方式",
+    "titleEn": "A sign-in method was linked",
+    "subject": "NextChina.org · 登录方式已关联 / Sign-in linked",
+    "preview": "账户安全通知：账户关联了一个登录方式。",
+    "zh": "一个登录方式已关联到你的 NextChina.org 账户。",
+    "english": "A sign-in method was linked to your NextChina.org account.",
+    "details": [
+      [
+        "登录服务商 / Sign-in provider",
+        "{{ .Provider }}"
+      ],
+      [
+        "账户邮箱 / Account email",
+        "{{ .Email }}"
+      ]
+    ],
+    "group": "安全通知",
+    "note": [
+      "如果这是你本人的操作，无需回复。若非本人操作，请立即联系支持，并检查关联邮箱与登录服务商的账户安全。请勿发送密码、验证码或登录链接。",
+      "If you made this change, no reply is needed. Otherwise, contact support immediately and secure your email and linked sign-in accounts. Never send passwords, verification codes, or sign-in links."
+    ],
+    "usage": "建议开启此安全通知。只在实际发生对应账户变更时发送；开启通知不会自动启用电话登录、密码登录或 MFA 功能。",
+    "subjectKey": "mailer_subjects_identity_linked_notification",
+    "bodyKey": "mailer_templates_identity_linked_notification_content",
+    "enabledKey": "mailer_notifications_identity_linked_enabled"
+  },
+  {
+    "id": "identity_unlinked_notification",
+    "event": "identity_unlinked",
+    "file": "identity-unlinked",
+    "label": "登录方式已移除",
+    "en": "Sign-in method removed",
+    "title": "一个登录方式已移除",
+    "titleEn": "A sign-in method was removed",
+    "subject": "NextChina.org · 登录方式已移除 / Sign-in removed",
+    "preview": "账户安全通知：账户移除了一个登录方式。",
+    "zh": "以下登录方式已从你的 NextChina.org 账户中移除。请确认你仍可通过其他已关联方式登录。",
+    "english": "This sign-in method was removed from your NextChina.org account. Make sure you can still sign in with another linked method.",
+    "details": [
+      [
+        "登录服务商 / Sign-in provider",
+        "{{ .Provider }}"
+      ],
+      [
+        "账户邮箱 / Account email",
+        "{{ .Email }}"
+      ]
+    ],
+    "group": "安全通知",
+    "note": [
+      "如果这是你本人的操作，无需回复。若非本人操作，请立即联系支持，并检查关联邮箱与登录服务商的账户安全。请勿发送密码、验证码或登录链接。",
+      "If you made this change, no reply is needed. Otherwise, contact support immediately and secure your email and linked sign-in accounts. Never send passwords, verification codes, or sign-in links."
+    ],
+    "usage": "建议开启此安全通知。只在实际发生对应账户变更时发送；开启通知不会自动启用电话登录、密码登录或 MFA 功能。",
+    "subjectKey": "mailer_subjects_identity_unlinked_notification",
+    "bodyKey": "mailer_templates_identity_unlinked_notification_content",
+    "enabledKey": "mailer_notifications_identity_unlinked_enabled"
+  },
+  {
+    "id": "mfa_factor_enrolled_notification",
+    "event": "mfa_factor_enrolled",
+    "file": "mfa-added",
+    "label": "新增 MFA 方法",
+    "en": "Verification method added",
+    "title": "已添加多因素验证方式",
+    "titleEn": "A verification method was added",
+    "subject": "NextChina.org · MFA 已添加 / Verification added",
+    "preview": "账户安全通知：新增了多因素验证方式。",
+    "zh": "你的 NextChina.org 账户已添加以下多因素身份验证（MFA）方式。",
+    "english": "This multi-factor authentication (MFA) method was added to your NextChina.org account.",
+    "details": [
+      [
+        "验证类型 / Verification type",
+        "{{ .FactorType }}"
+      ]
+    ],
+    "group": "安全通知",
+    "note": [
+      "如果这是你本人的操作，无需回复。若非本人操作，请立即联系支持，并检查关联邮箱与登录服务商的账户安全。请勿发送密码、验证码或登录链接。",
+      "If you made this change, no reply is needed. Otherwise, contact support immediately and secure your email and linked sign-in accounts. Never send passwords, verification codes, or sign-in links."
+    ],
+    "usage": "建议开启此安全通知。只在实际发生对应账户变更时发送；开启通知不会自动启用电话登录、密码登录或 MFA 功能。",
+    "subjectKey": "mailer_subjects_mfa_factor_enrolled_notification",
+    "bodyKey": "mailer_templates_mfa_factor_enrolled_notification_content",
+    "enabledKey": "mailer_notifications_mfa_factor_enrolled_enabled"
+  },
+  {
+    "id": "mfa_factor_unenrolled_notification",
+    "event": "mfa_factor_unenrolled",
+    "file": "mfa-removed",
+    "label": "MFA 方法已移除",
+    "en": "Verification method removed",
+    "title": "多因素验证方式已移除",
+    "titleEn": "A verification method was removed",
+    "subject": "NextChina.org · MFA 已移除 / Verification removed",
+    "preview": "账户安全通知：多因素验证方式发生了移除。",
+    "zh": "以下多因素身份验证（MFA）方式已从你的 NextChina.org 账户中移除。",
+    "english": "This multi-factor authentication (MFA) method was removed from your NextChina.org account.",
+    "details": [
+      [
+        "验证类型 / Verification type",
+        "{{ .FactorType }}"
+      ]
+    ],
+    "group": "安全通知",
+    "note": [
+      "如果这是你本人的操作，无需回复。若非本人操作，请立即联系支持，并检查关联邮箱与登录服务商的账户安全。请勿发送密码、验证码或登录链接。",
+      "If you made this change, no reply is needed. Otherwise, contact support immediately and secure your email and linked sign-in accounts. Never send passwords, verification codes, or sign-in links."
+    ],
+    "usage": "建议开启此安全通知。只在实际发生对应账户变更时发送；开启通知不会自动启用电话登录、密码登录或 MFA 功能。",
+    "subjectKey": "mailer_subjects_mfa_factor_unenrolled_notification",
+    "bodyKey": "mailer_templates_mfa_factor_unenrolled_notification_content",
+    "enabledKey": "mailer_notifications_mfa_factor_unenrolled_enabled"
+  }
+]

@@ -1,0 +1,18 @@
+NextChina.org
+登录 NextChina.org
+Your sign-in link
+
+我们收到了你的登录请求。点击下方按钮，即可登录 NextChina.org。无需在邮件中输入密码。
+We received your sign-in request. Use the button below to sign in to NextChina.org. You do not need to enter a password in this email.
+
+登录账户 · Sign in
+{{ .ConfirmationURL }}
+
+请在发起操作的同一个浏览器中打开链接。链接只能使用一次；若已失效，请回到网站重新发起操作。
+Open the link in the same browser where you started. It can only be used once. If it has expired, return to the website and request a new one.
+如果你没有发起此操作，请忽略这封邮件，不要转发链接。
+If you did not request this, ignore this email and do not forward the link.
+
+支持 / Support: chentieshu520@gmail.com
+https://nextchina.org/
+隐私政策 / Privacy: https://nextchina.org/zh-CN/privacy/

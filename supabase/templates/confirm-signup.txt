@@ -1,0 +1,18 @@
+NextChina.org
+验证邮箱，加入 NextChina.org
+Confirm your email address
+
+欢迎加入 NextChina.org。请点击下方按钮验证邮箱并完成注册。你可以阅读科技新闻，并在登录后点赞、收藏和参与评论。
+Welcome to NextChina.org. Confirm your email to complete signup, then like, bookmark, and comment on technology news.
+
+验证邮箱 · Confirm email
+{{ .ConfirmationURL }}
+
+请在发起操作的同一个浏览器中打开链接。链接只能使用一次；若已失效，请回到网站重新发起操作。
+Open the link in the same browser where you started. It can only be used once. If it has expired, return to the website and request a new one.
+如果你没有发起此操作，请忽略这封邮件，不要转发链接。
+If you did not request this, ignore this email and do not forward the link.
+
+支持 / Support: chentieshu520@gmail.com
+https://nextchina.org/
+隐私政策 / Privacy: https://nextchina.org/zh-CN/privacy/

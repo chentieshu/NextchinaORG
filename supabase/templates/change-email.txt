@@ -1,0 +1,19 @@
+NextChina.org
+确认更换账户邮箱
+Confirm your email change
+
+我们收到了更换 NextChina.org 账户邮箱的请求。请核对下方新邮箱，确认是你本人操作后再继续。
+We received a request to change your NextChina.org account email. Check the new address below and continue only if you requested this change.
+
+新的邮箱 / New email: {{ .NewEmail }}
+确认变更 · Confirm change
+{{ .ConfirmationURL }}
+
+若启用了双重邮箱确认，请分别按照旧邮箱和新邮箱收到的邮件完成确认，之后变更才会生效。
+If secure email change is enabled, complete the confirmations sent to both your current and new email addresses before the change takes effect.
+如果你没有发起此操作，请忽略这封邮件，不要转发链接。
+If you did not request this, ignore this email and do not forward the link.
+
+支持 / Support: chentieshu520@gmail.com
+https://nextchina.org/
+隐私政策 / Privacy: https://nextchina.org/zh-CN/privacy/

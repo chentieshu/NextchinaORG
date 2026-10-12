@@ -1,0 +1,16 @@
+NextChina.org
+多因素验证方式已移除
+A verification method was removed
+
+以下多因素身份验证（MFA）方式已从你的 NextChina.org 账户中移除。
+This multi-factor authentication (MFA) method was removed from your NextChina.org account.
+
+验证类型 / Verification type: {{ .FactorType }}
+
+
+如果这是你本人的操作，无需回复。若非本人操作，请立即联系支持，并检查关联邮箱与登录服务商的账户安全。请勿发送密码、验证码或登录链接。
+If you made this change, no reply is needed. Otherwise, contact support immediately and secure your email and linked sign-in accounts. Never send passwords, verification codes, or sign-in links.
+
+支持 / Support: chentieshu520@gmail.com
+https://nextchina.org/
+隐私政策 / Privacy: https://nextchina.org/zh-CN/privacy/

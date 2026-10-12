@@ -138,12 +138,11 @@ Supabase 负责注册、一次性链接与会话；Resend 通过 SMTP 发送邮�
 
 ### 邮件模板
 
-在同一 Email 页面分别打开 **Magic Link** 和 **Confirm signup** 模板。正文可复制仓库中的 [`supabase/templates/magic-link.html`](../supabase/templates/magic-link.html)，主题分别建议：
+全部 6 类验证邮件与 7 类安全通知已分别准备，使用中英双语 NextChina.org 样式。请下载并在浏览器打开 [`supabase/templates/preview.html`](../supabase/templates/preview.html)，逐项复制对应主题和 HTML 正文；不要把 Magic Link 正文重复用在 Confirm signup 或其他不同操作中。
 
-- Magic Link：`登录 NextChina.org · Sign in`
-- Confirm signup：`验证邮箱并加入 NextChina.org · Confirm your email`
+完整文件对应表、SMTP 填写值、批量保存脚本和功能限制见 [邮件配置指南](../supabase/templates/README.md)。七项安全通知建议保存后全部开启；通知开关不会开启网站里的密码、电话或 MFA 功能。
 
-这是中英双语模板。保留按钮中的 `{{ .ConfirmationURL }}` 原样，它包含 Supabase 生成的一次性验证链接与返回地址。不要替换成普通首页，也不要粘贴网上使用 `/auth/confirm` 的模板；本站实际回调是带语言的 `/auth/callback/`。更换邮件文案本身不需要重新发布网站。
+保留验证按钮中的 `{{ .ConfirmationURL }}` 原样，它包含 Supabase 生成的一次性验证链接与返回地址。重新认证专用模板使用 `{{ .Token }}`；当前网站没有密码重置表单和重新认证输入界面，这些模板属于预备配置。更换邮件模板本身不需要重新发布网站，但必须在 Supabase 单独保存，提交文件不会自动生效。
 
 依据：[Resend + Supabase SMTP](https://resend.com/docs/send-with-supabase-smtp)、[Resend 密钥权限](https://resend.com/docs/dashboard/api-keys/introduction)、[Supabase 邮件模板](https://supabase.com/docs/guides/auth/auth-email-templates)。
 

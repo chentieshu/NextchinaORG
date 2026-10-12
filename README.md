@@ -4,7 +4,7 @@
 
 正式网站：[NextChina.org](https://nextchina.org)。`www.nextchina.org` 自动跳转主域并保留路径及查询参数。
 
-域名迁移、Google / X / GitHub、Supabase 与 Resend 的逐项填写指南见 [登录与域名配置](docs/auth-and-domains.md)。可直接复制的品牌邮件模板见 [magic-link.html](supabase/templates/magic-link.html)。
+域名迁移、Google / X / GitHub、Supabase 与 Resend 的逐项填写指南见 [登录与域名配置](docs/auth-and-domains.md)。全部 13 类品牌邮件的 [配置说明](supabase/templates/README.md) 与 [可视化复制页面](supabase/templates/preview.html) 已备齐；需单独保存到 Supabase Auth，不会随网站部署自动生效。
 
 Google 品牌审核的修复说明及准确填写值见 [品牌验证指南](docs/google-brand-verification.md)。
 
