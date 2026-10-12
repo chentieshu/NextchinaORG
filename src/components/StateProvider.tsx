@@ -19,14 +19,14 @@ function useAppState(locale:Locale){
   setContentVersion(v=>v+1);if(!db)return;
   const sequence=++refreshRequest.current;contentController.current?.abort();const controller=new AbortController();contentController.current=controller;const timeout=setTimeout(()=>controller.abort(),15000);
   setLoadError(false);try{
-   const [news,posts,s]=await Promise.all([db.rpc('omni_content_feed',{content_kind:'news',page_size:5,featured_only:true}).abortSignal(controller.signal),db.rpc('omni_content_feed',{content_kind:'post',page_size:5,featured_only:true}).abortSignal(controller.signal),db.from('omni_settings').select('*').eq('id',true).abortSignal(controller.signal).single()]);
-   if(!mounted.current||sequence!==refreshRequest.current)return;if(news.error||posts.error||s.error)throw Error('Content unavailable');setArticles([...(news.data??[]),...(posts.data??[])]);setSettings(s.data);
+   const s=await db.from('omni_settings').select('*').eq('id',true).abortSignal(controller.signal).single();
+   if(!mounted.current||sequence!==refreshRequest.current)return;if(s.error)throw Error('Content unavailable');setSettings(s.data);
   }catch{if(mounted.current&&sequence===refreshRequest.current)setLoadError(true);}finally{clearTimeout(timeout);if(mounted.current&&sequence===refreshRequest.current)setLoading(false);}
  },[db]);
  const sync=useCallback(async(nextUser:User|null)=>{
   const sequence=++authRequest.current;authController.current?.abort();const controller=new AbortController();authController.current=controller;
   const changed=currentUser.current!==(nextUser?.id??null);currentUser.current=nextUser?.id??null;
-  setUser(nextUser);if(changed||!nextUser){profileReady.current=false;setProfile(null);setLiked([]);setBookmarked([]);}if(!profileReady.current)setAuthStatus('loading');
+  setUser(nextUser);if(changed||!nextUser){profileReady.current=false;setProfile(null);setLiked([]);setBookmarked([]);setArticles(old=>old.filter(a=>a.status==='published'));}if(!profileReady.current)setAuthStatus('loading');
   if(!nextUser||!db){setAuthStatus('ready');return;}
   const timeout=setTimeout(()=>controller.abort(),12000);
   try{

@@ -4,7 +4,7 @@ import {useSearchParams} from 'next/navigation';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {FiSearch,FiHeart,FiBookmark,FiMessageCircle,FiArrowLeft,FiLink,FiTrash2} from 'react-icons/fi';
 import {useApp} from '@/components/Provider';
-import {Carousel,contentHref} from '@/components/Carousel';
+import {contentHref} from '@/lib/content-href';
 import {ContentManagement} from '@/components/ContentManagement';
 import {RichText} from '@/components/RichText';
 import {CommentEditor,type CommentValue} from '@/components/CommentEditor';
@@ -12,7 +12,7 @@ import {AccountGate} from '@/components/AccountGate';
 import {forumCopy} from '@/lib/forum-copy';
 import {experienceCopy} from '@/lib/experience-copy';
 import {articleText,readingTime,safeSource} from '@/lib/content';
-import {normalizeDocument,plainDocument} from '@/lib/rich-content';
+import {normalizeDocument,plainDocument,safeContentUrl} from '@/lib/rich-content';
 import {useContentFeed,useDebounce} from '@/lib/use-content-feed';
 import type {Article,Comment} from '@/lib/types';
 const categories=['all','ai','opensource','hardware','design','frontier'] as const;
@@ -25,14 +25,15 @@ export function ArticleFeed({kind='news',bookmarks=false,initialQuery='',initial
 }
 export function ArticleCard({article}:{article:Article}){
  const{t,locale}=useApp(),text=articleText(article,locale);
- return <article className="article-card"><div className="card-content"><div className="article-meta"><span>{article.author_name??t.editor}</span><span>{t[article.category]}</span><time>{new Date(article.published_at??article.created_at).toLocaleDateString(locale,{month:'short',day:'numeric'})}</time>{article.status!=='published'&&<span className="status-label">{t[article.status]}</span>}{article.locked&&<span>{forumCopy[locale].lock}</span>}</div><h3><Link href={contentHref(article,locale)}>{text.title}</Link></h3>{text.summary&&<p>{text.summary}</p>}<div className="card-bottom"><ArticleActions article={article} compact/>{article.status!=='published'&&<Link className="text-link" href={`/${locale}/write/?id=${article.id}`}>{t.edit}</Link>}</div></div></article>;
+ return <article className="article-card"><div className="card-content"><div className="article-meta"><span>{article.author_name??t.editor}</span><span>{t[article.category]}</span><time>{new Date(article.published_at??article.created_at).toLocaleDateString(locale,{month:'short',day:'numeric'})}</time>{article.status!=='published'&&<span className="status-label">{t[article.status]}</span>}{article.locked&&<span>{forumCopy[locale].lock}</span>}</div><h3><Link href={contentHref(article,locale)}>{text.title}</Link></h3>{text.summary&&<p>{text.summary}</p>}<div className="card-bottom"><ArticleActions article={article} compact/>{article.status!=='published'&&<Link className="text-link" href={`/${locale}/write/?id=${article.id}`}>{t.edit}</Link>}</div></div>{article.content_type==='post'&&safeContentUrl(article.thumbnail_url)&&<PostThumbnail key={article.thumbnail_url} src={safeContentUrl(article.thumbnail_url)!} href={contentHref(article,locale)} title={text.title}/>}</article>;
 }
+function PostThumbnail({src,href,title}:{src:string;href:string;title:string}){const[failed,setFailed]=useState(false);if(failed)return null;return <Link className="post-thumbnail" href={href} aria-label={title}><img src={src} alt="" width={160} height={112} loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={()=>setFailed(true)}/></Link>;}
 export function ArticleActions({article,compact=false}:{article:Article;compact?:boolean}){
  const{t,locale,articles,liked,bookmarked,toggle,authStatus}=useApp();const[busy,setBusy]=useState(false);const live=articles.find(a=>a.id===article.id)??article;
  async function act(kind:'likes'|'bookmarks'){if(busy)return;setBusy(true);try{await toggle(kind,article.id);}finally{setBusy(false);}}
  return <div className={`article-actions ${compact?'compact':''}`}><button disabled={busy||authStatus==='loading'||article.status!=='published'} aria-label={t.likes} aria-pressed={liked.includes(article.id)} onClick={()=>void act('likes')}><FiHeart/>{!compact&&<span>{t.likes}</span>}{!!live.like_count&&<span>{live.like_count}</span>}</button><Link aria-label={t.comments} href={`${contentHref(article,locale)}#comments`}><FiMessageCircle/>{!!live.comment_count&&<span>{live.comment_count}</span>}</Link><button disabled={busy||authStatus==='loading'||article.status!=='published'} aria-label={bookmarked.includes(article.id)?t.bookmarked:t.bookmark} aria-pressed={bookmarked.includes(article.id)} onClick={()=>void act('bookmarks')}><FiBookmark/>{!compact&&<span>{bookmarked.includes(article.id)?t.bookmarked:t.bookmark}</span>}</button></div>;
 }
-export function NewsPage(){const{t,articles,profile,locale}=useApp();const params=useSearchParams(),id=params.get('id');if(id)return <ArticleDetail id={id}/>;return <main id="main" className="page-wrap content-wrap news-page"><div className="page-heading"><div><h1 className="page-title">{t.news}</h1><p>{experienceCopy[locale].newsIntro}</p></div>{profile&&!profile.disabled&&profile.role!=='member'&&<Link className="button primary" href={`/${locale}/write/?kind=news`}>{forumCopy[locale].newNews}</Link>}</div><Carousel articles={articles.filter(a=>a.content_type==='news')}/><ArticleFeed initialQuery={params.get('q')??''} initialCategory={params.get('category')??'all'}/></main>;}
+export function NewsPage(){const{t,profile,locale}=useApp();const params=useSearchParams(),id=params.get('id');if(id)return <ArticleDetail id={id}/>;return <main id="main" className="page-wrap content-wrap news-page"><div className="page-heading"><div><h1 className="page-title">{t.news}</h1><p>{experienceCopy[locale].newsIntro}</p></div>{profile&&!profile.disabled&&profile.role!=='member'&&<Link className="button primary" href={`/${locale}/write/?kind=news`}>{forumCopy[locale].newNews}</Link>}</div><ArticleFeed initialQuery={params.get('q')??''} initialCategory={params.get('category')??'all'}/></main>;}
 export function ArticleDetail({id,expectedType='news'}:{id:string;expectedType?:'news'|'post'}){
  const{t,locale,db,demo,notify,contentVersion,authStatus,user,rememberArticles}=useApp();const[article,setArticle]=useState<Article|null>(null),[fetching,setFetching]=useState(!demo),[failed,setFailed]=useState(false),[attempt,setAttempt]=useState(0);const identity=useRef(user?.id);
  useEffect(()=>{if(!db){setFetching(false);return;}const changed=identity.current!==user?.id;identity.current=user?.id;const controller=new AbortController();let active=true;const timeout=setTimeout(()=>controller.abort(),15000);setFetching(true);setFailed(false);setArticle(old=>changed||old?.id!==id||old.content_type!==expectedType?null:old);

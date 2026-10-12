@@ -32,7 +32,7 @@ npm run build
 
 - `/zh-CN/` 简体中文（默认）、`/en/`、`/ja/`、`/es/`、`/zh-TW/`
 - `/{locale}/news/` 新闻、筛选、搜索；`?id={article_uuid}` 阅读详情
-- `/{locale}/` 与 `/{locale}/community/` 开放论坛、精选轮播、搜索及分类；`community/?id={uuid}` 阅读帖子
+- `/{locale}/` 与 `/{locale}/community/` 列表论坛、右侧配图、搜索及分类；`community/?id={uuid}` 阅读帖子
 - `/{locale}/write/` 成员发帖、草稿与富文本编辑；管理员使用 `?kind=news` 撰写新闻
 - `/{locale}/bookmarks/` 私人收藏
 - `/` 完整公开首页，不依赖 JavaScript 跳转或登录
@@ -48,7 +48,7 @@ UI 文案具有五种语言版本，不包含占位文章。真实文章按语�
 
 目标项目：`cznhnupwojmydttdattb`。
 
-1. 按顺序应用 `supabase/migrations/` 内的迁移。目标项目已通过 Supabase 插件执行五个迁移；文件版本与远端迁移记录一致，不要重复执行。它们创建 `omni_` 前缀的表、RLS、受控 RPC、注册触发器、评论节流、审计日志和首次管理员预约。内部提权函数位于不对 API 暴露的 `omni_private` schema；公开入口使用显式授权的 invoker 函数。
+1. 按顺序应用 `supabase/migrations/` 内的迁移。目标项目已通过 Supabase 插件执行六个迁移；文件版本与远端迁移记录一致，不要重复执行。它们创建 `omni_` 前缀的表、RLS、受控 RPC、注册触发器、评论节流、审计日志和首次管理员预约。内部提权函数位于不对 API 暴露的 `omni_private` schema；公开入口使用显式授权的 invoker 函数。
 2. 将项目 URL 与 **Publishable key 或 legacy anon key** 设置为 `NEXT_PUBLIC_SUPABASE_URL` 和 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`。它们用于浏览器；绝对不要填入 `service_role`、数据库密码或 OAuth client secret。
 3. Supabase Authentication 设置 Site URL 为正式站点源地址；Redirect URLs 添加五个语言的完整回调地址，例如 `https://nextchina.org/zh-CN/auth/callback/`。其他部署域名和本地地址也需逐个加入允许列表。
 4. 在 Providers 中启用 Google、GitHub、**X OAuth 2.0（provider: x）** 和 Email。分别在服务商控制台配置 OAuth 应用，把 client ID / secret 放入 Supabase 提供商设置。提供商回调为 `https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback`。
