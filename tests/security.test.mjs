@@ -1,0 +1,39 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {PGlite} from '@electric-sql/pglite';
+
+test('database enforces member, editor and owner permissions',async()=>{
+ const db=new PGlite();
+ await db.exec(`create role anon; create role authenticated; create schema auth; create table auth.users(id uuid primary key,raw_user_meta_data jsonb default '{}'); create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$; grant usage on schema auth,public to anon,authenticated; grant execute on function auth.uid() to anon,authenticated;`);
+ await db.exec(await readFile('supabase/migrations/202610120001_omniremix.sql','utf8'));
+ const owner='00000000-0000-4000-8000-000000000001',editor='00000000-0000-4000-8000-000000000002',member='00000000-0000-4000-8000-000000000003',other='00000000-0000-4000-8000-000000000004';
+ await db.exec(`insert into auth.users(id,raw_user_meta_data) values('${owner}','{}'),('${editor}','{}'),('${member}','{"role":"super_admin"}'),('${other}','{}'); update omni_profiles set role='super_admin' where id='${owner}'; update omni_profiles set role='editor' where id='${editor}';`);
+ async function as(id,sql){await db.exec(`reset role; set role authenticated; select set_config('request.jwt.claim.sub','${id}',false);`);return db.exec(sql);}
+ const data=`'ai','zh-CN','{"zh-CN":{"title":"Test","summary":"Summary","body":"Body"}}'`;
+ assert.equal((await as(member,'select role from omni_profiles'))[0].rows[0].role,'member','metadata must never grant roles');
+ await assert.rejects(as(member,`insert into omni_articles(category,original_locale,translations,author_id) values(${data},'${member}')`));
+ await assert.rejects(as(member,"update omni_profiles set role='super_admin'"));
+ await assert.rejects(as(member,`select omni_manage_user('${other}','editor',false)`));
+ const article=(await as(editor,`insert into omni_articles(category,original_locale,translations,author_id,status) values(${data},'${editor}','published') returning id`))[0].rows[0].id;
+ const draft=(await as(editor,`insert into omni_articles(category,original_locale,translations,author_id) values(${data},'${editor}') returning id`))[0].rows[0].id;
+ await db.exec("reset role;set role anon;select set_config('request.jwt.claim.sub','',false);");
+ assert.equal((await db.query('select * from omni_articles')).rows.length,1,'anonymous cannot read drafts');
+ await as(member,`insert into omni_likes(article_id,user_id) values('${article}','${member}');insert into omni_bookmarks(article_id,user_id) values('${article}','${member}');insert into omni_comments(article_id,user_id,body) values('${article}','${member}','Hello');`);
+ await assert.rejects(as(member,`insert into omni_comments(article_id,user_id,body) values('${article}','${member}','Too soon')`));
+ await assert.rejects(as(member,`insert into omni_likes(article_id,user_id) values('${draft}','${member}')`));
+ await assert.rejects(as(other,`insert into omni_likes(article_id,user_id) values('${article}','${member}')`));
+ assert.equal((await as(other,'select * from omni_bookmarks'))[0].rows.length,0,'bookmarks private');
+ assert.equal((await as(other,'select * from omni_article_counts()'))[0].rows[0].like_count,1);
+ assert.equal((await as(other,`select * from omni_article_comments('${article}')`))[0].rows.length,1);
+ assert.equal((await as(editor,`update omni_settings set notice='Forbidden' returning *`))[0].rows.length,0,'editor cannot change global settings');
+ await assert.rejects(as(editor,`select omni_manage_user('${other}','editor',false)`));
+ await as(owner,`select omni_manage_user('${other}','editor',false);update omni_settings set comments_enabled=false;`);
+ await assert.rejects(as(other,`insert into omni_comments(article_id,user_id,body) values('${article}','${other}','Closed')`));
+ await assert.rejects(as(owner,`select omni_manage_user('${owner}','member',false)`));
+ await as(owner,`select omni_manage_user('${member}','member',true)`);
+ await assert.rejects(as(member,`insert into omni_comments(article_id,user_id,body) values('${article}','${member}','Blocked')`));
+ await assert.rejects(as(member,`insert into omni_submissions(user_id,content) values('${member}','{}')`));
+ assert.ok((await as(owner,'select * from omni_audit'))[0].rows.length>=4);
+ await db.close();
+});

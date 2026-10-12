@@ -1,0 +1,4 @@
+'use client';
+import {useApp} from '@/components/Provider';
+import {FiArrowUpRight} from 'react-icons/fi';
+export function About(){const{t}=useApp();return <main id="main" className="page-wrap content-wrap about-page"><span className="eyebrow">ABOUT OMNIREMIX</span><h1 className="page-title">{t.aboutTitle}</h1><p className="about-lead">{t.aboutText}</p><div className="principles">{t.principles.map((title,i)=><article key={title}><span className="eyebrow">0{i+1}</span><h2>{title}</h2><p>{t.principleText[i]}</p></article>)}</div><a className="button primary" href="https://github.com/chentieshu/NextchinaORG" target="_blank" rel="noreferrer">{t.github}<FiArrowUpRight/></a><div className="policies">{(['guidelines','privacy','terms'] as const).map(key=><section id={key} key={key}><span className="eyebrow">OMNIREMIX / {key.toUpperCase()}</span><h2>{t[key]}</h2><p>{t[`${key}Text`]}</p></section>)}</div></main>;}
