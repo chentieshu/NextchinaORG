@@ -6,10 +6,10 @@ test('the root homepage and all policies are readable without login or JavaScrip
  try{
   const root=await page.goto('/');expect(root?.status()).toBe(200);
   await expect(page).toHaveURL('http://127.0.0.1:3000/');
-  await expect(page.locator('#service-purpose')).toContainText('NextChina.org');
-  await expect(page.locator('.service-overview')).toContainText('任何人都可以直接阅读公开新闻');
+  await expect(page.locator('main h1')).toHaveText('论坛');
+  await expect(page.locator('main')).toContainText('一个开放的新闻与交流社区');
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  await page.locator('.service-policy-links').getByRole('link',{name:'隐私说明'}).click();
+  await page.locator('footer').getByRole('link',{name:'隐私说明'}).click();
   await expect(page.getByRole('heading',{level:1})).toHaveText('隐私政策');
   for(const locale of ['zh-CN','en','ja','es','zh-TW']){
    for(const kind of ['privacy','terms']){
@@ -27,5 +27,5 @@ test('language selection on the root homepage opens the selected language',async
  await page.goto('/');
  await page.getByRole('combobox',{name:'选择语言'}).selectOption('en');
  await expect(page).toHaveURL('http://127.0.0.1:3000/en/');
- await expect(page.locator('#service-purpose')).toContainText('News and forum');
+ await expect(page.locator('main')).toContainText('An open community for news and conversation');
 });

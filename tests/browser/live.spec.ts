@@ -3,11 +3,10 @@ test.skip(!process.env.LIVE_SUPABASE,'Run against a build configured with Supaba
 
 test('live content requests succeed and anonymous administration stays locked',async({page})=>{
  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
- const articles=page.waitForResponse(r=>r.url().includes('/rest/v1/omni_articles?'));
+ const articles=page.waitForResponse(r=>r.url().includes('/rpc/omni_content_feed'));
  const settings=page.waitForResponse(r=>r.url().includes('/rest/v1/omni_settings?'));
- const counts=page.waitForResponse(r=>r.url().includes('/rpc/omni_article_counts'));
  await page.goto('/zh-CN/');
- for(const response of await Promise.all([articles,settings,counts]))expect(response.status()).toBe(200);
+ for(const response of await Promise.all([articles,settings]))expect(response.status()).toBe(200);
  await expect(page.getByText('以下为界面演示文章，用于展示阅读体验，并非实时新闻。')).toHaveCount(0);
  await page.goto('/zh-CN/admin/');
  await expect(page.getByText('此页面仅向管理员开放。')).toBeVisible();

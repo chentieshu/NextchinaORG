@@ -1,15 +1,17 @@
 'use client';
 import Link from 'next/link';
-import {useState} from 'react';
-import {FiEdit3,FiLock,FiTrash2,FiStar,FiEyeOff,FiUnlock} from 'react-icons/fi';
+import {useRouter} from 'next/navigation';
+import {useRef,useState} from 'react';
+import {FiMoreHorizontal} from 'react-icons/fi';
 import {useApp} from './Provider';
 import {forumCopy} from '@/lib/forum-copy';
+import {experienceCopy} from '@/lib/experience-copy';
 import type {Article} from '@/lib/types';
-export function ContentManagement({article,onChange}:{article:Article;onChange?:()=>void}){
- const{db,profile,user,locale,t,notify,refresh}=useApp(),c=forumCopy[locale];const[busy,setBusy]=useState(false);
- const admin=!!profile&&!profile.disabled&&profile.role!=='member',own=!!user&&user.id===article.author_id&&article.content_type==='post'&&!profile?.disabled;
+export function ContentManagement({article,onChange,onDeleted}:{article:Article;onChange?:()=>void;onDeleted?:()=>void}){
+ const{db,profile,user,locale,t,notify,refresh,online,settings,authStatus}=useApp(),c=forumCopy[locale],router=useRouter();const[busy,setBusy]=useState(false),pending=useRef(false),menu=useRef<HTMLDetailsElement>(null);
+ const admin=authStatus==='ready'&&!!profile&&!profile.disabled&&profile.role!=='member',own=authStatus==='ready'&&!!profile&&!profile.disabled&&user?.id===article.author_id&&article.content_type==='post';
  if(!admin&&!own)return null;
- async function change(values:Partial<Article>){if(!db||busy)return;if(values.moderated&&!confirm(c.confirmHide))return;setBusy(true);const{error}=await db.from('omni_articles').update(values).eq('id',article.id).select('id').single();setBusy(false);if(error){notify(t.error);return;}notify(t.saved);void refresh();if(onChange)onChange();else window.location.reload();}
- async function remove(){if(!db||busy||!confirm(c.confirmRemove))return;setBusy(true);const{error}=await db.from('omni_articles').delete().eq('id',article.id).select('id').single();setBusy(false);if(error){notify(t.error);return;}void refresh();if(onChange)onChange();else window.location.href=`/${locale}/${article.content_type==='post'?'':'news/'}`;}
- return <div className="content-management">{(admin||!article.locked&&!article.moderated)&&<Link className="button small" href={`/${locale}/write/?id=${article.id}`}><FiEdit3/>{t.edit}</Link>}{admin&&<><button className="button small" disabled={busy} onClick={()=>change({featured:!article.featured})}><FiStar/>{article.featured?c.unpin:c.pin}</button><button className="button small" disabled={busy} onClick={()=>change({locked:!article.locked})}>{article.locked?<FiUnlock/>:<FiLock/>}{article.locked?c.unlock:c.lock}</button><button className="button small" disabled={busy} onClick={()=>change(article.status==='published'?{status:'archived',moderated:true}:{status:'published',moderated:false})}><FiEyeOff/>{article.status==='published'?c.hide:c.restore}</button></>}<button className="button small danger" disabled={busy} onClick={remove}><FiTrash2/>{t.delete}</button></div>;
+ async function change(values:Partial<Article>){if(!db||pending.current||!online)return;if(values.moderated&&!confirm(c.confirmHide))return;pending.current=true;setBusy(true);try{const{error}=await db.from('omni_articles').update(values).eq('id',article.id).select('id').single();if(error)throw error;if(menu.current)menu.current.open=false;notify(t.saved);await refresh();onChange?.();}catch{notify(t.error);}finally{pending.current=false;setBusy(false);}}
+ async function remove(){if(!db||pending.current||!online||!confirm(c.confirmRemove))return;pending.current=true;setBusy(true);try{const{error}=await db.from('omni_articles').delete().eq('id',article.id).select('id').single();if(error)throw error;if(menu.current)menu.current.open=false;void refresh();if(onDeleted)onDeleted();else router.push(`/${locale}/${article.content_type==='post'?'':'news/'}`);}catch{notify(t.error);}finally{pending.current=false;setBusy(false);}}
+ return <div className="content-management">{(admin||settings.ugc_enabled&&!article.locked&&!article.moderated)&&<Link className="text-link" href={`/${locale}/write/?id=${article.id}`}>{t.edit}</Link>}<details className="content-menu" ref={menu}><summary className="icon-button" aria-label={experienceCopy[locale].options}><FiMoreHorizontal/></summary><div className="dropdown">{admin&&<><button disabled={busy||!online} onClick={()=>void change({featured:!article.featured})}>{article.featured?c.unpin:c.pin}</button><button disabled={busy||!online} onClick={()=>void change({locked:!article.locked})}>{article.locked?c.unlock:c.lock}</button><button disabled={busy||!online} onClick={()=>void change(article.status==='published'?{status:'archived',moderated:true}:{status:'published',moderated:false})}>{article.status==='published'?c.hide:c.restore}</button></>}<button className="danger" disabled={busy||!online} onClick={()=>void remove()}>{t.delete}</button></div></details></div>;
 }

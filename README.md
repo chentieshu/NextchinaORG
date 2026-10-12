@@ -16,7 +16,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-开发地址：`http://127.0.0.1:3000`。未提供 Supabase 公钥时进入明确标注的演示模式：文章为示例，点赞与收藏仅保存在浏览器，登录和评论不可用。配置有效 Supabase URL 和公钥后使用真实数据库，空数据库不会混入示例文章。
+开发地址：`http://127.0.0.1:3000`。未提供 Supabase 公钥时展示空列表和接入提示，登录、发布和互动不可用；不再提供示例文章或模拟收藏。配置有效 Supabase URL 和公钥后使用真实数据库。
 
 ```sh
 npm run typecheck
@@ -26,7 +26,7 @@ npm run build
 
 构建输出为 `out/`。使用 Next.js 官方静态导出；数据读取与权限操作由 Supabase 完成，不需要 Node 服务。Webpack 构建避免部分 Windows 环境的 Turbopack 子进程问题。
 
-浏览器验证：安装 Playwright Chromium 后执行 `npm run test:browser`。演示构建验证示例文章；已接入 Supabase 的构建请设置 `LIVE_SUPABASE=1`，验证真实数据读取、后台保护、登录选项、五语言布局和邮箱回调参数。邮箱提交测试拦截请求，不发送邮件；真实 OAuth 需在已配置的提供商项目中联调。
+浏览器验证：安装 Playwright Chromium 后执行 `npm run test:browser`。已接入 Supabase 的构建请设置 `LIVE_SUPABASE=1`，验证真实数据读取、后台保护、登录选项、五语言布局和邮箱回调参数。邮箱提交测试拦截请求，不发送邮件；真实 OAuth 需在已配置的提供商项目中联调。
 
 ## 路由与国际化
 
@@ -42,13 +42,13 @@ npm run build
 - `/{locale}/admin/` 管理后台
 - `/{locale}/auth/callback/` OAuth 和邮箱登录回调
 
-UI 文案与演示文章具有五种语言版本。真实文章按语言编辑，缺少翻译时提示并展示原文。语言切换保留页面及查询参数。主题与语言偏好保存在浏览器。真实新闻在浏览器加载，适合首版社区；新闻专属 SEO、社交卡片及大规模全文检索可在后续引入服务端渲染或 Supabase 索引。
+UI 文案具有五种语言版本，不包含占位文章。真实文章按语言编辑，缺少翻译时提示并展示原文。语言切换保留页面及查询参数。主题与语言偏好保存在浏览器。真实新闻在浏览器加载，适合首版社区；内容专属 SEO、社交卡片及带索引的全文检索可在后续引入服务端渲染或 Supabase 索引。
 
 ## Supabase 配置
 
 目标项目：`cznhnupwojmydttdattb`。
 
-1. 按顺序应用 `supabase/migrations/` 内的迁移。目标项目已通过 Supabase 插件执行三个迁移；文件版本与远端迁移记录一致，不要重复执行。它们创建 `omni_` 前缀的表、RLS、受控 RPC、注册触发器、评论节流、审计日志和首次管理员预约。内部提权函数位于不对 API 暴露的 `omni_private` schema；公开入口使用显式授权的 invoker 函数。
+1. 按顺序应用 `supabase/migrations/` 内的迁移。目标项目已通过 Supabase 插件执行五个迁移；文件版本与远端迁移记录一致，不要重复执行。它们创建 `omni_` 前缀的表、RLS、受控 RPC、注册触发器、评论节流、审计日志和首次管理员预约。内部提权函数位于不对 API 暴露的 `omni_private` schema；公开入口使用显式授权的 invoker 函数。
 2. 将项目 URL 与 **Publishable key 或 legacy anon key** 设置为 `NEXT_PUBLIC_SUPABASE_URL` 和 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`。它们用于浏览器；绝对不要填入 `service_role`、数据库密码或 OAuth client secret。
 3. Supabase Authentication 设置 Site URL 为正式站点源地址；Redirect URLs 添加五个语言的完整回调地址，例如 `https://nextchina.org/zh-CN/auth/callback/`。其他部署域名和本地地址也需逐个加入允许列表。
 4. 在 Providers 中启用 Google、GitHub、**X OAuth 2.0（provider: x）** 和 Email。分别在服务商控制台配置 OAuth 应用，把 client ID / secret 放入 Supabase 提供商设置。提供商回调为 `https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback`。
@@ -64,7 +64,7 @@ where id = 'VERIFIED-USER-UUID';
 
 总管理员可以把已有账号设为子管理员或普通用户、停用账号、调整全站公告、评论与发帖开关。总管理员和子管理员可发布新闻，编辑、置顶、锁定、下架、恢复或删除所有新闻和帖子，并编辑或删除评论。普通用户登录后可发帖、管理自己的帖子与评论、点赞和私人收藏。所有角色均由数据库查询，用户元数据不能设置角色。总管理员账号不能通过前台被降级或停用。
 
-评论每位用户至少间隔 10 秒，正文最多 2000 字符；成员新建帖子至少间隔 30 秒。富文本保存为 Tiptap JSON，阅读页只渲染允许的节点与格式，不注入任意 HTML；图片和链接只允许 HTTPS。旧文章纯文本继续兼容。所有写操作均受 RLS 或受控函数保护；UI 限制不是权限边界。收藏只向本人开放。编辑权限、角色变更、设置变更及评论编辑、删除会写入审计记录。
+评论每位用户至少间隔 10 秒，正文最多 2000 字符；成员新建帖子至少间隔 30 秒。帖子、新闻、前台评论和后台评论共用 Tiptap 编辑器与 JSON 规范；评论使用精简工具栏。编辑和阅读都应用节点、格式与结构白名单，不注入任意 HTML；图片和链接只允许无凭据的 HTTPS 地址。旧文章及旧评论的纯文本继续兼容。所有写操作均受 RLS 或受控函数保护；UI 限制不是权限边界。收藏只向本人开放。编辑权限、角色变更、设置变更及评论编辑、删除会写入审计记录。
 
 ## Cloudflare + GitHub
 
@@ -72,7 +72,7 @@ where id = 'VERIFIED-USER-UUID';
 
 已为 Cloudflare Pages 项目 `omniremix` 配置 GitHub 源、`main` 生产分支、`npm run build` 构建命令和 `out` 输出目录。正式站点源地址为 `https://nextchina.org`。实际部署是否成功请以 Cloudflare deployment 状态为准。
 
-在 Pages 的 production build 环境设置上面的两个 Supabase 公开变量；变量在构建时写入前端，所以变更后需要重新构建。项目中的 `.env.example` 只是示例，不包含真实公钥。没有公钥的构建会明确使用演示模式。
+在 Pages 的 production build 环境设置上面的两个 Supabase 公开变量；变量在构建时写入前端，所以变更后需要重新构建。项目中的 `.env.example` 只是示例，不包含真实公钥。没有公钥的构建展示接入提示和空列表。
 
 当前生产环境已配置 Supabase URL 和 Publishable key。Sites 使用本地 `.env.local` 构建出的同一静态产物；`NEXT_PUBLIC_*` 是构建变量，不能用 Sites 的运行时变量代替。重新构建前确保本地或构建平台已配置这两个公开变量。
 
@@ -96,13 +96,13 @@ supabase/migrations/     可版本管理的数据库迁移
 tests/                   PostgreSQL 权限与浏览器交互验证
 ```
 
-论坛已开放，成员帖子与管理员新闻共用内容表，通过 `content_type` 和数据库权限区分。`ugc_enabled` 可由总管理员关闭；管理员仍可管理内容。锁定阻止成员编辑及新增评论，下架后作者不能自行恢复。`omni_submissions` 仍是未开放写入的独立预留审核表。新闻和论坛各读取最近 500 篇，后台每页 50 条；更大规模需要服务端搜索和分页。详见 [论坛与写作说明](docs/forum-upgrade.md)。
+论坛已开放，成员帖子与管理员新闻共用内容表，通过 `content_type` 和数据库权限区分。`ugc_enabled` 可由总管理员关闭；管理员仍可管理内容。锁定阻止成员编辑及新增评论，下架后作者不能自行恢复。`omni_submissions` 仍是未开放写入的独立预留审核表。新闻和论坛使用服务端筛选、搜索、排序及每页 20 条分页；收藏同样分页，后台和评论每页 50 条。列表只返回标题与摘要，不传输各语言正文及富文本。当前搜索匹配所有语言的标题与摘要，超大规模全文检索仍需要索引或独立服务。详见 [论坛与写作说明](docs/forum-upgrade.md)。
 
 ## 验证与边界
 
 `npm test` 在嵌入式 PostgreSQL (PGlite) 中实际执行迁移与权限场景，覆盖匿名草稿隔离、用户元数据提权阻断、发布限制、收藏隐私、互动身份、评论节流、停用账号、编辑者与总管理员边界、帖子归属、发帖节流、锁定/下架、防止成员发布新闻、评论编辑及审计。
 
-2026-10-12 已应用论坛升级迁移，原有新闻完整保留。PGlite 测试验证跨角色权限；浏览器以拦截的后端验证成员发帖、草稿恢复、管理员写新闻及管理操作，不向生产库写入测试内容。线上只读检查确认论坛开关与新字段生效。安全检查仍有一项原有 Auth 提示：未开启 [泄露密码保护](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection)；私有管理员预约表无客户端策略为有意拒绝所有访问。
+2026-10-12 已应用论坛、统一内容分页和详情统计迁移，原有新闻完整保留。PGlite 测试验证跨角色权限；浏览器以拦截的后端验证成员发帖、富文本评论、管理员管理、登录异常恢复、分页搜索竞态、草稿冲突与离线写作，不向生产库写入测试内容。线上只读检查确认论坛开关与新字段生效。安全检查仍有一项原有 Auth 提示：未开启 [泄露密码保护](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection)；私有管理员预约表无客户端策略为有意拒绝所有访问。
 
 2026-10-12 上线复查时邮箱、Google、GitHub 已启用；Google、GitHub、X 三个授权入口均返回正确的服务商跳转。当前项目的公开 Auth settings 没有返回 `x` 字段，因此在验证 X OAuth 2.0 授权入口后，设置 `NEXT_PUBLIC_SUPABASE_X_ENABLED=true` 作为该字段缺失时的显示回退。服务端明确返回 `x:false` 时仍禁用按钮。网站登录面板读取提供商状态，未启用项显示“暂未开放”。
 

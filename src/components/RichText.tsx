@@ -1,8 +1,7 @@
 import type {ReactNode} from 'react';
 import type {RichNode,Translation} from '@/lib/types';
-
-export function safeContentUrl(value:unknown){if(typeof value!=='string')return null;try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password?u.href:null;}catch{return null;}}
-export function plainDocument(text:string):RichNode{return {type:'doc',content:text.split(/\n\s*\n/).map(p=>({type:'paragraph',content:p?[{type:'text',text:p}]:[]}))};}
+import {normalizeDocument,safeContentUrl} from '@/lib/rich-content';
+export {safeContentUrl,plainDocument} from '@/lib/rich-content';
 function renderNode(node:RichNode,index:number,depth=0):ReactNode{
  if(!node||typeof node!=='object'||depth>20)return null;
  const children=Array.isArray(node.content)?node.content.slice(0,2000).map((n,i)=>renderNode(n,i,depth+1)):null;
@@ -34,4 +33,4 @@ function renderNode(node:RichNode,index:number,depth=0):ReactNode{
   default:return null;
  }
 }
-export function RichText({text}:{text:Translation}){return <div className="rich-prose">{renderNode(text.document?.type==='doc'?text.document:plainDocument(text.body),0)}</div>;}
+export function RichText({text,compact=false}:{text:Pick<Translation,'body'|'document'>;compact?:boolean}){return <div className={`rich-prose ${compact?'compact-prose':''}`}>{renderNode(normalizeDocument(text.document,text.body,compact),0)}</div>;}
