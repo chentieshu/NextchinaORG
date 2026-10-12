@@ -27,5 +27,5 @@ test('language selection on the root homepage opens the selected language',async
  await page.goto('/');
  await page.getByRole('combobox',{name:'选择语言'}).selectOption('en');
  await expect(page).toHaveURL('http://127.0.0.1:3000/en/');
- await expect(page.locator('#service-purpose')).toContainText('Technology news and community');
+ await expect(page.locator('#service-purpose')).toContainText('News and forum');
 });

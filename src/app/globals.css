@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./forum.css";
 @theme {--font-sans:Arial,"Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;}
 :root{--bg:#fff;--fg:#232326;--muted:#828287;--line:#eaeaec;--soft:#f6f6f7;--soft2:#efeff1;--card:#fff;--accent:#242426;--shadow:0 4px 12px #00000008;--radius:14px;color-scheme:light}
 :root[data-theme=dark]{--bg:#151517;--fg:#ececef;--muted:#9a9aa2;--line:#303035;--soft:#1b1b1e;--soft2:#26262b;--card:#1c1c20;--accent:#eaeaf0;--shadow:0 4px 12px #0003;color-scheme:dark}

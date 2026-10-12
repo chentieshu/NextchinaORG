@@ -1,6 +1,6 @@
 # NextChina.org
 
-科技新闻与社区官网。Next.js 16 App Router、React 19、Tailwind CSS v4、React Icons、Supabase。
+开放论坛与新闻社区。Next.js 16 App Router、React 19、Tailwind CSS v4、React Icons、Supabase。
 
 正式网站：[NextChina.org](https://nextchina.org)。`www.nextchina.org` 自动跳转主域并保留路径及查询参数。
 
@@ -32,7 +32,8 @@ npm run build
 
 - `/zh-CN/` 简体中文（默认）、`/en/`、`/ja/`、`/es/`、`/zh-TW/`
 - `/{locale}/news/` 新闻、筛选、搜索；`?id={article_uuid}` 阅读详情
-- `/{locale}/community/` 围绕新闻的讨论，当前不开放普通用户发帖
+- `/{locale}/` 与 `/{locale}/community/` 开放论坛、精选轮播、搜索及分类；`community/?id={uuid}` 阅读帖子
+- `/{locale}/write/` 成员发帖、草稿与富文本编辑；管理员使用 `?kind=news` 撰写新闻
 - `/{locale}/bookmarks/` 私人收藏
 - `/` 完整公开首页，不依赖 JavaScript 跳转或登录
 - `/{locale}/about/` 组织理念、社区公约及政策入口
@@ -47,7 +48,7 @@ UI 文案与演示文章具有五种语言版本。真实文章按语言编辑�
 
 目标项目：`cznhnupwojmydttdattb`。
 
-1. 按顺序应用 `supabase/migrations/` 内的迁移。目标项目已通过 Supabase 插件执行两个迁移；文件版本与远端迁移记录一致，不要重复执行。它们创建 `omni_` 前缀的表、RLS、受控 RPC、注册触发器、评论节流、审计日志和首次管理员预约。内部提权函数位于不对 API 暴露的 `omni_private` schema；公开入口使用显式授权的 invoker 函数。
+1. 按顺序应用 `supabase/migrations/` 内的迁移。目标项目已通过 Supabase 插件执行三个迁移；文件版本与远端迁移记录一致，不要重复执行。它们创建 `omni_` 前缀的表、RLS、受控 RPC、注册触发器、评论节流、审计日志和首次管理员预约。内部提权函数位于不对 API 暴露的 `omni_private` schema；公开入口使用显式授权的 invoker 函数。
 2. 将项目 URL 与 **Publishable key 或 legacy anon key** 设置为 `NEXT_PUBLIC_SUPABASE_URL` 和 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`。它们用于浏览器；绝对不要填入 `service_role`、数据库密码或 OAuth client secret。
 3. Supabase Authentication 设置 Site URL 为正式站点源地址；Redirect URLs 添加五个语言的完整回调地址，例如 `https://nextchina.org/zh-CN/auth/callback/`。其他部署域名和本地地址也需逐个加入允许列表。
 4. 在 Providers 中启用 Google、GitHub、**X OAuth 2.0（provider: x）** 和 Email。分别在服务商控制台配置 OAuth 应用，把 client ID / secret 放入 Supabase 提供商设置。提供商回调为 `https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback`。
@@ -61,9 +62,9 @@ set role = 'super_admin'
 where id = 'VERIFIED-USER-UUID';
 ```
 
-总管理员可以把已有账号设为子管理员或普通用户、停用账号、调整全站公告和评论开关。子管理员可发布、编辑、归档新闻和删除违规评论。普通用户可点赞、私人收藏、评论和删除自己的评论。所有角色均由数据库查询，用户元数据不能设置角色。总管理员账号不能通过前台被降级或停用。
+总管理员可以把已有账号设为子管理员或普通用户、停用账号、调整全站公告、评论与发帖开关。总管理员和子管理员可发布新闻，编辑、置顶、锁定、下架、恢复或删除所有新闻和帖子，并编辑或删除评论。普通用户登录后可发帖、管理自己的帖子与评论、点赞和私人收藏。所有角色均由数据库查询，用户元数据不能设置角色。总管理员账号不能通过前台被降级或停用。
 
-评论每位用户至少间隔 10 秒，正文最多 2000 字符。文章只渲染纯文本，HTTPS 来源链接经过检查。所有写操作均受 RLS 或受控函数保护；UI 限制不是权限边界。收藏只向本人开放。编辑权限、角色变更、设置变更及评论删除会写入审计记录。
+评论每位用户至少间隔 10 秒，正文最多 2000 字符；成员新建帖子至少间隔 30 秒。富文本保存为 Tiptap JSON，阅读页只渲染允许的节点与格式，不注入任意 HTML；图片和链接只允许 HTTPS。旧文章纯文本继续兼容。所有写操作均受 RLS 或受控函数保护；UI 限制不是权限边界。收藏只向本人开放。编辑权限、角色变更、设置变更及评论编辑、删除会写入审计记录。
 
 ## Cloudflare + GitHub
 
@@ -85,7 +86,9 @@ Sites 的 `.openai/hosting.json` 绑定同一代码的独立私有 Sites 预览�
 src/app/                 Next.js 页面与语言路由
 src/components/          共享布局、登录、全局状态
 src/modules/news/        新闻、阅读、收藏、评论
-src/modules/admin/       管理中心与多语言编辑器
+src/modules/forum/       论坛首页、帖子列表与个人草稿
+src/modules/editor/      五语言富文本写作空间
+src/modules/admin/       帖子、新闻、评论、用户及全站管理
 src/modules/about/       组织介绍与规则
 src/modules/registry.ts  模块能力说明
 src/lib/                 语言、类型、Supabase 与内容适配
@@ -93,13 +96,13 @@ supabase/migrations/     可版本管理的数据库迁移
 tests/                   PostgreSQL 权限与浏览器交互验证
 ```
 
-UGC 模块与 `omni_submissions` 审核表已预留，当前无写入授权，`ugc_enabled` 受数据库约束保持关闭。未来开放时应新增迁移、投稿编辑器、审核工作流与滥用防护，再开启权限；不能只修改前端开关。第一版新闻列表读取最近 500 篇，后台按每页 50 条管理。超过这一规模时应加入服务端分页和搜索。
+论坛已开放，成员帖子与管理员新闻共用内容表，通过 `content_type` 和数据库权限区分。`ugc_enabled` 可由总管理员关闭；管理员仍可管理内容。锁定阻止成员编辑及新增评论，下架后作者不能自行恢复。`omni_submissions` 仍是未开放写入的独立预留审核表。新闻和论坛各读取最近 500 篇，后台每页 50 条；更大规模需要服务端搜索和分页。详见 [论坛与写作说明](docs/forum-upgrade.md)。
 
 ## 验证与边界
 
-`npm test` 在嵌入式 PostgreSQL (PGlite) 中实际执行迁移与权限场景，覆盖匿名草稿隔离、用户元数据提权阻断、发布限制、收藏隐私、互动身份、评论节流、停用账号、编辑者与总管理员边界、UGC 禁写及审计。
+`npm test` 在嵌入式 PostgreSQL (PGlite) 中实际执行迁移与权限场景，覆盖匿名草稿隔离、用户元数据提权阻断、发布限制、收藏隐私、互动身份、评论节流、停用账号、编辑者与总管理员边界、帖子归属、发帖节流、锁定/下架、防止成员发布新闻、评论编辑及审计。
 
-2026-10-12 已在目标 Supabase 项目执行迁移，并在自动回滚的事务中验证：子管理员发布、普通用户禁止发布及提权、点赞/收藏/评论和公开聚合。测试未留下账号或文章。安全检查无 ERROR/WARN；私有管理员预约表无客户端策略为有意拒绝所有访问。新数据库的索引尚未使用属于 INFO。
+2026-10-12 已应用论坛升级迁移，原有新闻完整保留。PGlite 测试验证跨角色权限；浏览器以拦截的后端验证成员发帖、草稿恢复、管理员写新闻及管理操作，不向生产库写入测试内容。线上只读检查确认论坛开关与新字段生效。安全检查仍有一项原有 Auth 提示：未开启 [泄露密码保护](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection)；私有管理员预约表无客户端策略为有意拒绝所有访问。
 
 2026-10-12 上线复查时邮箱、Google、GitHub 已启用；Google、GitHub、X 三个授权入口均返回正确的服务商跳转。当前项目的公开 Auth settings 没有返回 `x` 字段，因此在验证 X OAuth 2.0 授权入口后，设置 `NEXT_PUBLIC_SUPABASE_X_ENABLED=true` 作为该字段缺失时的显示回退。服务端明确返回 `x:false` 时仍禁用按钮。网站登录面板读取提供商状态，未启用项显示“暂未开放”。
 

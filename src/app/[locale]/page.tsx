@@ -1,4 +1,4 @@
-import {Home} from '@/modules/news/NewsExperience';
+import {ForumPage as Home} from '@/modules/forum/Forum';
 import {isLocale,locales} from '@/lib/i18n';
 export async function generateMetadata({params}:{params:Promise<{locale:string}>}){
  const {locale}=await params;if(!isLocale(locale))return{};

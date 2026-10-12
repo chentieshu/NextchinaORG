@@ -11,13 +11,13 @@ function useAppState(locale:Locale){
  const [user,setUser]=useState<User|null>(null),[profile,setProfile]=useState<Profile|null>(null);
  const [articles,setArticles]=useState<Article[]>(demo?demoArticles:[]),[loading,setLoading]=useState(!demo),[loadError,setLoadError]=useState(false);
  const [liked,setLiked]=useState<string[]>([]),[bookmarked,setBookmarked]=useState<string[]>([]),[authOpen,setAuthOpen]=useState(false),[toast,setToast]=useState('');
- const [settings,setSettings]=useState<SiteSettings>({id:true,notice:'',comments_enabled:true,ugc_enabled:false});
+ const [settings,setSettings]=useState<SiteSettings>({id:true,notice:'',comments_enabled:true,ugc_enabled:true});
  const notify=useCallback((message:string)=>setToast(message),[]);
  const refresh=useCallback(async()=>{
   if(!db)return;
   setLoading(true);setLoadError(false);
-  const [a,s,c]=await Promise.all([db.from('omni_articles').select('*').eq('status','published').order('published_at',{ascending:false}).limit(500),db.from('omni_settings').select('*').eq('id',true).single(),db.rpc('omni_article_counts')]);
-  if(a.error||s.error||c.error){setLoadError(true);}else{const counts=new Map((c.data??[]).map((v:{article_id:string;like_count:number;comment_count:number})=>[v.article_id,v]));setArticles((a.data??[]).map(a=>({...a,...(counts.get(a.id)??{})})));setSettings(s.data);}
+  const [n,p,s,c]=await Promise.all([db.from('omni_articles').select('*').eq('content_type','news').eq('status','published').order('published_at',{ascending:false}).limit(500),db.from('omni_articles').select('*').eq('content_type','post').eq('status','published').order('featured',{ascending:false}).order('published_at',{ascending:false}).limit(500),db.from('omni_settings').select('*').eq('id',true).single(),db.rpc('omni_article_counts')]);
+  if(n.error||p.error||s.error||c.error){setLoadError(true);}else{const counts=new Map((c.data??[]).map((v:{article_id:string;like_count:number;comment_count:number})=>[v.article_id,v]));setArticles([...(n.data??[]),...(p.data??[])].map(a=>({...a,...(counts.get(a.id)??{})})));setSettings(s.data);}
   setLoading(false);
  },[db]);
  useEffect(()=>{document.documentElement.lang=locale;localStorage.setItem('omni-locale',locale);},[locale]);
