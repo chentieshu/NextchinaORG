@@ -25,7 +25,7 @@ test('login options follow provider settings and email keeps the locale callback
  // Simulate the email endpoint so this test never sends an email.
  await page.route('**/auth/v1/otp**',route=>{payload=route.request().postDataJSON();requestedUrl=route.request().url();return route.fulfill({json:{}});});
  await page.getByRole('textbox',{name:'邮箱地址'}).fill('reader@example.test');
- await page.getByRole('button',{name:'发送登录链接',exact:true}).click();
+ await page.getByRole('button',{name:'使用邮箱继续',exact:true}).click();
  await expect(page.getByRole('button',{name:'登录链接已发送，请检查邮箱。',exact:true})).toBeDisabled();
  expect(payload?.email).toBe('reader@example.test');
  expect(new URL(requestedUrl).searchParams.get('redirect_to')).toBe('http://127.0.0.1:3000/zh-CN/auth/callback/');
@@ -38,5 +38,5 @@ test('login settings failures can be retried',async({page})=>{
  await page.goto('/zh-CN/');await page.getByRole('button',{name:'登录 / 加入'}).click();
  await expect(page.getByText('暂时无法获取登录方式，请重试。')).toBeVisible();
  await page.getByRole('button',{name:'重试',exact:true}).click();
- await expect(page.getByRole('button',{name:'发送登录链接',exact:true})).toBeEnabled();
+ await expect(page.getByRole('button',{name:'使用邮箱继续',exact:true})).toBeEnabled();
 });

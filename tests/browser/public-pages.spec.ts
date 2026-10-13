@@ -25,7 +25,10 @@ test('the root homepage and all policies are readable without login or JavaScrip
 
 test('language selection on the root homepage opens the selected language',async({page})=>{
  await page.goto('/');
- await page.getByRole('combobox',{name:'选择语言'}).selectOption('en');
- await expect(page).toHaveURL('http://127.0.0.1:3000/en/');
+ await page.locator('.app-nav').getByRole('link',{name:'设置',exact:true}).click();
+ await page.getByRole('combobox',{name:'界面语言',exact:true}).selectOption('en');
+ await page.locator('#preferences').getByRole('button',{name:'保存',exact:true}).click();
+ await expect(page).toHaveURL('http://127.0.0.1:3000/en/settings/#preferences');
+ await page.goto('/');await expect(page).toHaveURL('http://127.0.0.1:3000/en/');
  await expect(page.locator('main h1')).toHaveText('Forum');
 });

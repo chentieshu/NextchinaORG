@@ -9,7 +9,7 @@ test('database enforces member, editor and owner permissions',async()=>{
  for(const file of (await readdir('supabase/migrations')).filter(f=>f.endsWith('.sql')).sort()) await db.exec(await readFile(`supabase/migrations/${file}`,'utf8'));
  const owner='00000000-0000-4000-8000-000000000001',editor='00000000-0000-4000-8000-000000000002',member='00000000-0000-4000-8000-000000000003',other='00000000-0000-4000-8000-000000000004';
  await db.exec(`insert into auth.users(id,raw_user_meta_data) values('${owner}','{}'),('${editor}','{}'),('${member}','{"role":"super_admin"}'),('${other}','{}'); update omni_profiles set role='super_admin' where id='${owner}'; update omni_profiles set role='editor' where id='${editor}';`);
- async function as(id,sql){await db.exec(`reset role; set role authenticated; select set_config('request.jwt.claim.sub','${id}',false);`);return db.exec(sql);}
+ async function as(id,sql){await db.exec(`reset role;select set_config('request.jwt.claim.sub','',false);update omni_profiles set profile_completed_at=now() where id='${id}' and profile_completed_at is null;set role authenticated;select set_config('request.jwt.claim.sub','${id}',false);`);return db.exec(sql);}
  const data=`'ai','zh-CN','{"zh-CN":{"title":"Test","summary":"Summary","body":"Body"}}'`;
  assert.equal((await as(member,'select role from omni_profiles'))[0].rows[0].role,'member','metadata must never grant roles');
  await assert.rejects(as(member,`insert into omni_articles(category,original_locale,translations,author_id) values(${data},'${member}')`));

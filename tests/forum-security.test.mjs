@@ -11,7 +11,7 @@ test('forum ownership, moderation, rich content and comment permissions are enfo
  const owner='10000000-0000-4000-8000-000000000001',editor='10000000-0000-4000-8000-000000000002',member='10000000-0000-4000-8000-000000000003',other='10000000-0000-4000-8000-000000000004';
  await db.exec(`insert into auth.users(id) values('${owner}'),('${editor}'),('${member}'),('${other}');update omni_profiles set role='super_admin' where id='${owner}';update omni_profiles set role='editor' where id='${editor}';`);
  const data=`'ai','en','{"en":{"title":"Forum test","summary":"Summary","body":"Body","document":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Body"}]}]}}}'`;
- async function as(id,sql){await db.exec(`reset role;set role authenticated;select set_config('request.jwt.claim.sub','${id}',false)`);return db.exec(sql);}
+ async function as(id,sql){await db.exec(`reset role;select set_config('request.jwt.claim.sub','',false);update omni_profiles set profile_completed_at=now() where id='${id}' and profile_completed_at is null;set role authenticated;select set_config('request.jwt.claim.sub','${id}',false)`);return db.exec(sql);}
  async function root(sql){await db.exec("reset role;select set_config('request.jwt.claim.sub','',false)");return db.exec(sql);}
  const post=(await as(member,`insert into omni_articles(category,original_locale,translations,author_id,content_type,status,created_at) values(${data},'${member}','post','published','1999-01-01') returning *`))[0].rows[0];
  assert.equal(post.content_type,'post');assert.ok(new Date(post.created_at).getFullYear()>2020,'database owns creation time');assert.equal(post.author_name,'Explorer');

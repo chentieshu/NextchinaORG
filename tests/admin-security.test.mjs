@@ -5,7 +5,7 @@ test('categories and settings serialize edits; owner can manage all content whil
  for(const file of (await readdir('supabase/migrations')).filter(f=>f.endsWith('.sql')).sort())await db.exec(await readFile('supabase/migrations/'+file,'utf8'));
  const owner='70000000-0000-4000-8000-000000000001',editor='70000000-0000-4000-8000-000000000002',member='70000000-0000-4000-8000-000000000003';
  await db.exec(`insert into auth.users(id) values('${owner}'),('${editor}'),('${member}');update omni_profiles set role='super_admin' where id='${owner}';update omni_profiles set role='editor' where id='${editor}'`);
- async function as(id,sql){await db.exec(`reset role;set role authenticated;select set_config('request.jwt.claim.sub','${id}',false)`);return db.exec(sql);}
+ async function as(id,sql){await db.exec(`reset role;select set_config('request.jwt.claim.sub','',false);update omni_profiles set profile_completed_at=now() where id='${id}' and profile_completed_at is null;set role authenticated;select set_config('request.jwt.claim.sub','${id}',false)`);return db.exec(sql);}
  const labels=JSON.stringify({'zh-CN':'工具',en:'Tools',ja:'ツール',es:'Herramientas','zh-TW':'工具'}),save=`select omni_save_category('tools','${labels}',1,true) as c`;
  await assert.rejects(as(member,save),/Forbidden/);await assert.rejects(as(editor,save),/Forbidden/);
  let cat=(await as(owner,save))[0].rows[0].c;

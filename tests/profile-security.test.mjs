@@ -8,7 +8,7 @@ test('profile identity is current and public while avatar ownership, roles, quot
   for(const file of (await readdir('supabase/migrations')).filter(f=>f.endsWith('.sql')).sort())await db.exec(await readFile(`supabase/migrations/${file}`,'utf8'));
   const member='40000000-0000-4000-8000-000000000001',other='40000000-0000-4000-8000-000000000002';
   await db.exec(`insert into auth.users(id) values('${member}'),('${other}')`);
-  async function as(id,sql){await db.exec(`reset role;set role authenticated;select set_config('request.jwt.claim.sub','${id}',false)`);return db.exec(sql);}
+  async function as(id,sql){await db.exec(`reset role;select set_config('request.jwt.claim.sub','',false);update omni_profiles set profile_completed_at=now() where id='${id}' and profile_completed_at is null;set role authenticated;select set_config('request.jwt.claim.sub','${id}',false)`);return db.exec(sql);}
   const first=(await as(member,'select updated_at from omni_profiles'))[0].rows[0].updated_at;
   const stamp=new Date(first).toISOString();
   const asset=(await as(member,"select omni_reserve_media('avatar',100,'webp') as asset"))[0].rows[0].asset.object_key;
@@ -26,7 +26,7 @@ test('profile identity is current and public while avatar ownership, roles, quot
   await as(member,`insert into omni_comments(article_id,user_id,body) values('${post}','${member}','Comment')`);
   const name2=(await as(member,`select omni_save_profile('Renamed',null,'keep','${fresh.updated_at}') as profile`))[0].rows[0].profile;
   await db.exec("reset role;set role anon;select set_config('request.jwt.claim.sub','',false)");
-  const pub=(await db.query(`select * from omni_public_profiles(array['${member}']::uuid[])`)).rows[0];assert.deepEqual(Object.keys(pub).sort(),['avatar_key','display_name','id']);assert.equal(pub.display_name,'Renamed');
+  const pub=(await db.query(`select * from omni_public_profiles(array['${member}']::uuid[])`)).rows[0];assert.deepEqual(Object.keys(pub).sort(),['avatar_key','display_name','handle','id']);assert.equal(pub.display_name,'Renamed');
   const feed=(await db.query("select * from omni_content_feed() as data")).rows[0].data;assert.equal(feed.author_name,'Renamed');assert.equal(feed.author_avatar_key,asset);
   const comment=(await db.query(`select * from omni_rich_comments('${post}')`)).rows[0];assert.equal(comment.avatar_key,asset);assert.equal(comment.display_name,'Renamed');
   await assert.rejects(db.exec(`select omni_save_profile('Attack',null,'none','${name2.updated_at}')`));
