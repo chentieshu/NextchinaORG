@@ -2,6 +2,8 @@
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {useApp} from '@/components/Provider';
 import type {Article} from './types';
+export const contentCategories=['all','ai','opensource','hardware','design','frontier'] as const;
+export type FeedFilters={category:string;query:string;sort:string;mine:boolean};
 type Options={kind:'post'|'news'|'all';category:string;query:string;sort:string;mine?:boolean;bookmarks?:boolean};
 export function useContentFeed(options:Options){
  const {db,user,contentVersion,rememberArticles}=useApp();const [state,setState]=useState<{key:string;items:Article[];hasMore:boolean;loading:boolean;error:boolean}>({key:'',items:[],hasMore:false,loading:!!db,error:false});

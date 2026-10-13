@@ -13,15 +13,23 @@ import {forumCopy} from '@/lib/forum-copy';
 import {experienceCopy} from '@/lib/experience-copy';
 import {articleText,readingTime,safeSource} from '@/lib/content';
 import {normalizeDocument,plainDocument,safeContentUrl} from '@/lib/rich-content';
-import {useContentFeed,useDebounce} from '@/lib/use-content-feed';
+import {useContentFeed,useDebounce,contentCategories as categories,type FeedFilters} from '@/lib/use-content-feed';
 import type {Article,Comment} from '@/lib/types';
-const categories=['all','ai','opensource','hardware','design','frontier'] as const;
-export function ArticleFeed({kind='news',bookmarks=false,initialQuery='',initialCategory='all'}:{kind?:'post'|'news';bookmarks?:boolean;initialQuery?:string;initialCategory?:string}){
+export function ArticleFeed({kind='news',bookmarks=false,initialQuery='',initialCategory='all',controls}:{kind?:'post'|'news';bookmarks?:boolean;initialQuery?:string;initialCategory?:string;controls?:{value:FeedFilters;onChange:(patch:Partial<FeedFilters>)=>void}}){
  const{t,locale,user,setAuthOpen,demo}=useApp(),c=forumCopy[locale],x=experienceCopy[locale];
- const[category,setCategory]=useState(initialCategory),[query,setQuery]=useState(initialQuery),[sort,setSort]=useState('latest'),[mine,setMine]=useState(false);
- useEffect(()=>{setQuery(initialQuery);setCategory(categories.includes(initialCategory as typeof categories[number])?initialCategory:'all');},[initialQuery,initialCategory]);
+ const[local,setLocal]=useState<FeedFilters>({category:initialCategory,query:initialQuery,sort:'latest',mine:false});
+ const{category,query,sort,mine}=controls?.value??local;
+ const controlled=!!controls;
+ function update(patch:Partial<FeedFilters>){if(controls)controls.onChange(patch);else setLocal(old=>({...old,...patch}));}
+ useEffect(()=>{if(!controlled)setLocal(old=>({...old,query:initialQuery,category:categories.includes(initialCategory as typeof categories[number])?initialCategory:'all'}));},[initialQuery,initialCategory,controlled]);
  const settled=useDebounce(query),feed=useContentFeed({kind:bookmarks?'all':kind,category,query:settled,sort,mine:mine&&!!user,bookmarks});
- return <section className="content-feed" aria-label={kind==='post'?c.latest:t.news}><div className="feed-toolbar"><div className="category-tabs" role="group" aria-label={t.category}>{categories.map(value=><button key={value} className={category===value?'selected':''} aria-pressed={category===value} onClick={()=>setCategory(value)}>{t[value]}</button>)}</div><div className="feed-tools"><label className="inline-search"><FiSearch/><input aria-label={t.searchLabel} value={query} maxLength={120} onChange={e=>setQuery(e.target.value)} placeholder={x.search}/></label><select aria-label={t.sort} value={sort} onChange={e=>setSort(e.target.value)}><option value="latest">{t.sort}</option><option value="popular">{t.popular}</option></select>{kind==='post'&&!bookmarks&&<button className={mine?'button small selected':'button small'} aria-pressed={mine&&!!user} onClick={()=>{if(!user){setAuthOpen(true);return;}setMine(!mine);}}>{mine&&user?c.all:c.mine}</button>}</div></div>{demo&&<p className="form-note">{t.setup}</p>}{feed.error&&<div className="inline-error" role="alert">{x.connection}<button className="text-link" onClick={feed.retry}>{t.retry}</button></div>}{feed.loading&&!feed.items.length?<div className="skeleton-list" role="status" aria-label={t.loading}><i/><i/><i/></div>:!feed.items.length?<div className="empty-state"><p>{query||category!=='all'?x.noResults:bookmarks?t.emptyBookmarks:x.empty}</p></div>:<div className="news-grid">{feed.items.map(a=><ArticleCard key={a.id} article={a}/>)}</div>}{feed.hasMore&&<div className="load-more"><button className="button" disabled={feed.loading} onClick={feed.more}>{feed.loading?t.loading:t.more}</button></div>}</section>;
+ return <section className={`content-feed ${controls?'forum-feed':''}`} aria-label={kind==='post'?c.latest:t.news}>
+  <div className="feed-toolbar">
+   {!controls&&<div className="category-tabs" role="group" aria-label={t.category}>{categories.map(value=><button key={value} className={category===value?'selected':''} aria-pressed={category===value} onClick={()=>update({category:value})}>{t[value]}</button>)}</div>}
+   <div className="feed-tools"><label className="inline-search"><FiSearch/><input aria-label={t.searchLabel} value={query} maxLength={120} onChange={e=>update({query:e.target.value})} placeholder={x.search}/></label><select aria-label={t.sort} value={sort} onChange={e=>update({sort:e.target.value})}><option value="latest">{t.sort}</option><option value="popular">{t.popular}</option></select>{kind==='post'&&!bookmarks&&!controls&&<button className={mine?'button small selected':'button small'} aria-pressed={mine&&!!user} onClick={()=>{if(!user){setAuthOpen(true);return;}update({mine:!mine});}}>{mine&&user?c.all:c.mine}</button>}</div>
+  </div>
+  {demo&&<p className="form-note">{t.setup}</p>}{feed.error&&<div className="inline-error" role="alert">{x.connection}<button className="text-link" onClick={feed.retry}>{t.retry}</button></div>}{feed.loading&&!feed.items.length?<div className="skeleton-list" role="status" aria-label={t.loading}><i/><i/><i/></div>:!feed.items.length?<div className="empty-state"><p>{query||category!=='all'?x.noResults:bookmarks?t.emptyBookmarks:x.empty}</p></div>:<div className="news-grid">{feed.items.map(a=><ArticleCard key={a.id} article={a}/>)}</div>}{feed.hasMore&&<div className="load-more"><button className="button" disabled={feed.loading} onClick={feed.more}>{feed.loading?t.loading:t.more}</button></div>}
+ </section>;
 }
 export function ArticleCard({article}:{article:Article}){
  const{t,locale}=useApp(),text=articleText(article,locale);

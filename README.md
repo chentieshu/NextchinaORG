@@ -32,7 +32,7 @@ npm run build
 
 - `/zh-CN/` 简体中文（默认）、`/en/`、`/ja/`、`/es/`、`/zh-TW/`
 - `/{locale}/news/` 新闻、筛选、搜索；`?id={article_uuid}` 阅读详情
-- `/{locale}/` 与 `/{locale}/community/` 列表论坛、右侧配图、搜索及分类；`community/?id={uuid}` 阅读帖子
+- `/{locale}/` 与 `/{locale}/community/` 顶部导航、论坛侧边栏与帖子列表；分类、搜索、排序、我的帖子保持 URL 状态，手机侧栏可收起；`community/?id={uuid}` 阅读帖子
 - `/{locale}/write/` 成员发帖、草稿与富文本编辑；管理员使用 `?kind=news` 撰写新闻
 - `/{locale}/bookmarks/` 私人收藏
 - `/` 完整公开首页，不依赖 JavaScript 跳转或登录

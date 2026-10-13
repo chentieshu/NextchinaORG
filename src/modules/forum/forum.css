@@ -1,0 +1,49 @@
+.forum-page.forum-layout{width:min(100%,1184px);max-width:1184px;display:grid;grid-template-columns:204px minmax(0,1fr);gap:48px;align-items:start;padding-top:36px}
+.forum-sidebar{position:sticky;top:28px;min-width:0;padding:4px 24px 16px 0;border-right:1px solid var(--line)}
+.forum-menu-toggle{display:none}
+.forum-nav-group{display:flex;flex-direction:column;gap:4px}
+.forum-nav-group h2{font-size:11px;font-weight:400;color:var(--muted);padding:0 12px;margin:0 0 9px;letter-spacing:.03em}
+.forum-nav-group a,.forum-nav-group button{display:flex;align-items:center;gap:11px;width:100%;min-height:42px;padding:9px 12px;border-radius:6px;text-align:left;font-size:13px;color:var(--muted);line-height:1.6}
+.forum-nav-group svg{width:16px;height:16px;stroke-width:1.6}
+.forum-nav-group a:hover,.forum-nav-group button:hover{background:var(--soft);color:var(--fg)}
+.forum-nav-group button[aria-pressed=true]{background:var(--soft2);color:var(--fg);font-weight:500}
+.forum-topics{margin-top:30px}
+.forum-admin-link{border-top:1px solid var(--line);padding-top:18px;margin-top:24px}
+.forum-main{min-width:0}
+.forum-main .page-heading{margin-bottom:26px;align-items:center;gap:20px}
+.forum-main .page-heading h1{font-size:30px;letter-spacing:-.6px}
+.forum-main .page-heading p{font-size:13px;margin-top:5px}
+.forum-main .page-heading>.button{flex-shrink:0;min-height:40px}
+.forum-feed .feed-toolbar{padding-bottom:20px;margin-bottom:0}
+.forum-feed .feed-tools{flex-wrap:nowrap;gap:12px}
+.forum-feed .inline-search{max-width:400px;background:var(--soft);border-color:transparent}
+.forum-feed .inline-search:focus-within{border-color:var(--muted)}
+.forum-feed .feed-tools>select{margin-left:auto;background:transparent;border-color:transparent;padding-right:0;flex:none;max-width:155px;color:var(--muted)}
+.forum-main .article-card h3{font-size:19px;font-weight:600;line-height:1.6}
+.forum-main .article-meta{margin-bottom:7px}
+.forum-main .card-content>p{margin-top:6px}
+@media(max-width:1000px){.forum-page.forum-layout{grid-template-columns:175px minmax(0,1fr);gap:30px}.forum-sidebar{padding-right:18px}.forum-main .post-thumbnail{flex-basis:128px}.forum-main .post-thumbnail img{width:128px;height:100px}.forum-main .article-card{gap:22px}}
+@media(max-width:760px){
+ .forum-page.forum-layout{display:flex;flex-direction:column;gap:24px;padding-top:18px}
+ .forum-sidebar{position:static;width:100%;padding:0;border:0;border-bottom:1px solid var(--line)}
+ .forum-menu-toggle{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:0 0 13px;font-size:12px;text-align:left;color:var(--muted)}
+ .forum-menu-toggle>svg:first-child{font-size:16px;color:var(--fg)}
+ .forum-menu-toggle>svg:last-child{font-size:14px}
+ .forum-menu-current{margin-left:auto;max-width:40%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--fg)}
+ .forum-sidebar nav{display:none;padding:4px 0 20px}
+ .forum-sidebar[data-open=true] nav{display:block}
+ .forum-sidebar[data-open=true] .forum-menu-toggle>svg:last-child{transform:rotate(180deg)}
+ .forum-nav-group{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px}
+ .forum-nav-group h2{grid-column:1/-1;margin-bottom:3px}
+ .forum-nav-group button,.forum-nav-group a{font-size:13px;min-height:44px;padding:9px 10px}
+ .forum-topics{margin-top:18px}.forum-admin-link{margin-top:14px;padding-top:10px}
+ .forum-main{width:100%}.forum-main .page-heading{margin-bottom:24px}
+ .forum-main .page-heading>div{flex-basis:auto}
+ .forum-main .page-heading h1{font-size:28px}
+ .forum-main .page-heading p{font-size:12px;line-height:1.7;max-width:240px}
+ .forum-main .page-heading>.button{white-space:normal;max-width:43%;font-size:12px;padding:8px 12px;line-height:1.5}
+ .forum-feed .feed-tools{gap:8px}.forum-feed .inline-search{flex-basis:auto}.forum-feed .feed-tools>select{max-width:125px;font-size:11px;padding-left:6px}
+ .forum-main .post-thumbnail{flex-basis:96px}.forum-main .post-thumbnail img{width:96px;height:78px}.forum-main .article-card{gap:16px}
+ .forum-main .article-card h3{font-size:17px}
+}
+@media(max-width:360px){.forum-main .post-thumbnail{flex-basis:82px}.forum-main .post-thumbnail img{width:82px;height:72px}.forum-main .article-card{gap:12px}.forum-main .page-heading>.button{gap:6px;padding:8px 10px}.forum-feed .feed-tools>select{max-width:112px}}
