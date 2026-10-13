@@ -2,7 +2,6 @@
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {useApp} from '@/components/Provider';
 import type {Article} from './types';
-export const contentCategories=['all','ai','opensource','hardware','design','frontier'] as const;
 export type FeedFilters={category:string;query:string;sort:string;mine:boolean;following?:boolean};
 type Options={kind:'post'|'news'|'all';category:string;query:string;sort:string;mine?:boolean;bookmarks?:boolean;author?:string;following?:boolean;mediaOnly?:boolean};
 export function useContentFeed(options:Options){

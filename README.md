@@ -1,5 +1,7 @@
 # NextChina.org
 
+后台支持动态五语言分类、内容搜索与状态筛选、总管理员权限和受保护的数据库/R2 监控。操作方式、状态管理边界和剩余生产缺口见 [后台与运维说明](docs/admin-and-operations.md)。
+
 开放论坛与新闻社区。Next.js 16 App Router、React 19、Tailwind CSS v4、React Icons、Supabase。
 
 正式网站：[NextChina.org](https://nextchina.org)。`www.nextchina.org` 自动跳转主域并保留路径及查询参数。

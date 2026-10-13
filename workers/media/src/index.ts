@@ -1,6 +1,7 @@
 import {MediaError,imageType,providerImageUrl,readBounded} from './image';
+import {mediaInventory,measured} from './metrics';
 type User={id:string;identities?:{provider:string;last_sign_in_at?:string;identity_data?:Record<string,unknown>}[]};
-type Profile={id:string;display_name:string;avatar_key:string|null;avatar_source:string;updated_at:string;disabled:boolean};
+type Profile={id:string;display_name:string;avatar_key:string|null;avatar_source:string;updated_at:string;disabled:boolean;role:string};
 type Asset={object_key:string};
 type Settings={display_name?:string;mode?:'keep'|'custom'|'provider'|'none';expected_updated_at?:string;automatic?:boolean};
 const UUID='[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',objectPath=new RegExp(`^/(avatars|content)/${UUID}/${UUID}\\.(webp|png|jpg)$`);
@@ -37,12 +38,19 @@ async function handle(request:Request,env:Env,ctx:ExecutionContext):Promise<Resp
   return new Response(request.method==='HEAD'?null:file.body,{headers});
  }
  if(url.pathname==='/health'&&request.method==='GET')return Response.json({ok:true});
- if(request.method!=='POST'||!['/v1/profile','/v1/images'].includes(url.pathname))throw new MediaError(404,'not_found');
+ const monitor=request.method==='GET'&&url.pathname==='/v1/admin/metrics';
+ if(!monitor&&(request.method!=='POST'||!['/v1/profile','/v1/images'].includes(url.pathname)))throw new MediaError(404,'not_found');
  if(!allowed)throw new MediaError(403,'origin_not_allowed');
  const token=request.headers.get('Authorization')??'';if(!/^Bearer [\w.-]+$/.test(token))throw new MediaError(401,'login_required');
  const user=await api<User>(env,token,'/auth/v1/user');
- const profiles=await api<Profile[]>(env,token,`/rest/v1/omni_profiles?id=eq.${encodeURIComponent(user.id)}&select=id,display_name,avatar_key,avatar_source,updated_at,disabled`),profile=profiles[0];
+ const profiles=await api<Profile[]>(env,token,`/rest/v1/omni_profiles?id=eq.${encodeURIComponent(user.id)}&select=id,display_name,avatar_key,avatar_source,updated_at,disabled,role`),profile=profiles[0];
  if(!profile||profile.disabled)throw new MediaError(403,'account_disabled');
+ if(monitor){
+  if(profile.role!=='super_admin')throw new MediaError(403,'forbidden');
+  if(!(await env.MONITOR_LIMITER.limit({key:user.id})).success)throw new MediaError(429,'monitor_limit');
+  const [database,storage]=await Promise.all([measured(()=>api(env,token,'/rest/v1/rpc/omni_admin_metrics',{})),measured(()=>mediaInventory(env.MEDIA))]);
+  return Response.json({sampled_at:new Date().toISOString(),worker:{status:'ok',version:'admin-metrics-v1'},database,storage});
+ }
  if(!(await env.UPLOAD_LIMITER.limit({key:user.id})).success)throw new MediaError(429,'upload_limit');
  if(url.pathname==='/v1/images'){
   const bytes=await readBounded(request.body,4*1024*1024),key=await storeImage(env,token,'content',bytes);
