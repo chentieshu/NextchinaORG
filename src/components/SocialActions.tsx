@@ -4,6 +4,8 @@ import {useRef,useState} from 'react';
 import {FiRepeat,FiEdit3,FiShare,FiX} from 'react-icons/fi';
 import {useApp} from './Provider';
 import {UserIdentity} from './Avatar';
+import {connectedCopy} from '@/lib/connected-copy';
+import {SITE_ORIGIN} from '@/lib/site';
 import {chinaCopy} from '@/lib/chinateam-copy';
 import {articleText} from '@/lib/content';
 import {contentHref} from '@/lib/content-href';
@@ -13,7 +15,7 @@ export function QuoteCard({article,unavailable=false,onRemove}:{article?:Article
  const{locale}=useApp(),c=chinaCopy[locale];
  if(unavailable||!article)return <div className="quote-card quote-unavailable">{c.unavailable}{onRemove&&<button type="button" className="icon-button" aria-label={c.removeQuote} onClick={onRemove}><FiX/></button>}</div>;
  const text=articleText(article,locale);
- return <div className="quote-card"><div className="quote-main"><UserIdentity id={article.author_id} name={article.author_name} handle={article.author_handle} avatarKey={article.author_avatar_key} size={22}/><Link href={contentHref(article,locale)} className="quote-excerpt"><p>{text.body||text.summary||'…'}</p></Link></div>{article.thumbnail_url&&<Link href={contentHref(article,locale)} tabIndex={-1} aria-hidden="true"><img src={article.thumbnail_url} alt="" loading="lazy" referrerPolicy="no-referrer"/></Link>}{onRemove&&<button type="button" className="icon-button" aria-label={c.removeQuote} onClick={onRemove}><FiX/></button>}</div>;
+ return <div className="quote-card"><div className="quote-main"><UserIdentity id={article.author_id} name={article.author_name} handle={article.author_handle} avatarKey={article.author_avatar_key} size={22}/><Link href={contentHref(article,locale)} className="quote-excerpt">{article.content_type==='news'&&<><small className="quoted-kind">{connectedCopy[locale].article}</small><strong>{text.title}</strong></>}<p>{text.summary||text.body||'…'}</p></Link></div>{article.thumbnail_url&&<Link href={contentHref(article,locale)} tabIndex={-1} aria-hidden="true"><img src={article.thumbnail_url} alt="" loading="lazy" referrerPolicy="no-referrer"/></Link>}{onRemove&&<button type="button" className="icon-button" aria-label={c.removeQuote} onClick={onRemove}><FiX/></button>}</div>;
 }
 export function RepostAction({article}:{article:Article}){
  const{locale,articles,reposted,toggleRepost,user,setAuthOpen,authStatus,online,profile}=useApp(),c=chinaCopy[locale],menu=useRef<HTMLDetailsElement>(null),pending=useRef(false),[busy,setBusy]=useState(false);
@@ -23,6 +25,11 @@ export function RepostAction({article}:{article:Article}){
 }
 export function ShareAction({article}:{article:Article}){
  const{locale,t,notify}=useApp(),c=chinaCopy[locale];
- async function share(){const url=new URL(contentHref(article,locale),'https://nextchina.org').href;try{if(navigator.share)await navigator.share({url});else{await navigator.clipboard.writeText(url);notify(t.copied);}}catch(error){if((error as {name?:string}).name!=='AbortError')notify(t.error);}}
+ async function share(){const url=new URL(contentHref(article,locale),SITE_ORIGIN).href;try{if(navigator.share)await navigator.share({url});else{await navigator.clipboard.writeText(url);notify(t.copied);}}catch(error){if((error as {name?:string}).name!=='AbortError')notify(t.error);}}
  return <button aria-label={c.share} title={c.share} onClick={()=>void share()}><FiShare/></button>;
+}
+
+export function QuoteArticleAction({article}:{article:Article}){
+ const{locale,user,setAuthOpen,authStatus,online,profile}=useApp(),c=connectedCopy[locale],disabled=!online||authStatus==='loading'||!!profile?.disabled||article.status!=='published';
+ return <Link href={`/${locale}/write/?quote=${article.id}`} aria-label={c.quoteArticle} title={c.quoteArticle} aria-disabled={disabled} onClick={e=>{if(disabled)e.preventDefault();else if(!user){e.preventDefault();setAuthOpen(true);}}}><FiEdit3/></Link>;
 }

@@ -1,6 +1,6 @@
 # 社区界面与账号架构
 
-更新：2026-10-13。正式地址：https://nextchina.org 。
+更新：2026-10-13。正式地址：https://chinateam.org 。
 
 ## 信息架构
 

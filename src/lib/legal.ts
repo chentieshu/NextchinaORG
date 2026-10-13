@@ -16,14 +16,15 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "管理 Google 第三方连接",
     "privacy": {
       "title": "隐私政策",
-      "intro": "本政策说明 ChinaTeam 网站运营团队如何处理访问者和注册用户的信息，适用于 nextchina.org 及其 www 入口。阅读公开新闻与本政策无需登录。",
+      "intro": "本政策说明 ChinaTeam 网站运营团队如何处理访问者和注册用户的信息，适用于 chinateam.org 及其 www 入口。阅读公开新闻与本政策无需登录。",
       "sections": [
         {
           "title": "1. 我们收集哪些信息",
           "paragraphs": [
             "创建账号时，Supabase 身份服务处理你的邮箱、账号标识、邮箱验证状态和登录记录。使用 Google、GitHub 或 X 登录时，它还接收该提供商返回的基本个人资料，例如名称、提供商用户标识及可能包含的头像地址。我们不接收你的社交账号密码。",
             "社区数据库保存显示名称、角色、账号状态、点赞、收藏、评论、相关时间及管理操作记录。公开评论会显示评论内容、显示名称和时间；点赞数量公开，个人收藏不向其他访客公开。请勿在评论中提交敏感资料。",
-            "浏览器和基础设施服务商会处理提供网站所需的请求信息，例如 IP 地址、浏览器信息、访问路径和安全日志。"
+            "浏览器和基础设施服务商会处理提供网站所需的请求信息，例如 IP 地址、浏览器信息、访问路径和安全日志。",
+            " 绑定 X 或 GitHub 后，公开资料和帖子旁会显示验证账号归属的徽章及平台主页链接，解除绑定后移除。我们可从 GitHub 官方 API 缓存本人非 Fork 公开仓库收到的 Star 总和及统计时间，不包括私有或组织仓库。X 粉丝数暂未启用；未来启用时，仅账号本人可请求通过官方 API 同步公开粉丝数。徽章不表示平台官方认证。"
           ]
         },
         {
@@ -139,14 +140,15 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "Manage Google third-party connections",
     "privacy": {
       "title": "Privacy Policy",
-      "intro": "This policy explains how the ChinaTeam website operators handle visitor and member information on nextchina.org and its www entry point. Public news and this policy are available without signing in.",
+      "intro": "This policy explains how the ChinaTeam website operators handle visitor and member information on chinateam.org and its www entry point. Public news and this policy are available without signing in.",
       "sections": [
         {
           "title": "1. Information we collect",
           "paragraphs": [
             "Supabase Auth processes your email address, account identifier, email verification status and login records. With Google, GitHub or X sign-in, it also receives basic profile information returned by that provider, such as your name, provider user identifier and, when supplied, avatar URL. We do not receive your social account password.",
             "Our community database stores your display name, role, account status, likes, bookmarks, comments, associated timestamps and administrative action records. Comments display their text, display name and date publicly. Like counts are public; personal bookmarks are not exposed to other visitors. Do not post sensitive information in comments.",
-            "Your browser and our infrastructure providers process request information necessary to serve the website, such as IP addresses, browser information, requested paths and security logs."
+            "Your browser and our infrastructure providers process request information necessary to serve the website, such as IP addresses, browser information, requested paths and security logs.",
+            " Linked X and GitHub accounts display public ownership badges and profile links, removed when unlinked. We cache the total Stars received by your public, non-fork GitHub repositories and the collection time via GitHub’s official API, excluding private and organization repositories. X follower counts are currently disabled; if enabled later, only the owner can request a public follower-count sync through the official API. These badges do not represent platform verification."
           ]
         },
         {
@@ -262,13 +264,14 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "管理 Google 第三方連結",
     "privacy": {
       "title": "隱私政策",
-      "intro": "本政策說明 ChinaTeam 網站營運團隊如何處理 nextchina.org 及 www 入口的訪客與會員資料。公開新聞和本政策無需登入即可閱讀。",
+      "intro": "本政策說明 ChinaTeam 網站營運團隊如何處理 chinateam.org 及 www 入口的訪客與會員資料。公開新聞和本政策無需登入即可閱讀。",
       "sections": [
         {
           "title": "1. 收集的資料",
           "paragraphs": [
             "Supabase 身分服務處理電子郵件、帳號識別碼、信箱驗證狀態及登入紀錄。透過 Google、GitHub 或 X 登入時，亦會接收服務商傳回的基本資料，例如姓名、服務商使用者識別碼及可能提供的頭像網址。我們不接收社群帳號密碼。",
-            "社群資料庫保存顯示名稱、角色、帳號狀態、按讚、收藏、留言、相關時間和管理操作紀錄。留言內容、名稱與日期及按讚數量公開；個人收藏不向其他訪客公開。請勿在留言中提交敏感資料。基礎設施服務商會處理 IP 位址、瀏覽器資訊、請求路徑及安全紀錄等必要資訊。"
+            "社群資料庫保存顯示名稱、角色、帳號狀態、按讚、收藏、留言、相關時間和管理操作紀錄。留言內容、名稱與日期及按讚數量公開；個人收藏不向其他訪客公開。請勿在留言中提交敏感資料。基礎設施服務商會處理 IP 位址、瀏覽器資訊、請求路徑及安全紀錄等必要資訊。",
+            " 綁定 X 或 GitHub 後，公開資料和貼文旁會顯示驗證帳號歸屬的徽章及平台主頁連結，解除綁定後移除。我們可從 GitHub 官方 API 快取本人非 Fork 公開儲存庫收到的 Star 總和及統計時間，不含私有或組織儲存庫。X 粉絲數暫未啟用；未來啟用時，僅本人可要求透過官方 API 同步公開粉絲數。徽章不表示平台官方認證。"
           ]
         },
         {
@@ -372,13 +375,14 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "Google のサードパーティ接続を管理",
     "privacy": {
       "title": "プライバシーポリシー",
-      "intro": "ChinaTeam 運営チームによる nextchina.org および www 入口の利用者情報の取り扱いを説明します。公開記事と本ポリシーはログイン不要です。",
+      "intro": "ChinaTeam 運営チームによる chinateam.org および www 入口の利用者情報の取り扱いを説明します。公開記事と本ポリシーはログイン不要です。",
       "sections": [
         {
           "title": "1. 収集する情報",
           "paragraphs": [
             "Supabase Auth はメールアドレス、アカウント識別子、メール確認状態、ログイン記録を処理します。Google、GitHub、X でログインすると、氏名、プロバイダーのユーザー識別子、提供される場合はアバター URL などの基本情報も受信します。外部アカウントのパスワードは受信しません。",
-            "コミュニティには表示名、権限、アカウント状態、いいね、ブックマーク、コメント、日時、管理操作記録が保存されます。コメントの内容・表示名・日時といいね数は公開されます。個人のブックマークは他の訪問者には公開されません。インフラ事業者は IP アドレス、ブラウザー情報、要求パス、安全性ログなども処理します。"
+            "コミュニティには表示名、権限、アカウント状態、いいね、ブックマーク、コメント、日時、管理操作記録が保存されます。コメントの内容・表示名・日時といいね数は公開されます。個人のブックマークは他の訪問者には公開されません。インフラ事業者は IP アドレス、ブラウザー情報、要求パス、安全性ログなども処理します。",
+            " X・GitHub を連携すると所有確認バッジとプロフィールリンクを公開し、解除すると非表示になります。GitHub 公式 API から、本人所有の公開かつ非フォークのリポジトリの Star 合計と集計時刻をキャッシュします。非公開・組織リポジトリは含みません。X フォロワー数は現在無効です。将来有効にした場合は本人のみが公式 API による同期を要求できます。バッジはプラットフォームの公式認証ではありません。"
           ]
         },
         {
@@ -482,7 +486,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "Gestionar conexiones de terceros de Google",
     "privacy": {
       "title": "Política de privacidad",
-      "intro": "Esta política explica cómo el equipo de ChinaTeam trata la información de visitantes y miembros en nextchina.org y su entrada www. Las noticias públicas y esta política no requieren iniciar sesión.",
+      "intro": "Esta política explica cómo el equipo de ChinaTeam trata la información de visitantes y miembros en chinateam.org y su entrada www. Las noticias públicas y esta política no requieren iniciar sesión.",
       "sections": [
         {
           "title": "1. Información recopilada",
@@ -495,7 +499,8 @@ export const legalCopy:Record<Locale,LegalCopy>={
           "title": "2. Datos de Google",
           "paragraphs": [
             "El acceso con Google usa Supabase y permisos básicos de identidad y perfil (email / profile, que pueden aparecer como openid, userinfo.email y userinfo.profile). El identificador y correo identifican la cuenta; el nombre crea el nombre visible. El servicio de identidad conserva el perfil recibido para permitir el acceso.",
-            "No solicitamos mensajes de Gmail, archivos de Drive, eventos de Calendar ni Contacts, ni enviamos mensajes o modificamos recursos de Google en tu nombre. No vendemos ni comercializamos estos datos, ni los usamos para publicidad dirigida o entrenar modelos de IA de uso general. Los tratamos conforme a la política de Google y los requisitos aplicables de Limited Use."
+            "No solicitamos mensajes de Gmail, archivos de Drive, eventos de Calendar ni Contacts, ni enviamos mensajes o modificamos recursos de Google en tu nombre. No vendemos ni comercializamos estos datos, ni los usamos para publicidad dirigida o entrenar modelos de IA de uso general. Los tratamos conforme a la política de Google y los requisitos aplicables de Limited Use.",
+            " Las cuentas X y GitHub vinculadas muestran insignias públicas de titularidad y enlaces; se eliminan al desvincularlas. Guardamos en caché las Stars recibidas por tus repositorios públicos propios sin forks, junto con la fecha, mediante la API oficial de GitHub. Excluimos repositorios privados y de organizaciones. El recuento de seguidores de X está desactivado; si se habilita, solo el titular podrá solicitar una sincronización mediante la API oficial. Las insignias no representan verificación oficial de las plataformas."
           ]
         },
         {

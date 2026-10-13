@@ -1,6 +1,7 @@
 'use client';
 import {createContext,useContext,useEffect,useState,useCallback,useRef,type ReactNode} from 'react';
 import type {User} from '@supabase/supabase-js';
+import {invalidateConnections} from '@/lib/connected-accounts';
 import {getSupabase} from '@/lib/supabase';
 import {dictionaries,type Locale} from '@/lib/i18n';
 import {experienceCopy} from '@/lib/experience-copy';
@@ -39,7 +40,7 @@ function useAppState(locale:Locale){
  const sync=useCallback(async(nextUser:User|null)=>{
   const sequence=++authRequest.current;authController.current?.abort();const controller=new AbortController();authController.current=controller;
   const changed=currentUser.current!==(nextUser?.id??null);currentUser.current=nextUser?.id??null;
-  setUser(nextUser);if(changed||!nextUser){profileReady.current=false;setProfile(null);setLiked([]);setBookmarked([]);setReposted([]);setNeedsMfa(false);setArticles(old=>old.filter(a=>a.status==='published'));}if(!profileReady.current)setAuthStatus('loading');
+  invalidateConnections();setUser(nextUser);if(changed||!nextUser){profileReady.current=false;setProfile(null);setLiked([]);setBookmarked([]);setReposted([]);setNeedsMfa(false);setArticles(old=>old.filter(a=>a.status==='published'));}if(!profileReady.current)setAuthStatus('loading');
   if(!nextUser||!db){setAuthStatus('ready');return;}
   const timeout=setTimeout(()=>controller.abort(),12000),epoch=interactionEpoch.current,profileVersion=profileEpoch.current;
   async function interactions(table:string){const rows:{article_id:string}[]=[];for(let offset=0;;offset+=500){const result=await db!.from(table).select('article_id').eq('user_id',nextUser!.id).order('article_id').range(offset,offset+499).abortSignal(controller.signal);if(result.error)throw result.error;rows.push(...result.data);if(result.data.length<500)return rows;}}

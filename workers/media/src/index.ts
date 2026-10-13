@@ -1,5 +1,6 @@
 import {MediaError,imageType,providerImageUrl,readBounded} from './image';
 import {mediaInventory,measured} from './metrics';
+import {socialMetrics,syncX} from './social';
 import {previewResponse} from './previews';
 type User={id:string;identities?:{provider:string;last_sign_in_at?:string;identity_data?:Record<string,unknown>}[]};
 type Profile={id:string;display_name:string;avatar_key:string|null;avatar_source:string;updated_at:string;disabled:boolean;role:string};
@@ -44,13 +45,21 @@ async function handle(request:Request,env:Env,ctx:ExecutionContext):Promise<Resp
   if(!(await env.PREVIEW_LIMITER.limit({key:request.headers.get('CF-Connecting-IP')??'unknown'})).success)throw new MediaError(429,'preview_limit');
   return previewResponse(request,env,ctx);
  }
+ if(request.method==='GET'&&url.pathname==='/v1/social-metrics'){
+  if(origin&&!allowed)throw new MediaError(403,'origin_not_allowed');
+  if(!(await env.PREVIEW_LIMITER.limit({key:request.headers.get('CF-Connecting-IP')??'unknown'})).success)throw new MediaError(429,'preview_limit');
+  const id=url.searchParams.get('user')??'';if(!new RegExp('^'+UUID+'$').test(id))throw new MediaError(400,'invalid_profile');
+  return Response.json(await socialMetrics(env,id));
+ }
+ const socialSync=request.method==='POST'&&url.pathname==='/v1/social-metrics/sync';
  const monitor=request.method==='GET'&&url.pathname==='/v1/admin/metrics';
- if(!monitor&&(request.method!=='POST'||!['/v1/profile','/v1/images'].includes(url.pathname)))throw new MediaError(404,'not_found');
+ if(!monitor&&!socialSync&&(request.method!=='POST'||!['/v1/profile','/v1/images'].includes(url.pathname)))throw new MediaError(404,'not_found');
  if(!allowed)throw new MediaError(403,'origin_not_allowed');
  const token=request.headers.get('Authorization')??'';if(!/^Bearer [\w.-]+$/.test(token))throw new MediaError(401,'login_required');
  const user=await api<User>(env,token,'/auth/v1/user');
  const profiles=await api<Profile[]>(env,token,`/rest/v1/omni_profiles?id=eq.${encodeURIComponent(user.id)}&select=id,display_name,avatar_key,avatar_source,updated_at,disabled,role`),profile=profiles[0];
  if(!profile||profile.disabled)throw new MediaError(403,'account_disabled');
+ if(socialSync)return Response.json(await syncX(env,user.id,token));
  if(monitor){
   if(profile.role!=='super_admin')throw new MediaError(403,'forbidden');
   if(await api<string|null>(env,token,'/rest/v1/rpc/omni_account_role',{})!=='super_admin')throw new MediaError(403,'forbidden');

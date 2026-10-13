@@ -1,0 +1,17 @@
+import {test,expect} from '@playwright/test';
+import {fixture,story,member,articleId} from './fixtures';
+test('article quotes preserve a title in the quote and publish as a title-free post',async({page})=>{
+ const state=await fixture(page),news='20000000-0000-4000-8000-000000000098';state.articles.push(story(news,'可引用的新闻',{content_type:'news'}));
+ await page.goto(`/zh-CN/news/?id=${news}`);await page.getByRole('link',{name:'引用文章',exact:true}).click();await expect(page.locator('.quote-excerpt strong')).toHaveText('可引用的新闻');await expect(page.getByRole('textbox',{name:'标题',exact:true})).toHaveCount(0);await page.locator('.tiptap').fill('我对这篇文章的看法');await page.getByRole('button',{name:'发布',exact:true}).click();await expect(page).toHaveURL(new RegExp('/community/'));expect(state.writes.at(-1)?.quoted_article_id).toBe(news);expect(state.writes.at(-1)?.content_type).toBe('post');await expect(page.locator('.quote-excerpt strong')).toHaveText('可引用的新闻');
+});
+test('linked ownership badges have separate external links; profile totals stay off the feed',async({page})=>{
+ const state=await fixture(page);state.connections.push({user_id:member,provider:'github',provider_id:'123',handle:'example',url:'https://github.com/example'},{user_id:member,provider:'x',provider_id:'456',handle:'example_x',url:'https://x.com/example_x'});state.articles.push(story());
+ await page.route('https://media.chinateam.org/v1/social-metrics?*',route=>route.fulfill({json:{metrics:[{...state.connections[0],status:'ok',count:1204,checked_at:'2026-10-14T00:00:00Z'},{...state.connections[1],status:'not_configured',count:null,checked_at:null}]}}));
+ await page.goto('/zh-CN/');await expect(page.locator('.article-meta .connected-badges a')).toHaveCount(2);await expect(page.locator('.article-meta .connected-badges a').first()).toHaveAttribute('href','https://github.com/example');await expect(page.locator('.user-identity a')).toHaveCount(0);await expect(page.locator('.external-counts')).toHaveCount(0);
+ await page.goto(`/zh-CN/profile/?id=${member}`);await expect(page.locator('.profile-name-row .connected-badge')).toHaveCount(2);await expect(page.locator('.external-counts')).toContainText('1,204');await expect(page.locator('.external-counts')).not.toContainText('X 粉丝');await expect(page.locator('.external-counts a')).toHaveAttribute('title',/非 Fork/);
+ await page.setViewportSize({width:390,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);await page.screenshot({path:`${process.env.SCREENSHOT_DIR??'test-results'}/chinateam-connected-profile-mobile.png`,fullPage:true});
+ await page.setViewportSize({width:1440,height:1000});await page.screenshot({path:`${process.env.SCREENSHOT_DIR??'test-results'}/chinateam-connected-profile-desktop.png`,fullPage:true});
+});
+test('removing a binding invalidates badges across navigation',async({page})=>{
+ const state=await fixture(page);state.connections.push({user_id:member,provider:'github',provider_id:'123',handle:'example',url:'https://github.com/example'});state.articles.push(story());await page.goto('/en/');await expect(page.locator('.article-meta .connected-badge')).toHaveCount(1);state.connections=[];await page.goto('/en/settings/');await expect(page.locator('#connections')).toContainText('account ownership');await page.goto('/en/');await expect(page.locator('.article-meta .connected-badge')).toHaveCount(0);
+});

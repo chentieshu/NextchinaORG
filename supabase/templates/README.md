@@ -21,7 +21,7 @@
 | 邀请用户 | `invite-user.html` | 保存；使用前完成邀请回调流程 |
 | 魔法链接或一次性密码 | `magic-link.html` | 保存；当前网站使用链接模式 |
 | 更改电子邮件地址 | `change-email.html` | 保存；配合邮箱变更功能 |
-| 重置密码 | `reset-password.html` | 预备；网站尚无设置新密码页面 |
+| 重置密码 | `reset-password.html` | 设置页支持修改密码，恢复链接返回设置页 |
 | 重新认证 | `reauthentication.html` | 设置中修改密码时使用 |
 | 密码已更改 | `password-changed.html` | 保存并开启通知 |
 | 电子邮件地址已更改 | `email-changed.html` | 保存并开启通知 |

@@ -1,7 +1,7 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import {readFile,readdir} from 'node:fs/promises';import {PGlite} from '@electric-sql/pglite';
 test('social posts, profile identities, follow ownership and deep replies preserve cross-user boundaries',async()=>{
  const db=new PGlite();try{
- await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb default '{}');create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth,public to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;`);
+ await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb default '{}');create table auth.identities(id uuid default gen_random_uuid(),user_id uuid references auth.users(id),provider text,provider_id text,identity_data jsonb default '{}');create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth,public to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;`);
  for(const file of (await readdir('supabase/migrations')).filter(f=>f.endsWith('.sql')).sort())await db.exec(await readFile('supabase/migrations/'+file,'utf8'));
  const a='60000000-0000-4000-8000-000000000001',b='60000000-0000-4000-8000-000000000002';await db.exec(`insert into auth.users(id) values('${a}'),('${b}')`);
  async function as(id,sql){await db.exec(`reset role;select set_config('request.jwt.claim.sub','',false);update omni_profiles set profile_completed_at=now() where id='${id}' and profile_completed_at is null;set role authenticated;select set_config('request.jwt.claim.sub','${id}',false)`);return db.exec(sql);}
@@ -30,7 +30,7 @@ test('social posts, profile identities, follow ownership and deep replies preser
  assert.equal(children[0].reply_count,1);await as(b,`select omni_remove_comment('${child.id}')`);
  const remaining=(await as(third,`select * from omni_thread_replies('${post}','${child.id}') as c`))[0].rows[0].c;assert.equal(remaining.body,'Third round');
  assert.equal((await as(a,`select comment_count from omni_content_counts('${post}')`))[0].rows[0].comment_count,1);
- const image={type:'image',attrs:{src:'https://media.nextchina.org/content/test.webp'}};
+ const image={type:'image',attrs:{src:'https://media.chinateam.org/content/test.webp'}};
  const media=JSON.stringify({en:{title:'',summary:'',body:'',document:{type:'doc',content:Array.from({length:4},()=>image)}}});
  await as(a,`update omni_articles set translations='${media}' where id='${post}'`);
  const tooMany=JSON.stringify({en:{title:'',summary:'',body:'',document:{type:'doc',content:Array.from({length:5},()=>image)}}});

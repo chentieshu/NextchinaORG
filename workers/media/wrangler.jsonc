@@ -2,16 +2,59 @@
   "name": "nextchina-media",
   "main": "src/index.ts",
   "compatibility_date": "2026-10-13",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
   "workers_dev": false,
-  "observability": {"enabled": true},
-  "r2_buckets": [{"binding": "MEDIA", "bucket_name": "nextchina-media"}],
-  "ratelimits": [{"name": "UPLOAD_LIMITER", "namespace_id": "1001", "simple": {"limit": 20, "period": 60}},{"name":"MONITOR_LIMITER","namespace_id":"1002","simple":{"limit":4,"period":60}},{"name":"PREVIEW_LIMITER","namespace_id":"1003","simple":{"limit":120,"period":60}}],
+  "observability": {
+    "enabled": true
+  },
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "nextchina-media"
+    }
+  ],
+  "ratelimits": [
+    {
+      "name": "UPLOAD_LIMITER",
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 20,
+        "period": 60
+      }
+    },
+    {
+      "name": "MONITOR_LIMITER",
+      "namespace_id": "1002",
+      "simple": {
+        "limit": 4,
+        "period": 60
+      }
+    },
+    {
+      "name": "PREVIEW_LIMITER",
+      "namespace_id": "1003",
+      "simple": {
+        "limit": 120,
+        "period": 60
+      }
+    }
+  ],
   "vars": {
     "SUPABASE_URL": "https://cznhnupwojmydttdattb.supabase.co",
     "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_S64GsjK-R_CGycTdquKVxw_17Y13ZlL",
-    "MEDIA_ORIGIN": "https://media.nextchina.org",
-    "ALLOWED_ORIGINS": "https://nextchina.org,https://www.nextchina.org,https://omniremix.pages.dev,https://omniremix.chentieshu520.chatgpt.site"
+    "MEDIA_ORIGIN": "https://media.chinateam.org",
+    "ALLOWED_ORIGINS": "https://chinateam.org,https://www.chinateam.org,https://omniremix.pages.dev,https://omniremix.chentieshu520.chatgpt.site,https://nextchina.org,https://www.nextchina.org"
   },
-  "routes": [{"pattern": "media.nextchina.org", "custom_domain": true}]
+  "routes": [
+    {
+      "pattern": "media.chinateam.org",
+      "custom_domain": true
+    },
+    {
+      "pattern": "media.nextchina.org",
+      "custom_domain": true
+    }
+  ]
 }

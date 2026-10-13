@@ -1,8 +1,8 @@
 # ChinaTeam
 
-当前品牌统一为 **ChinaTeam**，正式域名继续使用 `nextchina.org`，GitHub、Supabase 项目和 Cloudflare 资源标识保留，已有账号与内容不迁移。
+当前品牌统一为 **ChinaTeam**，正式域名使用 `chinateam.org`，GitHub、Supabase 项目和 Cloudflare 资源标识保留，已有账号与内容不迁移。
 
-支持转发/取消转发、带原帖卡片的引用、帖子详情与引用列表。列表继续使用正文在左、素材在右的样式。帖子发布器共用富文本编辑器，支持粘贴图片、四图排序、代码和外链。阅读偏好可独立选择新闻语言、外部播放器加载方式和转发显示；账户设置增加验证器双重验证。
+支持转发/取消转发、带原帖或新闻文章卡片的引用、帖子详情与引用列表。列表继续使用正文在左、素材在右的样式。帖子发布器共用富文本编辑器，支持粘贴图片、四图排序、代码和外链。阅读偏好可独立选择新闻语言、外部播放器加载方式和转发显示；账户设置增加验证器双重验证。
 
 已发布内容的修改可保存为私密云端草稿，保存时线上版本继续展示；新闻按当前选中语言发布，其他未发布译文留在草稿中。并发版本不一致时拒绝覆盖并保留输入。
 
@@ -12,7 +12,7 @@
 
 开放论坛与新闻社区。Next.js 16 App Router、React 19、Tailwind CSS v4、React Icons、Supabase。
 
-正式网站：[ChinaTeam](https://nextchina.org)。`www.nextchina.org` 自动跳转主域并保留路径及查询参数。
+正式网站：[ChinaTeam](https://chinateam.org)。`www.chinateam.org` 自动跳转主域并保留路径及查询参数。
 
 域名迁移、Google / X / GitHub、Supabase 与 Resend 的逐项填写指南见 [登录与域名配置](docs/auth-and-domains.md)。全部 13 类品牌邮件的 [配置说明](supabase/templates/README.md) 与 [可视化复制页面](supabase/templates/preview.html) 已备齐；需单独保存到 Supabase Auth，不会随网站部署自动生效。
 
@@ -66,7 +66,7 @@ UI 文案具有五种语言版本，不包含占位文章。真实文章按语�
 
 1. 按顺序应用 `supabase/migrations/` 内的迁移。目标项目的已执行版本可在 Supabase migration history 中核对，不要重复执行。它们创建 `omni_` 前缀的表、RLS、受控 RPC、注册触发器、评论节流、审计日志、头像配额及首次管理员预约。内部提权函数位于不对 API 暴露的 `omni_private` schema；公开入口使用显式授权的 invoker 函数。
 2. 将项目 URL 与 **Publishable key 或 legacy anon key** 设置为 `NEXT_PUBLIC_SUPABASE_URL` 和 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`。它们用于浏览器；绝对不要填入 `service_role`、数据库密码或 OAuth client secret。
-3. Supabase Authentication 设置 Site URL 为正式站点源地址；Redirect URLs 添加五个语言的完整回调地址，例如 `https://nextchina.org/zh-CN/auth/callback/`。其他部署域名和本地地址也需逐个加入允许列表。
+3. Supabase Authentication 设置 Site URL 为正式站点源地址；Redirect URLs 添加五个语言的完整回调地址，例如 `https://chinateam.org/zh-CN/auth/callback/`。其他部署域名和本地地址也需逐个加入允许列表。
 4. 在 Providers 中启用 Google、GitHub、**X OAuth 2.0（provider: x）** 和 Email。分别在服务商控制台配置 OAuth 应用，把 client ID / secret 放入 Supabase 提供商设置。提供商回调为 `https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback`。
 5. 邮箱支持一次性登录链接及密码登录、密码恢复。当前生产项目已使用 Resend SMTP；仍需实际收件验证送达。账号绑定已启用，正式站与 Sites 各五个精确回调已保存。新部署请检查 SMTP、邮件配额以及 `supabase/config.toml` 的声明配置。
 6. 当前项目已根据站长明确指定的邮箱，在不公开的 `omni_private.owner_claim` 中设置一次性预约。只有该准确邮箱通过 Supabase 验证后才能领取总管理员权限；用户元数据里的验证标记无效。领取后预约删除，其他注册者保持普通用户。新部署可由数据库管理者设置自己的预约邮箱，或在注册后按准确 UUID 授权，不要使用“第一个注册者自动成为管理员”的逻辑。
@@ -86,7 +86,7 @@ where id = 'VERIFIED-USER-UUID';
 
 仓库：`https://github.com/chentieshu/NextchinaORG`。
 
-已为 Cloudflare Pages 项目 `omniremix` 配置 GitHub 源、`main` 生产分支、`npm run build` 构建命令和 `out` 输出目录。正式站点源地址为 `https://nextchina.org`。实际部署是否成功请以 Cloudflare deployment 状态为准。
+已为 Cloudflare Pages 项目 `omniremix` 配置 GitHub 源、`main` 生产分支、`npm run build` 构建命令和 `out` 输出目录。正式站点源地址为 `https://chinateam.org`。实际部署是否成功请以 Cloudflare deployment 状态为准。
 
 在 Pages 的 production build 环境设置上面的两个 Supabase 公开变量；变量在构建时写入前端，所以变更后需要重新构建。项目中的 `.env.example` 只是示例，不包含真实公钥。没有公钥的构建展示接入提示和空列表。
 
@@ -132,14 +132,16 @@ tests/                   PostgreSQL 权限与浏览器交互验证
 | 项目 | 值 |
 | --- | --- |
 | 应用名称 | ChinaTeam |
-| 网站 | `https://nextchina.org` |
+| 网站 | `https://chinateam.org` |
 | Google / GitHub / X 服务商回调 | `https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback` |
-| 隐私说明 | `https://nextchina.org/zh-CN/privacy/` |
-| 使用条款 | `https://nextchina.org/zh-CN/terms/` |
-| Supabase Site URL | `https://nextchina.org` |
+| 隐私说明 | `https://chinateam.org/zh-CN/privacy/` |
+| 使用条款 | `https://chinateam.org/zh-CN/terms/` |
+| Supabase Site URL | `https://chinateam.org` |
 
 Google 选择 Web application；X 使用 OAuth 2.0 的 Web App，只申请登录所需权限。不要把客户端密钥放入 GitHub、前端或聊天。凭据直接填入 Supabase 的对应 Provider。Supabase Redirect URLs 需要覆盖 Cloudflare 和 Sites 下五个 `/{locale}/auth/callback/` 地址。设置固定域名的 `/**` 可以覆盖五种语言，生产环境也可收窄为十个完整回调 URL。
 
 技术依据：[Cloudflare 静态 Next.js](https://developers.cloudflare.com/pages/framework-guides/nextjs/deploy-a-static-nextjs-site/)、[Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security)、[Supabase X OAuth 2.0](https://supabase.com/docs/guides/auth/social-login/auth-twitter)、[Tailwind CSS v4](https://tailwindcss.com/docs/installation/framework-guides/nextjs)。
 
 账号引导、侧栏、统一搜索与内容语言边界见 [社区架构](docs/social-architecture.md)。
+
+X / GitHub 账号归属徽章、个人主页 Star 统计及缓存边界见 [账号关联说明](docs/connected-accounts.md)。X 粉丝数暂不启用。

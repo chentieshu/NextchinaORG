@@ -20,10 +20,10 @@
 | --- | --- |
 | App name | `ChinaTeam`，与网站完全一致；不要继续使用 `NextCHINA` |
 | User support email | `chentieshu520@gmail.com` |
-| App home page | `https://nextchina.org/` |
-| Privacy policy | `https://nextchina.org/zh-CN/privacy/` |
-| Terms of service | `https://nextchina.org/zh-CN/terms/` |
-| Authorized domains | 包含 `nextchina.org`，保留现有回调所需配置 |
+| App home page | `https://chinateam.org/` |
+| Privacy policy | `https://chinateam.org/zh-CN/privacy/` |
+| Terms of service | `https://chinateam.org/zh-CN/terms/` |
+| Authorized domains | 包含 `chinateam.org`，保留现有回调所需配置 |
 
 不再使用 `about/#privacy` 作为送审的隐私政策地址。完整政策页与首页链接保持一致。
 
@@ -31,7 +31,7 @@ OAuth 客户端的回调仍为 `https://cznhnupwojmydttdattb.supabase.co/auth/v1
 
 ## 域名所有权
 
-站长已报告在 Google Search Console 完成验证。我们也在 Cloudflare DNS 和公共 Google DNS 中核验到其提供的验证 TXT；没有创建重复记录。DNS 中有 TXT 记录不能替代 Google 控制台的最终验证状态。
+此前完成的是 nextchina.org 所有权验证。新的 chinateam.org 需要在同一 Google Cloud 项目管理账号的 Search Console 中添加网域资源并验证；旧域名验证不会自动转移。按 Google 提供的 TXT 值加入新域名 DNS，再在 Search Console 点击验证。DNS 存在 TXT 不能替代最终验证状态。
 
 确认 Search Console 的域名所有者 Google 账号同时是当前 Cloud 项目的 Owner 或 Editor。保留验证记录。按照此次 Google 错误提示，完成所有权验证后等待 24 小时，让 Google 系统更新，再重新提交。
 
