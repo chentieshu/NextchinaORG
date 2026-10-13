@@ -4,6 +4,14 @@ test.skip(!process.env.LIVE_SUPABASE,'Search requests and follow writes use inte
 const other='20000000-0000-4000-8000-000000000002';
 function person(){return {id:other,display_name:'Needle 开发者',handle:'needle',bio:'开源与人工智能',created_at:'2025-01-01T00:00:00Z',disabled:false,profile_completed_at:'2025-01-01T00:00:00Z',avatar_key:null};}
 
+test('submitting a new query then immediately changing type keeps the submitted query',async({page})=>{
+ const state=await fixture(page);state.users.push(person());state.articles.push(story(articleId,'新的搜索内容'));
+ await page.goto('/zh-CN/search/?q=needle&type=user');await expect(page.locator('.search-person')).toHaveCount(1);
+ await page.route(/\/search\/\?.*_rsc=/,async route=>{await new Promise(r=>setTimeout(r,500));await route.continue();});
+ const input=page.locator('.global-search-form input');await input.fill('新的搜索内容');await input.press('Enter');await page.locator('.search-types').getByRole('button',{name:'帖子',exact:true}).click();
+ await expect(page.locator('.post-excerpt')).toHaveText('新的搜索内容');expect(new URL(page.url()).searchParams.get('q')).toBe('新的搜索内容');await expect(input).toHaveValue('新的搜索内容');
+});
+
 test('username suggestions support keyboard navigation and do not submit during IME composition',async({page})=>{
  const state=await fixture(page);state.users.push(person());await page.goto('/zh-CN/search/');const input=page.getByRole('combobox',{name:'搜索帖子、新闻、用户和回复'});
  await input.focus();await input.dispatchEvent('compositionstart');await input.fill('@needle');await input.press('Enter');await page.waitForTimeout(350);expect(state.searches).toHaveLength(0);await expect(page).not.toHaveURL(/q=/);

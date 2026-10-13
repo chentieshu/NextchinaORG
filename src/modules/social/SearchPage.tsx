@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import {Suspense,useEffect,useRef,useState} from 'react';
+import {Suspense,useEffect,useRef,useState,useTransition} from 'react';
 import {useSearchParams,useRouter} from 'next/navigation';
 import {FiSearch,FiX,FiClock,FiArrowUpLeft} from 'react-icons/fi';
 import {useApp} from '@/components/Provider';
@@ -18,22 +18,23 @@ function Search(){
  const{db,locale,t,user,authStatus}=useApp(),c=shellCopy[locale],copy=searchCopy[locale],params=useSearchParams(),router=useRouter();
  const q=cleanSearch(params.get('q')??''),kind=searchKinds.find(k=>k===params.get('type'))??'all',sort=params.get('sort')==='latest'?'latest':'relevant',following=!!user&&params.get('scope')==='following';
  const owner=user?.id??'guest',[history,setHistory]=useState<{owner:string;items:string[]}>({owner:'',items:[]});
+ const[navigating,startNavigation]=useTransition();
  const results=useSearchResults({query:q,kind,sort,following});
  useEffect(()=>{if(authStatus==='loading')return;setHistory({owner,items:readSearchHistory(owner)});},[owner,authStatus]);
  function saveHistory(items:string[]){setHistory({owner,items});writeSearchHistory(owner,items);}
  function navigate(query:string,next:{kind?:SearchKind;sort?:string;following?:boolean}={}){
   const value=cleanSearch(query),p=new URLSearchParams(),nextKind=next.kind??kind,nextSort=next.sort??sort,nextFollowing=next.following??following;
   if(value)p.set('q',value);if(nextKind!=='all')p.set('type',nextKind);if(nextSort!=='relevant')p.set('sort',nextSort);if(nextFollowing)p.set('scope','following');
-  router.push(`/${locale}/search/${p.size?'?'+p:''}`,{scroll:false});
+  startNavigation(()=>router.push(`/${locale}/search/${p.size?'?'+p:''}`,{scroll:false}));
  }
  function submit(value:string){const query=cleanSearch(value);if(query&&authStatus!=='loading')saveHistory([query,...readSearchHistory(owner).filter(v=>v.toLocaleLowerCase()!==query.toLocaleLowerCase())].slice(0,8));navigate(query);}
  const labels={all:c.all,post:c.post,user:c.people,media:copy.media,news:t.news,reply:c.replies},recent=history.owner===owner?history.items:[];
  return <main id="main" className="search-page">
   <h1 className="sr-only">{c.search}</h1>
-  <div className="search-header"><SearchInput key={owner} query={q} submit={submit}/><div className="search-types" role="group" aria-label={c.search}>{searchKinds.map(k=><button key={k} aria-pressed={kind===k} onClick={()=>navigate(q,{kind:k})}>{labels[k]}</button>)}</div></div>
+  <div className="search-header"><SearchInput key={owner} query={q} submit={submit}/><div className="search-types" role="group" aria-label={c.search}>{searchKinds.map(k=><button key={k} disabled={navigating} aria-pressed={kind===k} onClick={()=>navigate(q,{kind:k})}>{labels[k]}</button>)}</div></div>
   {q&&<div className="search-filters">
-   <label><span className="sr-only">{copy.sort}</span><select aria-label={copy.sort} value={sort} onChange={e=>navigate(q,{sort:e.target.value})}><option value="relevant">{copy.relevant}</option><option value="latest">{c.newest}</option></select></label>
-   {user&&<label><span className="sr-only">{copy.scope}</span><select aria-label={copy.scope} value={following?'following':'all'} onChange={e=>navigate(q,{following:e.target.value==='following'})}><option value="all">{copy.everyone}</option><option value="following">{copy.following}</option></select></label>}
+   <label><span className="sr-only">{copy.sort}</span><select aria-label={copy.sort} disabled={navigating} value={sort} onChange={e=>navigate(q,{sort:e.target.value})}><option value="relevant">{copy.relevant}</option><option value="latest">{c.newest}</option></select></label>
+   {user&&<label><span className="sr-only">{copy.scope}</span><select aria-label={copy.scope} disabled={navigating} value={following?'following':'all'} onChange={e=>navigate(q,{following:e.target.value==='following'})}><option value="all">{copy.everyone}</option><option value="following">{copy.following}</option></select></label>}
   </div>}
   {!q?<section className="search-history" aria-label={copy.recent}>
    <div className="search-history-heading"><h2>{copy.recent}</h2>{recent.length>0&&<button className="text-link" onClick={()=>saveHistory([])}>{copy.clearAll}</button>}</div>
