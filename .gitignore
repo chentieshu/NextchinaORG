@@ -9,3 +9,6 @@ test-results/
 playwright-report/
 *.tsbuildinfo
 supabase/templates/backups/
+.wrangler/
+workers/media/worker-configuration.d.ts
+media-dist/

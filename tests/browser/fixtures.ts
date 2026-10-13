@@ -2,7 +2,7 @@ import type {Page} from '@playwright/test';
 export const member='20000000-0000-4000-8000-000000000001',articleId='20000000-0000-4000-8000-000000000010';
 export function story(id=articleId,title='一个公开帖子',extra:Record<string,any>={}){const now=new Date().toISOString();return {id,content_type:'post',author_id:member,author_name:'Test writer',category:'ai',status:'published',translations:{'zh-CN':{title,summary:'一起分享观点。',body:'这是正文。'}},original_locale:'zh-CN',cover_style:0,created_at:now,updated_at:now,published_at:now,featured:false,locked:false,moderated:false,...extra};}
 export async function fixture(page:Page,role='member'){
- const state={articles:[] as Record<string,any>[],writes:[] as Record<string,any>[],comments:[] as Record<string,any>[],feeds:[] as Record<string,any>[],likes:[] as {article_id:string}[],bookmarks:[] as {article_id:string}[],settings:{id:true,notice:'',comments_enabled:true,ugc_enabled:true},profileFailures:0,profileDelay:0,queryDelay:0,conflict:false};
+ const state={articles:[] as Record<string,any>[],writes:[] as Record<string,any>[],comments:[] as Record<string,any>[],feeds:[] as Record<string,any>[],likes:[] as {article_id:string}[],bookmarks:[] as {article_id:string}[],profile:{id:member,display_name:'Test writer',role,disabled:false,created_at:new Date().toISOString(),updated_at:new Date().toISOString(),avatar_key:null as string|null,avatar_source:'none'},settings:{id:true,notice:'',comments_enabled:true,ugc_enabled:true},profileFailures:0,profileDelay:0,queryDelay:0,conflict:false};
  const user={id:member,email:'fixture@example.test',aud:'authenticated',role:'authenticated',app_metadata:{provider:'email'},user_metadata:{},created_at:new Date().toISOString()};
  await page.addInitScript(({user})=>{const token=btoa(JSON.stringify({alg:'HS256',typ:'JWT'}))+'.'+btoa(JSON.stringify({sub:user.id,role:'authenticated',exp:Math.floor(Date.now()/1000)+3600}))+'.mock';localStorage.setItem('sb-cznhnupwojmydttdattb-auth-token',JSON.stringify({access_token:token,refresh_token:'mock-refresh',token_type:'bearer',expires_at:Math.floor(Date.now()/1000)+3600,expires_in:3600,user}));},{user});
  let clock=Date.now();
@@ -13,7 +13,8 @@ export async function fixture(page:Page,role='member'){
   function conflict(){return route.fulfill({status:406,json:{code:'PGRST116',message:'No matching record'}});}
   if(resource==='user')data=user;
   if(resource==='logout')data={};
-  if(resource==='omni_profiles'){if(state.profileDelay)await new Promise(r=>setTimeout(r,state.profileDelay));if(state.profileFailures-->0)return route.fulfill({status:400,json:{message:'Account unavailable'}});data={id:member,display_name:'Test writer',role,disabled:false,created_at:user.created_at};if(!single)data=[data];}
+  if(resource==='omni_profiles'){if(state.profileDelay)await new Promise(r=>setTimeout(r,state.profileDelay));if(state.profileFailures-->0)return route.fulfill({status:400,json:{message:'Account unavailable'}});data=state.profile;if(!single)data=[data];}
+  if(resource==='omni_public_profiles')data=[{id:member,display_name:state.profile.display_name,avatar_key:state.profile.avatar_key}];
   if(resource==='omni_settings'){if(method==='PATCH')Object.assign(state.settings,request.postDataJSON());data=state.settings;}
   if(resource==='omni_likes'||resource==='omni_bookmarks'){const rows=resource==='omni_likes'?state.likes:state.bookmarks;if(method==='POST')rows.push(request.postDataJSON());if(method==='DELETE'){const id=url.searchParams.get('article_id')?.slice(3),index=rows.findIndex(r=>r.article_id===id);if(index>=0)rows.splice(index,1);}data=rows;}
   if(resource==='omni_content_feed'){

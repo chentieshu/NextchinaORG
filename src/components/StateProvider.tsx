@@ -5,6 +5,7 @@ import {getSupabase} from '@/lib/supabase';
 import {dictionaries,type Locale} from '@/lib/i18n';
 import {experienceCopy} from '@/lib/experience-copy';
 import type {Article,Profile,SiteSettings} from '@/lib/types';
+import {saveProfile} from '@/lib/media';
 type AuthStatus='loading'|'ready'|'error';
 function useAppState(locale:Locale){
  const t=dictionaries[locale],copy=experienceCopy[locale],db=getSupabase(),demo=!db;
@@ -14,6 +15,14 @@ function useAppState(locale:Locale){
  const [settings,setSettings]=useState<SiteSettings>({id:true,notice:'',comments_enabled:true,ugc_enabled:true});
  const mounted=useRef(false),profileReady=useRef(false),currentUser=useRef<string|null>(null),authRequest=useRef(0),refreshRequest=useRef(0),authController=useRef<AbortController|null>(null),contentController=useRef<AbortController|null>(null),mutations=useRef(new Set<string>());
  const notify=useCallback((message:string)=>setToast(message),[]);
+ const avatarAttempts=useRef(new Set<string>());
+ const applyProfile=useCallback((fresh:Profile,actor:string)=>{if(!mounted.current||currentUser.current!==actor||fresh.id!==actor)return;setProfile(old=>old?{...old,...fresh}:fresh);setArticles(old=>old.map(a=>a.author_id===actor?{...a,author_name:fresh.display_name,author_avatar_key:fresh.avatar_key}:a));setContentVersion(v=>v+1);},[]);
+ useEffect(()=>{if(!user||authStatus!=='ready'||!profile||profile.disabled||profile.avatar_key||profile.avatar_source!=='provider'||!profile.updated_at||avatarAttempts.current.has(user.id))return;
+  if(!user.identities?.some(i=>['google','github','x','twitter'].includes(i.provider)))return;
+  const actor=user.id;avatarAttempts.current.add(actor);
+  // Provider photos are copied once into R2. Custom or removed photos are never overwritten at login.
+  void saveProfile({display_name:profile.display_name,mode:'provider',expected_updated_at:profile.updated_at,automatic:true}).then(fresh=>applyProfile(fresh,actor)).catch(()=>{/* A failed provider import keeps the initials fallback; manual retry remains available. */});
+ },[user,profile,authStatus,applyProfile]);
  const rememberArticles=useCallback((incoming:Article[])=>setArticles(old=>{const map=new Map(old.map(a=>[a.id,a]));incoming.forEach(a=>map.set(a.id,{...a,translations:Object.fromEntries(Object.entries(a.translations).map(([language,value])=>[language,{title:value?.title??'',summary:value?.summary??'',body:''}]))}));return [...map.values()].slice(-200);}),[]);
  const refresh=useCallback(async()=>{
   setContentVersion(v=>v+1);if(!db)return;
@@ -53,7 +62,7 @@ function useAppState(locale:Locale){
   }catch{if(currentUser.current===actor)notify(t.error);}finally{mutations.current.delete(key);}
  }
  async function logout(){if(!db)return;setAuthStatus('loading');const{error}=await db.auth.signOut();if(error){setAuthStatus('error');notify(t.error);}else{await sync(null);setAuthOpen(false);void refresh();}}
- return{locale,t,db,demo,user,profile,authStatus,retryAuth,online,articles,rememberArticles,contentVersion,loading,loadError,liked,bookmarked,authOpen,setAuthOpen,toast,notify,toggle,logout,settings,refresh};
+ return{locale,t,db,demo,user,profile,applyProfile,authStatus,retryAuth,online,articles,rememberArticles,contentVersion,loading,loadError,liked,bookmarked,authOpen,setAuthOpen,toast,notify,toggle,logout,settings,refresh};
 }
 type App=ReturnType<typeof useAppState>;const Context=createContext<App|null>(null);
 export function Provider({locale,children}:{locale:Locale;children:ReactNode}){const value=useAppState(locale);return <Context.Provider value={value}>{children}{value.toast&&<div className="toast" role="status">{value.toast}</div>}</Context.Provider>;}

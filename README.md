@@ -8,6 +8,8 @@
 
 Google 品牌审核的修复说明及准确填写值见 [品牌验证指南](docs/google-brand-verification.md)。
 
+用户可从头像菜单编辑显示名，上传、裁剪、旋转、缩放或移除头像，也可恢复第三方登录头像。Google / GitHub / X 头像与编辑器配图统一存储于 Cloudflare R2；资料、存储服务和部署说明见 [头像与媒体](docs/profile-and-media.md)。
+
 ## 本地运行
 
 ```sh
@@ -48,7 +50,7 @@ UI 文案具有五种语言版本，不包含占位文章。真实文章按语�
 
 目标项目：`cznhnupwojmydttdattb`。
 
-1. 按顺序应用 `supabase/migrations/` 内的迁移。目标项目已通过 Supabase 插件执行六个迁移；文件版本与远端迁移记录一致，不要重复执行。它们创建 `omni_` 前缀的表、RLS、受控 RPC、注册触发器、评论节流、审计日志和首次管理员预约。内部提权函数位于不对 API 暴露的 `omni_private` schema；公开入口使用显式授权的 invoker 函数。
+1. 按顺序应用 `supabase/migrations/` 内的迁移。目标项目的已执行版本可在 Supabase migration history 中核对，不要重复执行。它们创建 `omni_` 前缀的表、RLS、受控 RPC、注册触发器、评论节流、审计日志、头像配额及首次管理员预约。内部提权函数位于不对 API 暴露的 `omni_private` schema；公开入口使用显式授权的 invoker 函数。
 2. 将项目 URL 与 **Publishable key 或 legacy anon key** 设置为 `NEXT_PUBLIC_SUPABASE_URL` 和 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`。它们用于浏览器；绝对不要填入 `service_role`、数据库密码或 OAuth client secret。
 3. Supabase Authentication 设置 Site URL 为正式站点源地址；Redirect URLs 添加五个语言的完整回调地址，例如 `https://nextchina.org/zh-CN/auth/callback/`。其他部署域名和本地地址也需逐个加入允许列表。
 4. 在 Providers 中启用 Google、GitHub、**X OAuth 2.0（provider: x）** 和 Email。分别在服务商控制台配置 OAuth 应用，把 client ID / secret 放入 Supabase 提供商设置。提供商回调为 `https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback`。

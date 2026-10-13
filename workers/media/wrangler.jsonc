@@ -1,0 +1,17 @@
+{
+  "name": "nextchina-media",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-13",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "observability": {"enabled": true},
+  "r2_buckets": [{"binding": "MEDIA", "bucket_name": "nextchina-media"}],
+  "ratelimits": [{"name": "UPLOAD_LIMITER", "namespace_id": "1001", "simple": {"limit": 20, "period": 60}}],
+  "vars": {
+    "SUPABASE_URL": "https://cznhnupwojmydttdattb.supabase.co",
+    "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_S64GsjK-R_CGycTdquKVxw_17Y13ZlL",
+    "MEDIA_ORIGIN": "https://media.nextchina.org",
+    "ALLOWED_ORIGINS": "https://nextchina.org,https://www.nextchina.org,https://omniremix.pages.dev,https://omniremix.chentieshu520.chatgpt.site"
+  },
+  "routes": [{"pattern": "media.nextchina.org", "custom_domain": true}]
+}
