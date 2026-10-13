@@ -1,9 +1,9 @@
-NextChina.org
+ChinaTeam
 你的账户电话已更改
 Your phone number was changed
 
-你的 NextChina.org 账户电话号码已更改，请核对此次变更。
-The phone number for your NextChina.org account was changed. Review this change below.
+你的 ChinaTeam 账户电话号码已更改，请核对此次变更。
+The phone number for your ChinaTeam account was changed. Review this change below.
 
 原号码 / Previous number: {{ .OldPhone }}
 新号码 / New number: {{ .Phone }}

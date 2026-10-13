@@ -33,7 +33,7 @@ test('every email uses only variables supported for its event and remains below 
     assert.ok(!/<script|<form|<iframe|<svg|<img|@import|display:\s*(flex|grid)/i.test(html),name);
     for(const table of html.matchAll(/<table\b[^>]*>/g))assert.ok(table[0].includes('role="presentation"'),name);
     const subject=await read(name+'.subject.txt');
-    assert.ok(subject.startsWith('NextChina.org'),name);
+    assert.ok(subject.startsWith('ChinaTeam'),name);
     assert.ok(!subject.includes('{{'),`${name}: no token or personal information in subject`);
     assert.ok(html.includes('mailto:chentieshu520@gmail.com'),name);
   }
@@ -67,9 +67,9 @@ test('management payload contains only 13 email pairs and seven enabled security
   Object.keys(config).forEach(key=>assert.match(key,/^mailer_(?:subjects_\w+|templates_\w+_content|notifications_\w+_enabled)$/));
 });
 
-test('offline preview is self contained, clearly marks unsaved state, and substitutes only example data',async()=>{
+test('offline preview is self contained, clearly states that preview does not save settings, and substitutes only example data',async()=>{
   const html=await read('preview.html');
-  assert.ok(html.includes('尚未保存到 Supabase'));
+  assert.ok(html.includes('模板修改需单独保存到 Supabase'));
   assert.ok(html.includes('sandbox=""'));
   const embedded=JSON.parse(html.match(/<script type="application\/json" id="templates">([\s\S]*?)<\/script>/)[1]);
   assert.equal(embedded.length,13);

@@ -37,6 +37,6 @@ test('login settings failures can be retried',async({page})=>{
  await page.route('**/auth/v1/settings',route=>{attempts++;return attempts===1?route.fulfill({status:503,body:'Unavailable'}):route.fulfill({json:{external:{email:true}}});});
  await page.goto('/zh-CN/');await page.getByRole('button',{name:'登录 / 加入'}).click();
  await expect(page.getByText('暂时无法获取登录方式，请重试。')).toBeVisible();
- await page.getByRole('button',{name:'重试',exact:true}).click();
+ await page.getByRole('dialog').getByRole('button',{name:'重试',exact:true}).click();
  await expect(page.getByRole('button',{name:'使用邮箱继续',exact:true})).toBeEnabled();
 });

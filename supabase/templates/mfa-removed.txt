@@ -1,9 +1,9 @@
-NextChina.org
+ChinaTeam
 多因素验证方式已移除
 A verification method was removed
 
-以下多因素身份验证（MFA）方式已从你的 NextChina.org 账户中移除。
-This multi-factor authentication (MFA) method was removed from your NextChina.org account.
+以下多因素身份验证（MFA）方式已从你的 ChinaTeam 账户中移除。
+This multi-factor authentication (MFA) method was removed from your ChinaTeam account.
 
 验证类型 / Verification type: {{ .FactorType }}
 

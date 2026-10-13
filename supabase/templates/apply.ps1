@@ -21,7 +21,7 @@ foreach ($key in $expectedKeys) {
     } elseif ([string]::IsNullOrWhiteSpace($desired[$key])) { throw "Empty email field: $key" }
 }
 
-Write-Host 'Target: NextChina.org / Supabase project cznhnupwojmydttdattb'
+Write-Host 'Target: ChinaTeam / Supabase project cznhnupwojmydttdattb'
 Write-Host 'Scope: 13 email subjects and HTML bodies; enable 7 security notifications.'
 Write-Host 'SMTP, redirects, providers, accounts, and website features are not changed.'
 if (-not $Apply -and -not $VerifyOnly) {

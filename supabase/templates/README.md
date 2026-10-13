@@ -1,8 +1,8 @@
-# NextChina.org · Supabase 邮件模板
+# ChinaTeam · Supabase 邮件模板
 
-更新：2026-10-12。包含截图中的全部 **6 封验证邮件 + 7 封安全通知**。模板为简体中文 / English 双语，使用独立主题、Supabase 原生变量、邮件客户端兼容的表格与内联样式。没有广告、外部字体、图片追踪或依赖图片的按钮。
+更新：2026-10-14。包含截图中的全部 **6 封验证邮件 + 7 封安全通知**。模板为简体中文 / English 双语，使用独立主题、Supabase 原生变量、邮件客户端兼容的表格与内联样式。没有广告、外部字体、图片追踪或依赖图片的按钮。
 
-**当前交付状态：模板文件已准备；尚未写入 Supabase 托管项目，SMTP 是否保存尚未确认。** 发布网站或提交这些文件不会更新 Supabase Auth。当前连接的 Supabase 插件不提供 Auth 邮件配置读写接口。
+**当前项目状态：ChinaTeam 发件人、13 类主题/正文与 7 项安全通知已保存至 Supabase，并通过 CLI 回读确认一致。原 SMTP 密钥保留；本次未发送真实邮件。** 发布网站或提交这些文件不会更新 Supabase Auth。当前连接的 Supabase 插件不提供 Auth 邮件配置读写接口。
 
 ## 最方便：打开可视化配置页
 
@@ -22,7 +22,7 @@
 | 魔法链接或一次性密码 | `magic-link.html` | 保存；当前网站使用链接模式 |
 | 更改电子邮件地址 | `change-email.html` | 保存；配合邮箱变更功能 |
 | 重置密码 | `reset-password.html` | 预备；网站尚无设置新密码页面 |
-| 重新认证 | `reauthentication.html` | 预备；网站尚无该验证码输入界面 |
+| 重新认证 | `reauthentication.html` | 设置中修改密码时使用 |
 | 密码已更改 | `password-changed.html` | 保存并开启通知 |
 | 电子邮件地址已更改 | `email-changed.html` | 保存并开启通知 |
 | 电话号码已更改 | `phone-changed.html` | 保存并开启通知 |
@@ -64,7 +64,7 @@
 
 | 字段 | 内容 |
 | --- | --- |
-| Sender name | `NextChina.org` |
+| Sender name | `ChinaTeam` |
 | Sender email | `login@mail.nextchina.org` |
 | Host | `smtp.resend.com` |
 | Port | `465` |
@@ -93,7 +93,7 @@ Resend `mail.nextchina.org` 本次检查为 verified / sending enabled；打开�
 2. 新邮箱注册应使用 Confirm signup，已有邮箱使用 Magic link。真实收件后查看 Resend 邮件日志与 Supabase Auth 日志，确认投递成功。
 3. 安全通知只在实际发生对应操作后验证。不要为了测试去移除唯一登录方式、删除 MFA 或修改真实用户账户。
 4. 本包没有发送真实邮件，也没有验证 Gmail / Outlook 等真实邮件客户端的完整渲染；本地浏览器预览仅核对布局、文案、变量和链接。
-5. 重置密码、邀请、重新认证、电话和 MFA 等未来功能，必须先补齐前端界面与流程测试再对用户开放。保存对应模板不会自动完成这些功能。
+5. 密码恢复、重新认证与验证器 MFA 已提供界面和模拟流程测试；邀请与电话管理尚无前端。保存邮件模板不会新增对应产品功能。
 
 维护：修改 `scripts/build-auth-emails.mjs` 后运行 `npm run emails:build`，再重新保存到 Supabase。
 

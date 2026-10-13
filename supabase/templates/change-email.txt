@@ -1,9 +1,9 @@
-NextChina.org
+ChinaTeam
 确认更换账户邮箱
 Confirm your email change
 
-我们收到了更换 NextChina.org 账户邮箱的请求。请核对下方新邮箱，确认是你本人操作后再继续。
-We received a request to change your NextChina.org account email. Check the new address below and continue only if you requested this change.
+我们收到了更换 ChinaTeam 账户邮箱的请求。请核对下方新邮箱，确认是你本人操作后再继续。
+We received a request to change your ChinaTeam account email. Check the new address below and continue only if you requested this change.
 
 新的邮箱 / New email: {{ .NewEmail }}
 确认变更 · Confirm change

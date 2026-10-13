@@ -18,7 +18,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| App name | `NextChina.org`，与网站完全一致；不要继续使用 `NextCHINA` |
+| App name | `ChinaTeam`，与网站完全一致；不要继续使用 `NextCHINA` |
 | User support email | `chentieshu520@gmail.com` |
 | App home page | `https://nextchina.org/` |
 | Privacy policy | `https://nextchina.org/zh-CN/privacy/` |

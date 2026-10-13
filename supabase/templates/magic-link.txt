@@ -1,9 +1,9 @@
-NextChina.org
-登录 NextChina.org
+ChinaTeam
+登录 ChinaTeam
 Your sign-in link
 
-我们收到了你的登录请求。点击下方按钮，即可登录 NextChina.org。无需在邮件中输入密码。
-We received your sign-in request. Use the button below to sign in to NextChina.org. You do not need to enter a password in this email.
+我们收到了你的登录请求。点击下方按钮，即可登录 ChinaTeam。无需在邮件中输入密码。
+We received your sign-in request. Use the button below to sign in to ChinaTeam. You do not need to enter a password in this email.
 
 登录账户 · Sign in
 {{ .ConfirmationURL }}

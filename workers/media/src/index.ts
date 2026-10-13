@@ -1,5 +1,6 @@
 import {MediaError,imageType,providerImageUrl,readBounded} from './image';
 import {mediaInventory,measured} from './metrics';
+import {previewResponse} from './previews';
 type User={id:string;identities?:{provider:string;last_sign_in_at?:string;identity_data?:Record<string,unknown>}[]};
 type Profile={id:string;display_name:string;avatar_key:string|null;avatar_source:string;updated_at:string;disabled:boolean;role:string};
 type Asset={object_key:string};
@@ -38,6 +39,11 @@ async function handle(request:Request,env:Env,ctx:ExecutionContext):Promise<Resp
   return new Response(request.method==='HEAD'?null:file.body,{headers});
  }
  if(url.pathname==='/health'&&request.method==='GET')return Response.json({ok:true});
+ if(request.method==='GET'&&['/v1/link-preview','/v1/link-thumbnail'].includes(url.pathname)){
+  if(origin&&!allowed)throw new MediaError(403,'origin_not_allowed');
+  if(!(await env.PREVIEW_LIMITER.limit({key:request.headers.get('CF-Connecting-IP')??'unknown'})).success)throw new MediaError(429,'preview_limit');
+  return previewResponse(request,env,ctx);
+ }
  const monitor=request.method==='GET'&&url.pathname==='/v1/admin/metrics';
  if(!monitor&&(request.method!=='POST'||!['/v1/profile','/v1/images'].includes(url.pathname)))throw new MediaError(404,'not_found');
  if(!allowed)throw new MediaError(403,'origin_not_allowed');
@@ -47,6 +53,7 @@ async function handle(request:Request,env:Env,ctx:ExecutionContext):Promise<Resp
  if(!profile||profile.disabled)throw new MediaError(403,'account_disabled');
  if(monitor){
   if(profile.role!=='super_admin')throw new MediaError(403,'forbidden');
+  if(await api<string|null>(env,token,'/rest/v1/rpc/omni_account_role',{})!=='super_admin')throw new MediaError(403,'forbidden');
   if(!(await env.MONITOR_LIMITER.limit({key:user.id})).success)throw new MediaError(429,'monitor_limit');
   const [database,storage]=await Promise.all([measured(()=>api(env,token,'/rest/v1/rpc/omni_admin_metrics',{})),measured(()=>mediaInventory(env.MEDIA))]);
   return Response.json({sampled_at:new Date().toISOString(),worker:{status:'ok',version:'admin-metrics-v1'},database,storage});
@@ -84,7 +91,8 @@ export default {
   let response:Response;
   try{response=await handle(request,env,ctx);}catch(error){const known=error instanceof MediaError;if(!known)console.error('media_request_failed');response=Response.json({error:known?error.code:'upload_failed'},{status:known?error.status:500});}
   const origin=request.headers.get('Origin');if(origin&&env.ALLOWED_ORIGINS.split(',').includes(origin)){response.headers.set('Access-Control-Allow-Origin',origin);response.headers.set('Vary','Origin');}
-  if(new URL(request.url).pathname.startsWith('/v1/'))response.headers.set('Cache-Control','no-store');
+  const path=new URL(request.url).pathname;
+  if(path.startsWith('/v1/')&&!['/v1/link-preview','/v1/link-thumbnail'].includes(path))response.headers.set('Cache-Control','no-store');
   response.headers.set('X-Content-Type-Options','nosniff');return response;
  }
 } satisfies ExportedHandler<Env>;

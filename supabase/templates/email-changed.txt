@@ -1,9 +1,9 @@
-NextChina.org
+ChinaTeam
 你的账户邮箱已更改
 Your email address was changed
 
-你的 NextChina.org 账户邮箱已完成变更，请核对以下信息。
-The email address for your NextChina.org account was changed. Review the details below.
+你的 ChinaTeam 账户邮箱已完成变更，请核对以下信息。
+The email address for your ChinaTeam account was changed. Review the details below.
 
 原邮箱 / Previous email: {{ .OldEmail }}
 新邮箱 / New email: {{ .Email }}

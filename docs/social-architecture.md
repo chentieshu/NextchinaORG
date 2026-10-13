@@ -51,6 +51,14 @@ OAuth 回调只接受本站五语言路径，拒绝外站跳转。账号恢复�
 
 ## 设计依据
 
+- 2026-10-14：品牌统一为 ChinaTeam。转发是用户与原帖的唯一关联，引用是独立帖子、只展示一层原帖摘要；原帖下架或删除后显示不可用占位。普通成员不能引用或转发私密、未发布内容。
+- `omni_content_drafts` 独立保存已发布内容的修改，仅保存者可见。草稿与线上正文均做版本冲突检查，发布和草稿清理在同一事务完成。不同语言新闻独立发布，帖子保持单份原文。已发布内容的引用身份不可修改。
+- 界面语言、新闻筛选语言分开；全语言新闻按界面语言选择现有译文，否则明确使用原文。帖子不自动翻译。外部播放器默认点击后加载，可在阅读设置启用自动加载。
+- Cloudflare Worker 为 YouTube / Spotify 提供 oEmbed 元数据和代理缩略图，为 GitHub 公开仓库提供元数据与统计。固定上游主机、限制响应体和超时、拒绝任意 URL 抓取，缓存预览并设置独立限流；无法预览时保留原链接。X 使用官方嵌入，可能受原帖可见性及浏览器限制影响。
+- 验证器支持设置、验证和移除。对已绑定验证器的账号，数据库权限和 R2 管理监控都要求 `aal2`；未绑定的账号不强制启用。没有自助备用恢复码，丢失验证器须联系站点支持。
+- 焦点回归刷新同时更新回复正文与数量；互动继续使用原有共享状态，按账号隔离，重复操作串行，过期请求不能覆盖新状态。未增加另一套状态库，跨设备实时推送仍待后续实现。
+- [X：转发与引用](https://help.x.com/en/using-x/how-to-repost)、[X：对话](https://help.x.com/en/using-x/x-conversations)、[X：图片](https://help.x.com/en/using-x/posting-gifs-and-pictures)、[YouTube 播放参数](https://developers.google.com/youtube/player_parameters)、[GitHub 公开仓库 API](https://docs.github.com/en/rest/repos/repos#get-a-repository)。
+
 - [X：用户名与显示名称](https://help.x.com/en/managing-your-account/change-x-handle) —— 采用身份与显示名称分离的原则，保留本站已有字段约束。
 - [X：界面语言与内容语言](https://help.x.com/en/managing-your-account/how-to-change-language-settings) —— 帖子原文独立于界面语言；新闻译文是本站的编辑业务规则。
 - [Supabase：全文搜索](https://supabase.com/docs/guides/database/full-text-search) —— 后续检索索引升级参考；本次没有声称已启用全文检索。
