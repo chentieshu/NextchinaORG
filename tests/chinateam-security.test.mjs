@@ -1,9 +1,10 @@
+import {pg_trgm} from '@electric-sql/pglite/contrib/pg_trgm';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile,readdir} from 'node:fs/promises';
 import {PGlite} from '@electric-sql/pglite';
 test('reposts, quotes, independent drafts and MFA preserve authority and public visibility',async()=>{
- const db=new PGlite();try{
+ const db=new PGlite({extensions:{pg_trgm}});try{
   await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb default '{}');create table auth.mfa_factors(id uuid,user_id uuid,status text);create table auth.identities(id uuid default gen_random_uuid(),user_id uuid references auth.users(id),provider text,provider_id text,identity_data jsonb default '{}');create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth,public to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;`);
   for(const file of (await readdir('supabase/migrations')).filter(f=>f.endsWith('.sql')).sort())await db.exec(await readFile('supabase/migrations/'+file,'utf8'));
   const a='90000000-0000-4000-8000-000000000001',b='90000000-0000-4000-8000-000000000002',admin='90000000-0000-4000-8000-000000000003';
