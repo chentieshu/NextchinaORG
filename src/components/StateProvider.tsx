@@ -46,7 +46,7 @@ function useAppState(locale:Locale){
  },[db]);
  const retryAuth=useCallback(async()=>{if(!db)return;if(!profileReady.current)setAuthStatus('loading');try{const{data,error}=await db.auth.getSession();if(error)throw error;await sync(data.session?.user??null);}catch{if(mounted.current)setAuthStatus('error');}},[db,sync]);
  useEffect(()=>{mounted.current=true;let initial=true;
-  if(db){const{data:{subscription}}=db.auth.onAuthStateChange((_event,session)=>{initial=false;setTimeout(()=>{if(mounted.current)void sync(session?.user??null);},0);});db.auth.getSession().then(({data,error})=>{if(!initial||!mounted.current)return;if(error)setAuthStatus('error');else void sync(data.session?.user??null);});void refresh();return()=>{mounted.current=false;subscription.unsubscribe();authController.current?.abort();contentController.current?.abort();};}
+  if(db){const{data:{subscription}}=db.auth.onAuthStateChange((_event,session)=>{if(_event==='PASSWORD_RECOVERY'){try{sessionStorage.setItem('nextchina-auth-next','settings');}catch{}}initial=false;setTimeout(()=>{if(mounted.current)void sync(session?.user??null);},0);});db.auth.getSession().then(({data,error})=>{if(!initial||!mounted.current)return;if(error)setAuthStatus('error');else void sync(data.session?.user??null);});void refresh();return()=>{mounted.current=false;subscription.unsubscribe();authController.current?.abort();contentController.current?.abort();};}
   return()=>{mounted.current=false;};
  },[db,sync,refresh]);
  useEffect(()=>{document.documentElement.lang=locale;try{localStorage.setItem('omni-locale',locale);}catch{}},[locale]);

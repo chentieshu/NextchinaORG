@@ -10,6 +10,8 @@ Google 品牌审核的修复说明及准确填写值见 [品牌验证指南](doc
 
 用户可从头像菜单编辑显示名，上传、裁剪、旋转、缩放或移除头像，也可恢复第三方登录头像。Google / GitHub / X 头像与编辑器配图统一存储于 Cloudflare R2；资料、存储服务和部署说明见 [头像与媒体](docs/profile-and-media.md)。
 
+帖子现在不要求标题，支持最多四图、代码块和按需加载的外链内容；个人主页、关注、嵌套回复和账号安全设置共用原有身份与状态系统。具体用法、平台限制与调研依据见 [社交功能说明](docs/social-system.md)。
+
 ## 本地运行
 
 ```sh
@@ -36,6 +38,8 @@ npm run build
 - `/{locale}/news/` 新闻、筛选、搜索；`?id={article_uuid}` 阅读详情
 - `/{locale}/` 与 `/{locale}/community/` 顶部导航、论坛侧边栏与帖子列表；分类、搜索、排序、我的帖子保持 URL 状态，手机侧栏可收起；`community/?id={uuid}` 阅读帖子
 - `/{locale}/write/` 成员发帖、草稿与富文本编辑；管理员使用 `?kind=news` 撰写新闻
+- `/{locale}/profile/?id={user_uuid}` 公开个人主页、帖子、回复、媒体与关注关系
+- `/{locale}/settings/` 个人资料、账号安全、登录绑定与显示偏好
 - `/{locale}/bookmarks/` 私人收藏
 - `/` 完整公开首页，不依赖 JavaScript 跳转或登录
 - `/{locale}/about/` 组织理念、社区公约及政策入口
@@ -54,7 +58,7 @@ UI 文案具有五种语言版本，不包含占位文章。真实文章按语�
 2. 将项目 URL 与 **Publishable key 或 legacy anon key** 设置为 `NEXT_PUBLIC_SUPABASE_URL` 和 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`。它们用于浏览器；绝对不要填入 `service_role`、数据库密码或 OAuth client secret。
 3. Supabase Authentication 设置 Site URL 为正式站点源地址；Redirect URLs 添加五个语言的完整回调地址，例如 `https://nextchina.org/zh-CN/auth/callback/`。其他部署域名和本地地址也需逐个加入允许列表。
 4. 在 Providers 中启用 Google、GitHub、**X OAuth 2.0（provider: x）** 和 Email。分别在服务商控制台配置 OAuth 应用，把 client ID / secret 放入 Supabase 提供商设置。提供商回调为 `https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback`。
-5. 邮箱使用一次性登录链接。正式开放注册前配置自己的 SMTP，并检查 Supabase 的邮件发送限制；默认邮件服务不能替代正式 SMTP 配置。
+5. 邮箱支持一次性登录链接及密码登录、密码恢复。当前生产项目已使用 Resend SMTP；仍需实际收件验证送达。账号绑定已启用，正式站与 Sites 各五个精确回调已保存。新部署请检查 SMTP、邮件配额以及 `supabase/config.toml` 的声明配置。
 6. 当前项目已根据站长明确指定的邮箱，在不公开的 `omni_private.owner_claim` 中设置一次性预约。只有该准确邮箱通过 Supabase 验证后才能领取总管理员权限；用户元数据里的验证标记无效。领取后预约删除，其他注册者保持普通用户。新部署可由数据库管理者设置自己的预约邮箱，或在注册后按准确 UUID 授权，不要使用“第一个注册者自动成为管理员”的逻辑。
 
 ```sql
@@ -89,6 +93,7 @@ src/app/                 Next.js 页面与语言路由
 src/components/          共享布局、登录、全局状态
 src/modules/news/        新闻、阅读、收藏、评论
 src/modules/forum/       论坛首页、帖子列表与个人草稿
+src/modules/social/      公开个人主页、关注与账号设置
 src/modules/editor/      五语言富文本写作空间
 src/modules/admin/       帖子、新闻、评论、用户及全站管理
 src/modules/about/       组织介绍与规则
@@ -98,7 +103,9 @@ supabase/migrations/     可版本管理的数据库迁移
 tests/                   PostgreSQL 权限与浏览器交互验证
 ```
 
-论坛已开放，成员帖子与管理员新闻共用内容表，通过 `content_type` 和数据库权限区分。`ugc_enabled` 可由总管理员关闭；管理员仍可管理内容。锁定阻止成员编辑及新增评论，下架后作者不能自行恢复。`omni_submissions` 仍是未开放写入的独立预留审核表。新闻和论坛使用服务端筛选、搜索、排序及每页 20 条分页；收藏同样分页，后台和评论每页 50 条。列表只返回标题与摘要，不传输各语言正文及富文本。当前搜索匹配所有语言的标题与摘要，超大规模全文检索仍需要索引或独立服务。详见 [论坛与写作说明](docs/forum-upgrade.md)。
+论坛已开放，成员帖子与管理员新闻共用内容表，通过 `content_type` 和数据库权限区分。`ugc_enabled` 可由总管理员关闭；管理员仍可管理内容。锁定阻止成员编辑及新增评论，下架后作者不能自行恢复。`omni_submissions` 仍是未开放写入的独立预留审核表。新闻和论坛使用服务端筛选、搜索、排序及每页 20 条分页；收藏同样分页，后台和每层回复每页 30 条。列表返回正文摘录与轻量素材预览，不传输完整富文本。当前搜索匹配所有语言的标题、摘要与正文，超大规模全文检索仍需要索引或独立服务。详见 [论坛与写作说明](docs/forum-upgrade.md)。
+
+2026-10-13 社交迁移 `20261013052519` 已应用，原有 2 个账号、2 篇内容和 1 条评论保留。迁移插件及 TCP 连接失败后，通过官方 CLI 的 HTTPS 管理接口在同一事务内应用并记录版本；迁移历史与本地文件一致。
 
 ## 验证与边界
 

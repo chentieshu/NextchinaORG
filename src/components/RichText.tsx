@@ -1,6 +1,8 @@
 import type {ReactNode} from 'react';
 import type {RichNode,Translation} from '@/lib/types';
 import {normalizeDocument,safeContentUrl} from '@/lib/rich-content';
+import {ExternalContent} from './ExternalContent';
+import {CodeBlock} from './CodeBlock';
 export {safeContentUrl,plainDocument} from '@/lib/rich-content';
 function renderNode(node:RichNode,index:number,depth=0):ReactNode{
  if(!node||typeof node!=='object'||depth>20)return null;
@@ -26,7 +28,8 @@ function renderNode(node:RichNode,index:number,depth=0):ReactNode{
   case 'bulletList':return <ul key={index}>{children}</ul>;
   case 'orderedList':return <ol key={index}>{children}</ol>;
   case 'listItem':return <li key={index}>{children}</li>;
-  case 'codeBlock':return <pre key={index}><code>{children}</code></pre>;
+  case 'codeBlock':return <CodeBlock key={index} code={(node.content??[]).map(n=>n.text??'').join('')} language={typeof node.attrs?.language==='string'?node.attrs.language:undefined}/>;
+  case 'embed':return <ExternalContent key={index} url={String(node.attrs?.url??'')}/>;
   case 'hardBreak':return <br key={index}/>;
   case 'horizontalRule':return <hr key={index}/>;
   case 'image':{const src=safeContentUrl(node.attrs?.src);const alt=typeof node.attrs?.alt==='string'?node.attrs.alt:'';return src?<figure key={index}><img src={src} alt={alt} loading="lazy" referrerPolicy="no-referrer"/>{alt&&<figcaption>{alt}</figcaption>}</figure>:null;}

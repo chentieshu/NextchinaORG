@@ -1,0 +1,19 @@
+project_id = "nextchina"
+
+# The CLI pushes only these explicitly declared Auth properties.
+[auth]
+enable_manual_linking = true
+minimum_password_length = 12
+
+additional_redirect_urls = [
+  "https://nextchina.org/zh-CN/auth/callback/",
+  "https://nextchina.org/en/auth/callback/",
+  "https://nextchina.org/ja/auth/callback/",
+  "https://nextchina.org/es/auth/callback/",
+  "https://nextchina.org/zh-TW/auth/callback/",
+  "https://omniremix.chentieshu520.chatgpt.site/zh-CN/auth/callback/",
+  "https://omniremix.chentieshu520.chatgpt.site/en/auth/callback/",
+  "https://omniremix.chentieshu520.chatgpt.site/ja/auth/callback/",
+  "https://omniremix.chentieshu520.chatgpt.site/es/auth/callback/",
+  "https://omniremix.chentieshu520.chatgpt.site/zh-TW/auth/callback/",
+]

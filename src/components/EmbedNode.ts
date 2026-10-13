@@ -1,0 +1,3 @@
+import {Node,mergeAttributes} from '@tiptap/core';
+import {externalContent} from '@/lib/external-content';
+export const EmbedNode=Node.create({name:'embed',group:'block',atom:true,draggable:true,addAttributes(){return {url:{default:''}};},parseHTML(){return [{tag:'div[data-external-url]',getAttrs:node=>{const data=externalContent((node as HTMLElement).getAttribute('data-external-url'));return data?{url:data.url}:false;}}];},renderHTML({HTMLAttributes}){const data=externalContent(HTMLAttributes.url);return ['div',mergeAttributes({'data-external-url':data?.url??'','class':'editor-embed','contenteditable':'false'}),['span',{},data?.label??'Link'],['a',{href:data?.url??'#',target:'_blank',rel:'noopener noreferrer'},data?.url??'']];}});
