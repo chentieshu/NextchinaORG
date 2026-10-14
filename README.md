@@ -46,7 +46,7 @@ npm run build
 
 - `/zh-CN/` 简体中文（默认）、`/en/`、`/ja/`、`/es/`、`/zh-TW/`
 - `/{locale}/news/` 新闻、筛选、搜索；`?id={article_uuid}` 阅读详情
-- `/{locale}/` 与 `/{locale}/community/` 顶部导航、论坛侧边栏与帖子列表；分类、搜索、排序、我的帖子保持 URL 状态，手机侧栏可收起；`community/?id={uuid}` 阅读帖子
+- `/{locale}/` 与 `/{locale}/community/` 为列表论坛；桌面使用侧边栏，900px 及以下使用全宽内容与底部导航（首页、搜索、发帖、新闻、我的）。“我的”面板提供个人资料、收藏、设置、分类及按权限显示的管理入口。分类、排序、我的帖子保持 URL 状态；`community/?id={uuid}` 阅读帖子
 - `/{locale}/write/` 成员发帖、草稿与富文本编辑；管理员使用 `?kind=news` 撰写新闻
 - `/{locale}/profile/?id={user_uuid}` 公开个人主页、帖子、回复、媒体与关注关系
 - `/{locale}/settings/` 个人资料、账号安全、登录绑定与显示偏好
