@@ -19,14 +19,16 @@ export function PostComposer({document,onChange,disabled,onBusyChange}:{document
  const{locale,online}=useApp(),c=composerCopy[locale],p=profileCopy[locale];
  const [photos,setPhotos]=useState<Photo[]>(()=>savedPhotos(splitPostDocument(document).images)),[error,setError]=useState(''),[editing,setEditing]=useState<string|null>(null);
  const input=useRef<HTMLInputElement>(null),rows=useRef(photos),latest=useRef(document),callback=useRef({onChange,onBusyChange}),alive=useRef(true),running=useRef(false),requests=useRef(new Map<string,AbortController>()),urls=useRef(new Set<string>()),epoch=useRef(0),blocked=useRef(disabled||!online);
- const signature=JSON.stringify(splitPostDocument(document).images),expected=useRef(signature);
+ const signature=JSON.stringify(splitPostDocument(document).images),expected=useRef(signature),observed=useRef(signature),emitted=useRef(new Set<string>());
  latest.current=document;callback.current={onChange,onBusyChange};blocked.current=disabled||!online;
  const unresolved=photos.some(photo=>photo.status!=='ready');
  useEffect(()=>{onBusyChange(unresolved||!!editing);},[unresolved,editing,onBusyChange]);
  useEffect(()=>{alive.current=true;return()=>{alive.current=false;++epoch.current;requests.current.forEach(request=>request.abort());urls.current.forEach(url=>URL.revokeObjectURL(url));callback.current.onBusyChange(false);};},[]);
  // A restored or externally refreshed draft replaces this queue. Local changes use the same document.
- useEffect(()=>{if(signature===expected.current)return;expected.current=signature;++epoch.current;requests.current.forEach(request=>request.abort());const restored=savedPhotos(splitPostDocument(document).images);rows.current=restored;setPhotos(restored);setEditing(null);setError('');urls.current.forEach(url=>URL.revokeObjectURL(url));urls.current.clear();},[signature,document]);
- function emit(next:Photo[],body=latest.current){const doc=joinPostDocument(body,next.flatMap(photo=>photo.src?[{src:photo.src,alt:photo.alt}]:[]));expected.current=JSON.stringify(splitPostDocument(doc).images);latest.current=doc;callback.current.onChange(doc,documentText(doc));}
+ useEffect(()=>{if(signature===observed.current)return;observed.current=signature;if(signature===expected.current){emitted.current.clear();return;}if(emitted.current.has(signature)){emitted.current.delete(signature);return;}expected.current=signature;emitted.current.clear();++epoch.current;requests.current.forEach(request=>request.abort());const restored=savedPhotos(splitPostDocument(document).images);rows.current=restored;setPhotos(restored);setEditing(null);setError('');urls.current.forEach(url=>URL.revokeObjectURL(url));urls.current.clear();},[signature,document]);
+ // Parent renders can acknowledge an earlier upload while another upload has already completed.
+ // Such acknowledgements are not a draft restore and must not reset/cancel the live queue.
+ function emit(next:Photo[],body=latest.current){const doc=joinPostDocument(body,next.flatMap(photo=>photo.src?[{src:photo.src,alt:photo.alt}]:[]));expected.current=JSON.stringify(splitPostDocument(doc).images);if(expected.current!==observed.current)emitted.current.add(expected.current);if(emitted.current.size>64)emitted.current.delete(emitted.current.values().next().value!);latest.current=doc;callback.current.onChange(doc,documentText(doc));}
  function change(next:Photo[],persist=true){rows.current=next;setPhotos(next);callback.current.onBusyChange(next.some(photo=>photo.status!=='ready')||!!editing);if(persist)emit(next);}
  function release(photo:Photo){if(photo.preview&&urls.current.delete(photo.preview))URL.revokeObjectURL(photo.preview);}
  function preview(file:File){const url=URL.createObjectURL(file);urls.current.add(url);return url;}
