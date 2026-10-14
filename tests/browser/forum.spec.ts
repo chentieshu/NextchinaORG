@@ -6,7 +6,7 @@ test.skip(!process.env.LIVE_SUPABASE,'Requires the public Supabase URL; authenti
 test('shared editor restores member drafts, publishes rich posts and edits rich comments',async({page})=>{
  const state=await fixture(page);const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:390,height:844});await page.goto('/zh-CN/write/');
- await expect(page.getByRole('textbox',{name:'标题',exact:true})).toHaveCount(0);const editor=page.locator('.tiptap');await editor.fill('这是正文，我们一起讨论这个想法。');await editor.press('Control+a');await page.locator('.writing-toolbar').getByRole('button',{name:'粗体',exact:true}).click();
+ await expect(page.getByRole('textbox',{name:'标题',exact:true})).toHaveCount(0);const editor=page.locator('.tiptap');await editor.fill('这是正文，我们一起讨论这个想法。');await editor.press('Control+a');await page.locator('.post-format-options summary').click();await page.locator('.writing-toolbar').getByRole('button',{name:'粗体',exact:true}).click();
  await page.getByRole('button',{name:'预览',exact:true}).click();await expect(page.locator('.writing-preview strong')).toContainText('这是正文');await page.getByRole('button',{name:'继续编辑',exact:true}).click();await expect(page.locator('.draft-status')).toHaveText('已保存到此浏览器');
  page.once('dialog',d=>d.accept());await page.reload();await expect(page.locator('.tiptap strong')).toContainText('这是正文');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await page.getByRole('button',{name:'保存草稿',exact:true}).click();await expect(page).toHaveURL(new RegExp(`write/\\?id=${articleId}`));expect(state.writes[0].translations['zh-CN'].title).toBe('');await expect(page.locator('.tiptap strong')).toContainText('这是正文');

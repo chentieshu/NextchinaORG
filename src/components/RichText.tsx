@@ -3,6 +3,8 @@ import type {RichNode,Translation} from '@/lib/types';
 import {normalizeDocument,safeContentUrl} from '@/lib/rich-content';
 import {ExternalContent} from './ExternalContent';
 import {CodeBlock} from './CodeBlock';
+import {PostGallery} from './PostGallery';
+import {splitPostDocument} from '@/lib/post-document';
 export {safeContentUrl,plainDocument} from '@/lib/rich-content';
 function renderNode(node:RichNode,index:number,depth=0):ReactNode{
  if(!node||typeof node!=='object'||depth>20)return null;
@@ -36,4 +38,4 @@ function renderNode(node:RichNode,index:number,depth=0):ReactNode{
   default:return null;
  }
 }
-export function RichText({text,compact=false}:{text:Pick<Translation,'body'|'document'>;compact?:boolean}){return <div className={`rich-prose ${compact?'compact-prose':''}`}>{renderNode(normalizeDocument(text.document,text.body,compact),0)}</div>;}
+export function RichText({text,compact=false,gallery=false}:{text:Pick<Translation,'body'|'document'>;compact?:boolean;gallery?:boolean}){const doc=normalizeDocument(text.document,text.body,compact),parts=gallery?splitPostDocument(doc):null;return <div className={`rich-prose ${compact?'compact-prose':''}`}>{renderNode(parts?.body??doc,0)}{parts&&<PostGallery images={parts.images}/>}</div>;}

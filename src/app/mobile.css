@@ -12,6 +12,7 @@
  .mobile-nav>a[aria-current=page],.mobile-nav>.is-current,.mobile-nav>button[aria-expanded=true]{color:var(--fg);font-weight:650}
  .mobile-nav>a[aria-current=page] svg{stroke-width:2.4}
  .mobile-nav>.mobile-compose{min-height:44px;width:48px;justify-self:center;border-radius:16px;background:var(--fg);color:var(--bg)}
+ .mobile-nav>.mobile-compose[aria-current=page]{color:var(--bg)}
  .mobile-nav>.mobile-compose:disabled{opacity:.4;cursor:not-allowed}
  .mobile-nav>a:hover,.mobile-nav>button:not(.mobile-compose):hover{background:var(--soft)}
  .mobile-nav>.mobile-compose:hover{opacity:.85}
