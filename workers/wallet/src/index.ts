@@ -10,7 +10,10 @@ async function limitedJson(input:Request|Response,limit=2000000):Promise<unknown
 }
 async function rpc<T>(env:Env,name:string,body:unknown,authorization?:string):Promise<T>{
  const response=await fetch(`${env.SUPABASE_URL}/rest/v1/rpc/${name}`,{method:'POST',redirect:'error',headers:{apikey:env.SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json',...(authorization?{Authorization:authorization}:{'x-wallet-gateway-key':env.WALLET_GATEWAY_KEY})},body:JSON.stringify(body),signal:AbortSignal.timeout(10000)});
- if(!response.ok){await response.body?.cancel();throw Error(authorization?'authorization_or_request_failed':'ledger_unavailable');}return await limitedJson(response) as T;
+ if(!response.ok){await response.body?.cancel();throw Error(authorization?'authorization_or_request_failed':'ledger_unavailable');}
+ // PostgREST returns 204 for SQL functions declared RETURNS void.
+ if(response.status===204)return null as T;
+ return await limitedJson(response) as T;
 }
 async function tron(env:Env,path:string,body?:unknown){
  const response=await fetch(TRON_ORIGIN+path,{method:body?'POST':'GET',redirect:'error',headers:{'TRON-PRO-API-KEY':env.TRONGRID_API_KEY,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(10000)});

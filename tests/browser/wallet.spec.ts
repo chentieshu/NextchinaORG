@@ -37,3 +37,14 @@ test('failed wallet reads show errors, and only the owner sees the financial que
  await page.goto('/zh-CN/admin/');await page.getByRole('button',{name:'钱包管理',exact:true}).click();await expect(page.locator('.wallet-admin')).toContainText('账本借贷平衡');await expect(page.locator('.wallet-withdrawals')).toContainText('9.90 USDT');for(const width of [320,390,1440]){await page.setViewportSize({width,height:900});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
  page.once('dialog',d=>d.accept());await page.getByRole('button',{name:'拒绝并解冻'}).click();await expect(page.locator('.wallet-withdrawals li')).toHaveCount(0);
 });
+
+test('deposit shows only the allocated address and payout verification preserves uncertain transactions',async({page})=>{
+ const{wallet,requests}=await walletFixture(page,'super_admin');wallet.deposits_enabled=true;
+ await page.goto('/zh-CN/wallet/');await page.getByRole('button',{name:'充值 USDT',exact:true}).click();
+ await expect(page.getByRole('dialog')).toContainText('TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7');await expect(page.getByRole('dialog')).not.toContainText('TPxCJN86sfZPPE6M4PMAgDuTruT9fPPB3Z');
+ requests.push({id:'20000000-0000-4000-8000-000000000077',user_id:'20000000-0000-4000-8000-000000000002',display_name:'Another writer',handle:'another_writer',units:'1000000',fee_units:'10000',destination:'TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7',status:'processing',created_at:new Date().toISOString(),tx_hash:null});
+ const calls:Record<string,any>[]=[];await page.route('https://wallet.chinateam.org/v1/payout/verify',async route=>{if(route.request().method()==='OPTIONS')return route.fulfill({status:204,headers:{'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'Authorization,Content-Type','Access-Control-Allow-Methods':'POST,OPTIONS'}});calls.push(route.request().postDataJSON());if(calls.length===1)return route.fulfill({status:503,json:{error:'verification_pending'},headers:{'Access-Control-Allow-Origin':'*'}});requests.length=0;return route.fulfill({json:{status:'paid'},headers:{'Access-Control-Allow-Origin':'*'}});});
+ await page.goto('/zh-CN/admin/');await page.getByRole('button',{name:'钱包管理',exact:true}).click();await expect(page.locator('.wallet-withdrawals')).toContainText('100 积分');await expect(page.locator('.wallet-withdrawals')).toContainText('0.99 USDT');
+ const form=page.locator('.wallet-payout-form');await form.getByLabel('链上交易哈希').fill('a'.repeat(64));await form.getByRole('button',{name:'核验付款',exact:true}).click();await expect(form.getByRole('alert')).toContainText('暂未确认付款');await expect(form.getByLabel('链上交易哈希')).toHaveValue('a'.repeat(64));
+ await form.getByRole('button',{name:'核验付款',exact:true}).click();await expect(page.locator('.wallet-withdrawals li')).toHaveCount(0);expect(calls).toHaveLength(2);expect(calls[0]).toEqual(calls[1]);
+});

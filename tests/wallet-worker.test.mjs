@@ -35,7 +35,7 @@ test('watcher probes finality, verifies receipts, resumes pages and never advanc
   if(u.pathname.endsWith('/omni_wallet_scan_targets'))return Response.json([{address:'test-address',hex:to,assigned_ms:1000,fingerprint:null,lease_token:'test-lease'}]);
   if(u.pathname.endsWith('/omni_wallet_seen_transactions'))return Response.json(seen?[tx]:[]);
   if(u.pathname.endsWith('/omni_wallet_ingest_tron')){ingested.push(body);return Response.json(1);}
-  if(u.pathname.endsWith('/omni_wallet_scan_finish')){finished.push(body);return Response.json(null);}
+  if(u.pathname.endsWith('/omni_wallet_scan_finish')){finished.push(body);return new Response(null,{status:204});}
   throw Error('Unexpected network call');
  };
  try{
@@ -52,7 +52,7 @@ test('payout verifier requires owner MFA RPC approval and exact net receipt, nev
  globalThis.fetch=async(url,options)=>{
   const u=new URL(url);if(u.hostname==='api.trongrid.io'){chainCalls++;assert.equal(u.pathname,'/walletsolidity/gettransactioninfobyid');const r=receipt();if(mismatch)r.log[0].data=(1000000n).toString(16).padStart(64,'0');return Response.json(pending?{}:r);}
   if(u.pathname.endsWith('/omni_wallet_payout_target')){assert.equal(options.headers.Authorization,'Bearer valid.jwt.token');assert.equal(options.headers['x-wallet-gateway-key'],undefined);return denied?Response.json({}, {status:403}):Response.json({from,to,amount:'990000',created_ms:1000});}
-  if(u.pathname.endsWith('/omni_wallet_confirm_payout')){assert.equal(options.headers['x-wallet-gateway-key'],env.WALLET_GATEWAY_KEY);settled++;return Response.json(null);}
+  if(u.pathname.endsWith('/omni_wallet_confirm_payout')){assert.equal(options.headers['x-wallet-gateway-key'],env.WALLET_GATEWAY_KEY);settled++;return new Response(null,{status:204});}
   throw Error('Unexpected network call');
  };
  const run=(headers={},environment=env)=>worker.fetch(new Request('https://wallet.chinateam.org/v1/payout/verify',{method:'POST',headers:{Origin:origin,Authorization:'Bearer valid.jwt.token',...headers},body:JSON.stringify({withdrawal:'10000000-0000-4000-8000-000000000001',tx})}),environment);
