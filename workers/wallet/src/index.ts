@@ -1,4 +1,5 @@
 import {confirmedTransfers,USDT_CONTRACT,type Transfer} from './tron';
+import {Trx} from 'tronweb';
 const TRON_ORIGIN='https://api.trongrid.io';
 type Target={address:string;hex:string;assigned_ms:number;fingerprint:string|null;lease_token:string};
 type History={success?:boolean;data?:{transaction_id:string;to:string;block_timestamp:number}[];meta?:{fingerprint?:string}};
@@ -52,13 +53,23 @@ export default {
   if(request.method==='OPTIONS')return new Response(null,{status:allowed?204:403,headers:allowed?{...headers,'Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'Authorization, Content-Type','Access-Control-Max-Age':'600'}:headers});
   const url=new URL(request.url);
   if(url.pathname==='/health'&&request.method==='GET')return Response.json({service:'chinateam-wallet',status:env.WALLET_GATEWAY_KEY&&env.TRONGRID_API_KEY?'configured':'setup_required'},{headers});
-  if(url.pathname!=='/v1/payout/verify'||request.method!=='POST')return Response.json({error:'not_found'},{status:404,headers});
+  if(!['/v1/payout/verify','/v1/deposit/verify-address'].includes(url.pathname)||request.method!=='POST')return Response.json({error:'not_found'},{status:404,headers});
   if(!allowed)return Response.json({error:'origin_denied'},{status:403,headers});
-  if(!env.WALLET_GATEWAY_KEY||!env.TRONGRID_API_KEY)return Response.json({error:'setup_required'},{status:503,headers});
+  if(!env.WALLET_GATEWAY_KEY||url.pathname==='/v1/payout/verify'&&!env.TRONGRID_API_KEY)return Response.json({error:'setup_required'},{status:503,headers});
   if(!(await env.PAYOUT_LIMITER.limit({key:request.headers.get('CF-Connecting-IP')??'unknown'})).success)return Response.json({error:'rate_limited'},{status:429,headers});
   try{
    const authorization=request.headers.get('Authorization');if(!authorization||!/^Bearer [\w.-]+$/.test(authorization))return Response.json({error:'authentication_required'},{status:401,headers});
-   const input=await limitedJson(request,2048) as {withdrawal?:string;tx?:string};
+   const input=await limitedJson(request,2048) as {withdrawal?:string;tx?:string;challenge?:string;signature?:string};
+   if(url.pathname==='/v1/deposit/verify-address'){
+    if(!input||!input.challenge||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(input.challenge)||typeof input.signature!=='string'||input.signature.length>132)return Response.json({error:'invalid_request'},{status:400,headers});
+    // Consume first, in a separate committed RPC. Verify only the server's text,
+    // never client-provided user IDs, messages or addresses. No private key needed.
+    const challenge=await rpc<{id:string;address:string;message:string}>(env,'omni_wallet_consume_challenge',{challenge:input.challenge},authorization);
+    let recovered:string;try{recovered=Trx.verifyMessageV2(challenge.message,input.signature);}catch{return Response.json({error:'signature_invalid'},{status:400,headers});}
+    if(recovered!==challenge.address)return Response.json({error:'signature_invalid'},{status:400,headers});
+    await rpc(env,'omni_wallet_confirm_payer',{challenge:challenge.id,verified_address:recovered});
+    return Response.json({status:'verified',address:recovered},{headers});
+   }
    if(!input||!input.withdrawal||!/^[0-9a-f-]{36}$/.test(input.withdrawal)||!input.tx||!/^[0-9a-f]{64}$/.test(input.tx))return Response.json({error:'invalid_request'},{status:400,headers});
    const expected=await rpc<Payout>(env,'omni_wallet_payout_target',{withdrawal:input.withdrawal},authorization);
    const verified=await receipt(env,input.tx),matching=verified.transfers.filter(t=>t.from===expected.from&&t.to===expected.to&&t.amount===expected.amount);
