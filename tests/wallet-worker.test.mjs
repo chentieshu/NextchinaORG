@@ -66,27 +66,7 @@ test('payout verifier requires owner MFA RPC approval and exact net receipt, nev
  }finally{globalThis.fetch=original;}
 });
 
-test('TronLink verifier consumes each challenge and verifies only the server-stored message',async()=>{
- const {TronWeb,Trx}=await import('tronweb');
- // Disposable test-only key; never used by the application or on any network.
- const key='1'.padStart(64,'0'),address=TronWeb.address.fromPrivateKey(key),message='chinateam.org\nAccount: test-user\nNonce: single-use';
- const signature=await Trx.signMessageV2(message,key),challenge='10000000-0000-4000-8000-000000000009';
- const original=globalThis.fetch;let consumed=false,confirmed=0,storedMessage=message;
- globalThis.fetch=async(url,options)=>{
-  assert.equal(new URL(url).origin,env.SUPABASE_URL,'verification must not call a chain node or sign a transaction');
-  const body=JSON.parse(options.body);
-  if(url.endsWith('/omni_wallet_consume_challenge')){
-   assert.equal(options.headers.Authorization,'Bearer valid.jwt.token');assert.equal(body.challenge,challenge);
-   if(consumed)return Response.json({}, {status:409});consumed=true;return Response.json({id:challenge,address,message:storedMessage});
-  }
-  if(url.endsWith('/omni_wallet_confirm_payer')){assert.equal(options.headers['x-wallet-gateway-key'],env.WALLET_GATEWAY_KEY);assert.deepEqual(body,{challenge,verified_address:address});confirmed++;return new Response(null,{status:204});}
-  throw Error('Unexpected network call');
- };
- const run=(sig=signature,extra={})=>worker.fetch(new Request('https://wallet.chinateam.org/v1/deposit/verify-address',{method:'POST',headers:{Origin:origin,Authorization:'Bearer valid.jwt.token'},body:JSON.stringify({challenge,signature:sig,...extra})}),{...env,TRONGRID_API_KEY:''});
- try{
-  assert.equal((await run()).status,200);assert.equal(confirmed,1);
-  assert.equal((await run()).status,403);assert.equal(confirmed,1,'replay never reaches confirmation');
-  consumed=false;storedMessage=message+' changed nonce';assert.equal((await run(signature,{message,address})).status,400);assert.equal(confirmed,1,'client cannot substitute signed text');
-  consumed=false;storedMessage=message;assert.equal((await run('bad')).status,400);assert.equal(consumed,true,'invalid signatures consume the nonce');assert.equal(confirmed,1);
- }finally{globalThis.fetch=original;}
+test('retired payer verification endpoint never accesses the ledger or chain',async()=>{
+ const original=globalThis.fetch;globalThis.fetch=async()=>{throw Error('Unexpected request');};
+ try{const response=await worker.fetch(new Request('https://wallet.chinateam.org/v1/deposit/verify-address',{method:'POST',headers:{Origin:origin}}),env);assert.equal(response.status,404);}finally{globalThis.fetch=original;}
 });

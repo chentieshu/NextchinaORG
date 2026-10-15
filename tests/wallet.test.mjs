@@ -4,10 +4,12 @@ import {readFile,readdir} from 'node:fs/promises';
 import {randomUUID} from 'node:crypto';
 import {PGlite} from '@electric-sql/pglite';
 import {pg_trgm} from '@electric-sql/pglite/contrib/pg_trgm';
-import {parsePoints,pointsToUsdt,isTronAddress,withdrawalFee,formatPoints} from '../src/modules/wallet/money.ts';
+import {parseUsdt,parsePoints,pointsToUsdt,isTronAddress,withdrawalFee,formatPoints} from '../src/modules/wallet/money.ts';
 
 const address='TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7'; // Public address fixture, never a receiving address in the app.
 test('point units and TRON checksum reject rounding and wrong-network addresses',async()=>{
+ assert.equal(parseUsdt('1'),1000000n);assert.equal(parseUsdt('10.09'),10090000n);assert.equal(parseUsdt('10000.00'),10000000000n);
+ for(const value of ['0.99','1.001','10000.01','1e3','-1','01','Infinity',' 1'])assert.equal(parseUsdt(value),null);
  assert.equal(parsePoints('1'),10000n);assert.equal(parsePoints('1000000000'),10000000000000n);assert.equal(parsePoints('0.0001'),1n);assert.equal(withdrawalFee(1010000n,100),10100n);assert.equal(formatPoints(10001n),'1.0001');assert.equal(formatPoints(10001n,'es'),'1,0001');assert.equal(withdrawalFee(1000001n,100),10001n);assert.equal(withdrawalFee(1000000n,100),10000n);
  for(const value of ['0','-1','0.00001','01','1e3','Infinity','1000000001',' 1'])assert.equal(parsePoints(value),null);
  assert.equal(pointsToUsdt('1010000'),'1.01');assert.equal(pointsToUsdt('10000000000000'),'10000000.00');
@@ -17,7 +19,9 @@ test('point units and TRON checksum reject rounding and wrong-network addresses'
 test('wallet ledger is private, balanced, idempotent and holds prevent double spending',async()=>{
  const db=new PGlite({extensions:{pg_trgm}});try{
  await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb default '{}');create table auth.mfa_factors(id uuid,user_id uuid,status text);create table auth.identities(id uuid default gen_random_uuid(),user_id uuid references auth.users(id),provider text,provider_id text,identity_data jsonb default '{}');create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth,public to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;`);
- for(const f of (await readdir('supabase/migrations')).filter(f=>f.endsWith('.sql')).sort())await db.exec(await readFile('supabase/migrations/'+f,'utf8'));
+ const migrations=(await readdir('supabase/migrations')).filter(f=>f.endsWith('.sql')).sort();
+ // Exercise historical binding behavior before its explicit retirement migration.
+ for(const f of migrations.filter(f=>!f.endsWith('_chinateam_wallet_deposit_orders.sql')))await db.exec(await readFile('supabase/migrations/'+f,'utf8'));
  const a=randomUUID(),b=randomUUID(),owner=randomUUID(),editor=randomUUID(),allocation=randomUUID(),tx='a'.repeat(64);
  const root=async sql=>{await db.exec("reset role;select set_config('request.jwt.claim.sub','',false);select set_config('request.jwt.claims','{}',false)");return (await db.exec(sql)).at(-1);};
  const as=async(id,sql)=>{await db.exec(`reset role;set role ${id?'authenticated':'anon'};select set_config('request.jwt.claim.sub','${id??''}',false)`);return db.query(sql);};
@@ -132,6 +136,48 @@ test('wallet ledger is private, balanced, idempotent and holds prevent double sp
  await root(`update omni_private.wallet_challenges set expires_at=now()-interval '1 second' where id='${expired.id}'`);
  await assert.rejects(as(b,`select omni_wallet_consume_challenge('${expired.id}')`),/expired/);
  await assert.rejects(gateway(`select omni_wallet_confirm_payer('${expired.id}','${address}')`),/Invalid challenge/);
+ // Migrate the funded ledger in place. New deposits need no injected wallet.
+ await root(await readFile('supabase/migrations/'+migrations.find(f=>f.endsWith('_chinateam_wallet_deposit_orders.sql')),'utf8'));
+ await assert.rejects(as(newUser,`select omni_wallet_deposit_challenge('${address}')`),/permission denied/);
+ await assert.rejects(as(null,`select omni_wallet_create_deposit('${randomUUID()}',10000000)`),/permission denied/);
+ await assert.rejects(as(newUser,'select * from omni_private.wallet_deposit_quotes'),/permission denied/);
+ const create=(id=randomUUID(),amount='10000000')=>`select omni_wallet_create_deposit('${id}',${amount}) q`;
+ await assert.rejects(as(newUser,create()),/paused/);
+ await root('update omni_private.wallet_settings set deposits_enabled=true;update omni_private.wallet_gateway set last_heartbeat=now()');
+ for(const amount of ['0','999999','10000001','10000000001'])await assert.rejects(as(newUser,create(randomUUID(),amount)),/Invalid deposit/);
+ const request=randomUUID(),q1=(await as(newUser,create(request))).rows[0].q;
+ assert.equal(q1.status,'waiting');assert.equal(q1.address,target.address);assert.ok(BigInt(q1.actual_micro)>10000000n&&BigInt(q1.actual_micro)<10010000n);
+ assert.deepEqual((await as(newUser,create(request))).rows[0].q,q1,'lost create response returns the same order');
+ await assert.rejects(as(b,create(request)),/request changed/);
+ await assert.rejects(as(newUser,create(request,'20000000')),/request changed/);
+ await assert.rejects(as(newUser,create()),/already open/);
+ const q2=(await as(b,create())).rows[0].q;assert.notEqual(q1.actual_micro,q2.actual_micro,'same requested amount remains distinguishable');
+ assert.equal((await as(b,'select omni_wallet_deposit_status() s')).rows[0].s.order.id,q2.id,'orders are scoped to the caller');
+ await assert.rejects(root(`update omni_private.wallet_deposit_quotes set user_id='${b}' where user_id='${newUser}'`),/immutable/);
+ const priorBalance=BigInt((await as(newUser,'select omni_wallet_snapshot() s')).rows[0].s.purchased);
+ const orderTransfer={...transfer,from:'9'.repeat(40),amount:q1.actual_micro};
+ const orderIngest=(txHash,extra={})=>ingest({tx:txHash,transfer:orderTransfer,...extra});
+ await assert.rejects(gateway(`select omni_wallet_ingest_tron('${target.address}','${'8'.repeat(64)}',${Date.now()},'${JSON.stringify([orderTransfer,orderTransfer])}')`),/Duplicate/);
+ await gateway(orderIngest('3'.repeat(64),{block_ms:target.assigned_ms}));
+ assert.equal(BigInt((await as(newUser,'select omni_wallet_snapshot() s')).rows[0].s.purchased),priorBalance,'pre-order receipts cannot be claimed');
+ await gateway(orderIngest('4'.repeat(64),{transfer:{...orderTransfer,amount:'10000000'}}));
+ assert.equal(BigInt((await as(newUser,'select omni_wallet_snapshot() s')).rows[0].s.purchased),priorBalance,'rounded amounts never credit');
+ await root(`update omni_private.wallet_deposit_orders set created_at=created_at-interval '1 hour',expires_at=now()-interval '1 minute' where id='${q1.id}';update omni_private.wallet_settings set deposits_enabled=false`);
+ assert.equal((await as(newUser,'select omni_wallet_deposit_status() s')).rows[0].s.order.status,'expired');
+ assert.equal((await gateway(orderIngest('5'.repeat(64)))).rows[0].n,1,'late deposits credit their permanent owner even while paused');
+ assert.equal((await gateway(orderIngest('5'.repeat(64)))).rows[0].n,0,'replays do not duplicate journal or receipt count');
+ const paid=(await as(newUser,'select omni_wallet_deposit_status() s')).rows[0].s.order;
+ assert.equal(paid.status,'paid');assert.equal(paid.receipt_count,1);assert.equal(paid.credited_micro,q1.actual_micro);
+ await gateway(orderIngest('6'.repeat(64)));
+ assert.equal(BigInt((await as(newUser,'select omni_wallet_snapshot() s')).rows[0].s.purchased),priorBalance+BigInt(q1.actual_micro)*2n,'separate real transfers are both credited');
+ await root(`update omni_private.wallet_settings set deposits_enabled=true;update omni_private.wallet_gateway set last_heartbeat=now()`);
+ const again=(await as(newUser,create())).rows[0].q;assert.equal(again.actual_micro,q1.actual_micro,'amount assignment is permanent across orders');
+ await gateway(orderIngest('7'.repeat(64)));
+ assert.equal((await as(newUser,'select omni_wallet_deposit_status() s')).rows[0].s.order.receipt_count,1);
+ assert.equal((await as(b,'select omni_wallet_deposit_status() s')).rows[0].s.order.status,'waiting','other account is never credited');
+ await root('update omni_private.wallet_gateway set last_heartbeat=now()-interval \'10 minutes\'');
+ assert.equal((await as(newUser,'select omni_wallet_deposit_status() s')).rows[0].s.healthy,false);
+ await assert.rejects(as(newUser,create()),/listener unavailable/);
  const sums=await root(`select (select sum(amount) from omni_private.wallet_entries)=0 balanced,not exists(select 1 from omni_private.wallet_accounts a where balance<>(select coalesce(sum(amount),0) from omni_private.wallet_entries e where e.account_id=a.id)) reconciled`);
  assert.equal(sums.rows[0].balanced,true);assert.equal(sums.rows[0].reconciled,true);
  }finally{await db.close();}

@@ -594,14 +594,14 @@ const walletLegal:Record<Locale,{privacy:Section;terms:Section}>={
     "privacy": {
       "title": "钱包与链上交易",
       "paragraphs": [
-        "使用钱包时，我们保存经签名验证的付款地址、一次性验证消息与时间、提现地址、交易哈希、积分变动、打赏双方、提现审核状态与时间。钱包记录仅向本人和获授权的财务管理人员开放；链上的地址、金额和交易本身是公开的，可能与站内账号产生关联。Supabase 保存账本，Cloudflare 执行到账核验，TronGrid 提供 TRON 链上查询。我们不索取钱包私钥或助记词。",
+        "使用钱包时，我们保存充值订单、用于识别付款的精确金额、收款地址、链上付款地址及交易哈希、提现地址、积分变动、打赏双方、审核状态与时间。充值无需连接钱包或签名。钱包记录仅向本人和获授权的财务管理人员开放；链上的地址、金额和交易是公开的，可能与站内账号产生关联。Supabase 保存账本，Cloudflare 执行到账核验，TronGrid 提供 TRON 查询。我们不索取私钥或助记词。",
         "资金记录用于入账、提现、对账、争议处理和防止重复付款。账本不允许直接覆盖或删除；账号删除请求涉及未结算资金或财务记录时，需要联系支持人员进行结算和适用保留义务审查。"
       ]
     },
     "terms": {
       "title": "积分、打赏与提现",
       "paragraphs": [
-        "资金功能在完成配置并明确开放后才可使用。仅支持 TRON（TRC20）USDT；1 USDT 对应 100 积分。先用 TronLink 签名验证付款地址，再从该地址向钱包页显示的平台收款地址充值。签名不授权扣款。验证前的转账、交易所提币、其他付款地址、网络或代币不会自动入账，请联系支持对账。充值的网络资源费由用户承担。确认后的到账经核验记录；链上确认及查询延迟可能影响到账时间。",
+        "资金功能在完成配置并开放后才可使用。仅支持 TRON（TRC20）USDT；1 USDT = 100 积分。先创建充值订单，再向页面显示的地址发送完整的精确金额。订单金额在所选金额上增加不足 0.01 USDT 以识别付款，全部实际到账金额均兑换积分，不额外收取该差额。可使用支持完整金额的钱包或交易所；提币手续费扣除后须足额到账，不要取整或拆分。充值网络资源费由用户承担。订单有效期 30 分钟，精确金额不会重新分配给其他用户；按原金额支付的迟到款仍在核验后计入原账号。金额错误、订单创建前付款、其他网络或代币不自动入账，请联系支持对账。链上最终确认和索引延迟可能影响到账时间。",
         "充值积分用于打赏，收到的打赏可申请提现。最低提现 1 USDT（100 积分），手续费为申请金额的 1%，不足 0.000001 USDT 的手续费向上取整；例如申请 1 USDT，到账 0.99 USDT。平台另行承担支付时的 TRON 网络资源费用。提现需双重验证，经后台审核后人工转账，不承诺即时到账。待审核申请可取消；开始处理后资金继续冻结至付款核验或人工对账。打赏确认后立即记账，请核对收款人和金额。"
       ]
     }
@@ -610,14 +610,14 @@ const walletLegal:Record<Locale,{privacy:Section;terms:Section}>={
     "privacy": {
       "title": "Wallet and blockchain transactions",
       "paragraphs": [
-        "We store signature-verified payer addresses, one-time verification messages and timestamps, withdrawal addresses, transaction hashes, point transfers, tipping participants, review status and timestamps. Wallet records are available to their owner and authorized financial administrators. Blockchain addresses, amounts and transactions are public and may become linked to your account. Supabase stores the ledger, Cloudflare verifies transfers, and TronGrid supplies TRON chain data. We do not request private keys or recovery phrases.",
+        "We store deposit orders, exact payment-identifying amounts, receiving and on-chain sender addresses, transaction hashes, withdrawal addresses, point transfers, tipping participants, review status and timestamps. Deposits need no wallet connection or signature. Wallet records are available to their owner and authorized financial administrators. On-chain addresses, amounts and transactions are public and may become linked to your account. Supabase stores the ledger, Cloudflare verifies transfers, and TronGrid supplies TRON data. We do not request private keys or recovery phrases.",
         "Financial records support settlement, reconciliation, dispute handling and duplicate-payment prevention. The ledger cannot be directly overwritten or deleted. Account deletion involving outstanding balances or financial records requires support review of settlement and applicable retention obligations."
       ]
     },
     "terms": {
       "title": "Points, tips and withdrawals",
       "paragraphs": [
-        "Payments become available only after configuration and activation. Only TRON (TRC20) USDT is supported; 1 USDT equals 100 points. Verify your TronLink payer address by signing a message, then send from that address to the platform receiver shown in your wallet. The signature does not authorize spending. Transfers before verification, exchange withdrawals, other senders, networks or tokens are not credited automatically; contact support for reconciliation. You pay deposit network resources. Finalized transfers are verified before crediting; confirmation and indexing delays may affect timing.",
+        "Payments require configuration and activation. Only TRON (TRC20) USDT is supported; 1 USDT equals 100 points. Create an order before sending the full exact amount to the displayed address. An identifying amount of less than 0.01 USDT is added to your selection; the entire received amount becomes points, so this difference is not a fee. Use a wallet or exchange that supports the full amount; the amount received after withdrawal fees must match. Do not round or split payments. You pay deposit network resources. Orders last 30 minutes. Exact amounts are never reassigned to another user; late payments of the original amount are credited to the same account after verification. Incorrect amounts, transfers before order creation, other networks or tokens are not credited automatically; contact support. Final confirmation and indexing may delay credit.",
         "Purchased points fund tips; tip earnings can be withdrawn. The minimum is 1 USDT (100 points). The fee is 1% of the requested amount, rounded up to the nearest 0.000001 USDT. A 1 USDT request pays out 0.99 USDT. The platform separately covers TRON network resources for payouts. Withdrawals require two-factor authentication, administrator review and manual payment, with no instant-payment promise. Pending requests may be cancelled; processing funds stay held until payment verification or manual reconciliation. Confirmed tips are booked immediately; check the recipient and amount."
       ]
     }
@@ -626,14 +626,14 @@ const walletLegal:Record<Locale,{privacy:Section;terms:Section}>={
     "privacy": {
       "title": "錢包與鏈上交易",
       "paragraphs": [
-        "我們儲存經簽名驗證的付款地址、一次性驗證訊息與時間、提領地址、交易雜湊、積分異動、打賞雙方、審核狀態與時間。錢包紀錄僅供本人與獲授權的財務管理人員存取；鏈上地址、金額及交易公開可見，可能與帳號產生關聯。Supabase 儲存帳本，Cloudflare 核驗交易，TronGrid 提供 TRON 查詢。我們不索取私鑰或助記詞。",
+        "我們儲存儲值訂單、識別付款的精確金額、收款地址、鏈上付款地址與交易雜湊、提領地址、積分異動、打賞雙方、審核狀態及時間。儲值無需連接錢包或簽名。紀錄僅供本人與獲授權的財務管理人員存取；鏈上地址、金額及交易公開可見，可能與帳號產生關聯。Supabase 儲存帳本，Cloudflare 核驗交易，TronGrid 提供 TRON 查詢。我們不索取私鑰或助記詞。",
         "資金紀錄用於入帳、對帳、爭議處理與防止重複付款，帳本不可直接覆寫或刪除。刪除帳號涉及未結算資金或財務紀錄時，須聯絡支援人員審查結算與適用的保留義務。"
       ]
     },
     "terms": {
       "title": "積分、打賞與提領",
       "paragraphs": [
-        "資金功能完成設定並開放後才可使用。僅支援 TRON（TRC20）USDT；1 USDT = 100 積分。先用 TronLink 簽名驗證付款地址，再從該地址匯入錢包頁的平台收款地址。簽名不授權扣款。驗證前的轉帳、交易所提幣、其他地址、網路或代幣不會自動入帳，請聯絡支援對帳。儲值網路資源費由使用者承擔。最終確認與鏈上索引延遲可能影響入帳時間。",
+        "資金功能完成設定並開放後才可使用。僅支援 TRON（TRC20）USDT；1 USDT = 100 積分。先建立訂單，再向畫面地址發送完整精確金額。訂單在所選金額上增加不足 0.01 USDT 以識別付款，全部實際到帳金額均兌換積分，差額不是手續費。可使用支援完整金額的錢包或交易所；提幣費用扣除後須足額到帳，不要取整或拆分。儲值網路資源費由使用者承擔。訂單有效期 30 分鐘，精確金額不會重新分配給他人；按原金額支付的遲到款仍在核驗後計入原帳號。金額錯誤、訂單建立前付款、其他網路或代幣不自動入帳，請聯絡支援。最終確認及索引延遲可能影響入帳時間。",
         "儲值積分用於打賞，打賞收入可提領。最低 1 USDT（100 積分），手續費 1%，不足 0.000001 USDT 向上取整；申請 1 USDT 到帳 0.99 USDT。平台另行承擔付款的 TRON 網路資源費用。提領須雙重驗證、後台審核及人工付款，不承諾即時到帳。待審核可取消；處理中持續凍結至付款核驗或人工對帳。打賞確認後立即記帳，請核對對象與金額。"
       ]
     }
@@ -642,14 +642,14 @@ const walletLegal:Record<Locale,{privacy:Section;terms:Section}>={
     "privacy": {
       "title": "ウォレットとブロックチェーン",
       "paragraphs": [
-        "署名認証済み送金元、使い捨て認証メッセージと日時、入出金アドレス、取引ハッシュ、ポイント移動、チップの当事者、審査状況と日時を保存します。ウォレット記録は本人と権限を持つ財務管理者のみが閲覧できます。チェーン上のアドレス・金額・取引は公開され、アカウントと結び付く場合があります。Supabase が台帳を保存し、Cloudflare が検証を実行し、TronGrid が TRON データを提供します。秘密鍵や復元フレーズは要求しません。",
+        "入金注文、支払い識別用の正確な金額、入金先とチェーン上の送金元、取引ハッシュ、出金先、ポイント移動、チップの当事者、審査状況と日時を保存します。入金にウォレット接続や署名は不要です。記録は本人と権限を持つ財務管理者のみ閲覧できます。チェーン上の情報は公開され、アカウントと結び付く場合があります。Supabase が台帳を保存し、Cloudflare が検証し、TronGrid が TRON データを提供します。秘密鍵や復元フレーズは要求しません。",
         "台帳は決済、照合、紛争対応、重複払い防止に使われ、直接の上書きや削除はできません。残高や財務記録を伴うアカウント削除は、サポートが決済と適用される保存義務を確認します。"
       ]
     },
     "terms": {
       "title": "ポイント、チップ、出金",
       "paragraphs": [
-        "設定・有効化後に決済を利用できます。TRON（TRC20）の USDT のみ対応し、1 USDT は 100 ポイントです。TronLink のメッセージ署名で送金元を認証してから、画面のプラットフォーム入金先へ送金してください。署名は支出を承認しません。認証前の送金、取引所出金、別の送金元・ネットワーク・通貨は自動反映されず、サポートへの照合依頼が必要です。入金のネットワーク費用は利用者負担です。最終確認と索引の遅延により反映が遅れる場合があります。",
+        "設定・有効化後に決済を利用できます。TRON（TRC20）USDT のみ対応し、1 USDT は 100 ポイントです。注文を作成してから表示の宛先へ正確な全額を送金してください。識別用に 0.01 USDT 未満を加算しますが、受取全額をポイントにするため手数料ではありません。正確な金額に対応するウォレットや取引所を利用し、取引所手数料控除後の受取額を一致させてください。丸めや分割はしないでください。入金ネットワーク費用は利用者負担です。注文は 30 分間有効です。金額は他の利用者に再割当てされず、元の金額の遅延入金も検証後に同じアカウントへ反映します。金額違い、注文作成前の送金、他ネットワークや通貨は自動反映されません。サポートへ連絡してください。最終確認や索引の遅延で反映が遅れる場合があります。",
         "購入ポイントはチップに使用し、受け取ったチップを出金できます。最低額は 1 USDT（100 ポイント）、手数料は申請額の 1%（0.000001 USDT 単位で切り上げ）です。1 USDT の申請では 0.99 USDT を受け取ります。送金の TRON ネットワーク費用は別途プラットフォームが負担します。二要素認証と管理者審査後に手動送金し、即時支払いは保証しません。審査前はキャンセルできますが、処理中は検証または手動照合まで保留します。チップは確定後すぐ記帳されます。"
       ]
     }
@@ -658,14 +658,14 @@ const walletLegal:Record<Locale,{privacy:Section;terms:Section}>={
     "privacy": {
       "title": "Cartera y transacciones en cadena",
       "paragraphs": [
-        "Guardamos remitentes verificados por firma, mensajes de verificación de un solo uso y sus fechas, direcciones de depósito y retiro, hashes, movimientos de puntos, participantes de propinas, estados de revisión y fechas. Solo el titular y los administradores financieros autorizados acceden a los registros. Las direcciones, los importes y las transacciones en cadena son públicos y pueden vincularse a tu cuenta. Supabase guarda el libro contable, Cloudflare verifica las transferencias y TronGrid proporciona datos de TRON. No pedimos claves privadas ni frases de recuperación.",
+        "Guardamos órdenes de depósito, importes exactos que identifican los pagos, direcciones receptoras y remitentes en cadena, hashes, direcciones de retiro, movimientos de puntos, participantes de propinas, revisión y fechas. No se requiere conexión de cartera ni firma. Solo el titular y los administradores financieros autorizados acceden a los registros. Los datos en cadena son públicos y pueden vincularse a tu cuenta. Supabase guarda el libro contable, Cloudflare verifica las transferencias y TronGrid proporciona datos de TRON. No pedimos claves privadas ni frases de recuperación.",
         "Los registros permiten liquidar, conciliar, resolver disputas y evitar pagos duplicados. El libro contable no se sobrescribe ni se elimina directamente. La eliminación de cuentas con saldos o registros financieros requiere revisar la liquidación y las obligaciones de conservación con soporte."
       ]
     },
     "terms": {
       "title": "Puntos, propinas y retiros",
       "paragraphs": [
-        "Los pagos requieren configuración y activación. Solo admitimos USDT en TRON (TRC20); 1 USDT equivale a 100 puntos. Verifica el remitente de TronLink firmando un mensaje y envía desde esa dirección al receptor de la plataforma. La firma no autoriza gastos. Los envíos previos a la verificación, retiros de exchanges, otros remitentes, redes o tokens no se acreditan automáticamente; contacta con soporte para conciliarlos. Pagas los recursos de red del depósito. La confirmación final y la indexación pueden retrasar el abono.",
+        "Los pagos requieren configuración y activación. Solo admitimos USDT TRON (TRC20); 1 USDT equivale a 100 puntos. Crea una orden y envía el importe exacto completo a la dirección mostrada. Se añaden menos de 0,01 USDT para identificar el pago; todo lo recibido se convierte en puntos, por lo que no es una comisión. Usa una cartera o exchange que admita el importe completo, descontando las comisiones de retiro antes de calcular lo recibido. No redondees ni dividas el pago. Pagas los recursos de red. Las órdenes duran 30 minutos. Los importes nunca se reasignan a otra persona; un pago tardío del importe original se acredita a la misma cuenta tras verificarlo. Los importes incorrectos, envíos anteriores a la orden y otras redes o tokens no se acreditan automáticamente; contacta con soporte. La confirmación final y la indexación pueden retrasar el abono.",
         "Los puntos comprados sirven para dar propinas; las propinas recibidas se pueden retirar. El mínimo es 1 USDT (100 puntos) y la comisión es el 1%, redondeada hacia arriba a 0,000001 USDT. Una solicitud de 1 USDT entrega 0,99 USDT. La plataforma cubre por separado los recursos de red TRON del pago. Los retiros requieren autenticación de dos factores, revisión y transferencia manual; no son inmediatos. Se pueden cancelar mientras están pendientes; durante el procesamiento siguen retenidos hasta verificar o conciliar el pago. Las propinas se contabilizan al confirmar."
       ]
     }

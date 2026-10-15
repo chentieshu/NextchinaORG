@@ -1,4 +1,9 @@
 // Monetary arithmetic never goes through floating-point currency conversion.
+export function parseUsdt(value:string):bigint|null {
+ if(!/^(0|[1-9]\d{0,4})(\.\d{1,2})?$/.test(value))return null;
+ const [whole,fraction='']=value.split('.'),result=BigInt(whole)*1000000n+BigInt(fraction.padEnd(6,'0'));
+ return result>=1000000n&&result<=10000000000n?result:null;
+}
 export function parsePoints(value:string):bigint|null {
  if(!/^(0|[1-9]\d{0,9})(\.\d{1,4})?$/.test(value))return null;
  const [whole,fraction='']=value.split('.'),result=BigInt(whole)*10000n+BigInt(fraction.padEnd(4,'0'));return result>0n&&result<=10000000000000n?result:null;
@@ -27,3 +32,4 @@ export function walletRequest(actor:string,kind:string,payload:string):string {
  const id=crypto.randomUUID();sessionStorage.setItem(key,JSON.stringify({id,payload}));return id;
 }
 export function clearWalletRequest(actor:string,kind:string){try{sessionStorage.removeItem(`chinateam-wallet-request:${actor}:${kind}`);}catch{}}
+export function clearMatchedWalletRequest(actor:string,kind:string,id:string){try{if(JSON.parse(sessionStorage.getItem(`chinateam-wallet-request:${actor}:${kind}`)??'null')?.id===id)clearWalletRequest(actor,kind);}catch{}}
