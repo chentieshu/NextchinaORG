@@ -22,11 +22,11 @@ test('watcher probes finality, verifies receipts, resumes pages and never advanc
  const original=globalThis.fetch,calls=[],finished=[],ingested=[];let bad=false,seen=false,probeFails=false;
  globalThis.fetch=async(url,options={})=>{
   const u=new URL(url),body=options.body?JSON.parse(options.body):{};calls.push(u.pathname);
-  assert.equal(options.redirect,'error');assert.ok(options.signal);
+  assert.equal(options.redirect,'manual');assert.ok(options.signal);
   if(u.hostname==='api.trongrid.io'){
    assert.equal(options.headers['TRON-PRO-API-KEY'],env.TRONGRID_API_KEY);
    assert.equal(options.headers['x-wallet-gateway-key'],undefined);
-   if(u.pathname==='/walletsolidity/getnowblock')return Response.json(probeFails?{}:{blockID:'f'.repeat(64)});
+   if(u.pathname==='/walletsolidity/getblock'){assert.deepEqual(body,{detail:false});return Response.json(probeFails?{}:{blockID:'f'.repeat(64)});}
    if(u.pathname==='/walletsolidity/gettransactioninfobyid')return Response.json(bad?{}:receipt());
    assert.equal(u.searchParams.get('contract_address'),USDT_CONTRACT);assert.equal(u.searchParams.get('only_confirmed'),'true');
    return Response.json({success:true,data:[{transaction_id:tx,to:'test-address',block_timestamp:2000}],meta:{fingerprint:'next'}});
@@ -69,4 +69,13 @@ test('payout verifier requires owner MFA RPC approval and exact net receipt, nev
 test('retired payer verification endpoint never accesses the ledger or chain',async()=>{
  const original=globalThis.fetch;globalThis.fetch=async()=>{throw Error('Unexpected request');};
  try{const response=await worker.fetch(new Request('https://wallet.chinateam.org/v1/deposit/verify-address',{method:'POST',headers:{Origin:origin}}),env);assert.equal(response.status,404);}finally{globalThis.fetch=original;}
+});
+
+test('failed scheduled queries identify their stage without logging upstream bodies or credentials',async()=>{
+ const original=globalThis.fetch,originalError=console.error,logs=[];let wait;
+ globalThis.fetch=async()=>Response.json({message:'sensitive upstream response'},{status:401});
+ console.error=value=>logs.push(JSON.parse(value));
+ try{await worker.scheduled({},env,{waitUntil:promise=>{wait=promise;}});await wait;
+  assert.deepEqual(logs,[{event:'wallet_scan_failed',stage:'chain_head',http_status:401,reason:'http'}]);
+ }finally{globalThis.fetch=original;console.error=originalError;}
 });

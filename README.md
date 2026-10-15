@@ -168,8 +168,8 @@ X / GitHub 账号归属徽章、个人主页 Star 统计及缓存边界见 [账�
 - 申请时冻结打赏收入，用户不能同时花费这部分积分；待审核可取消或由总管理员拒绝并解冻。总管理员双重验证后点击“开始处理”，然后**从配置的平台收款地址**向页面指定收款地址支付精确净金额。点击开始处理不会转账。勿重复支付不确定结果的交易。
 - 付款后填入原交易哈希，Worker 验证已最终确认的 USDT 事件、付款方、收款方、金额及时间后完成账本结算。广播成功或暂未查到回执时保持冻结；不能手动跳过核验标为已付款。处理中申请不提供普通取消按钮；付款失败等异常需人工对账后通过经审计的补偿流程处理，不能直接改余额。
 - 所有写入在数据库内原子完成。唯一交易哈希+日志序号防重复入账；请求 UUID 防重复扣款；日志不可覆盖、借贷总和必须为零。不同积分桶分别记录，后台显示余额与待处理提现。暂停功能不丢弃已有订单的有效到账，包括原金额迟到款。未匹配的来款保留交易记录，不提供凭哈希直接认领入口。
-- 监听每分钟运行，单次最多 5 个地址、8 次回执核验，每页 20 条，租约防重叠，失败不前移游标。完整扫描后重新遍历历史以补偿延迟索引。大量地址或长历史会增加到账延迟；扩大规模前需改成分片队列及增量扫描+定期回补，并按 TronGrid 配额调整预算。
+- 监听每分钟运行；健康探测只读取最终确认的区块头（`walletsolidity/getblock` + `detail:false`）。所有带凭据的请求使用 `redirect:manual` 并拒绝非成功响应，兼容 Workers 且不会将密钥跟随跳转。单次最多 5 个地址、8 次回执核验，每页 20 条，租约防重叠，失败不前移游标。完整扫描后重新遍历历史以补偿延迟索引。大量地址或长历史会增加到账延迟；扩大规模前需改成分片队列及增量扫描+定期回补，并按 TronGrid 配额调整预算。
 - `/health` 只报告密钥是否存在，不保证上游实时健康。后台 heartbeat、Cloudflare `wallet_scan` / `wallet_scan_failed` 日志及账本平衡需持续检查；尚未接入外部告警或自动付款；直接收款无需归集。API Key 缺失时任务不访问链服务，资金功能保持关闭。
-- 检查命令：`npm run typecheck`、`npm test`、`npm run build`、`LIVE_SUPABASE=1 npm run test:browser`。浏览器资金接口使用测试夹具，不写生产交易。钱包 Worker 单独部署，不随 Pages 静态构建自动更新。
+- 检查命令：`npm run typecheck`、`npm test`、`npm run build`、`LIVE_SUPABASE=1 npm run test:browser`。浏览器资金接口使用测试夹具，不写生产交易。`tests/wallet-runtime.test.mjs` 在真实 workerd 运行时中拦截全部外部请求，覆盖扫描、204 响应以及重定向拒绝；不能仅以 Node 的 Fetch 模拟代替 Worker 验收。钱包 Worker 单独部署，不随 Pages 静态构建自动更新。
 
 协议依据：[TRON 最终确认](https://developers.tron.network/docs/confirmation-semantics)、[TRC20 历史查询](https://developers.tron.network/docs/get-trc20-transaction-history)、[Tether 官方合约](https://tether.to/en/supported-protocols/)。
