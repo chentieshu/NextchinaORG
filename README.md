@@ -170,7 +170,7 @@ X / GitHub 账号归属徽章、个人主页 Star 统计及缓存边界见 [账�
 - 所有写入在数据库内原子完成。唯一交易哈希+日志序号防重复入账；请求 UUID 防重复扣款；日志不可覆盖、借贷总和必须为零。不同积分桶分别记录，后台显示余额与待处理提现。暂停功能不丢弃已有订单的有效到账，包括原金额迟到款。未匹配的来款保留交易记录，不提供凭哈希直接认领入口。
 - 监听每分钟运行；健康探测只读取最终确认的区块头（`walletsolidity/getblock` + `detail:false`）。所有带凭据的请求使用 `redirect:manual` 并拒绝非成功响应，兼容 Workers 且不会将密钥跟随跳转。单次最多 5 个地址、8 次回执核验，每页 20 条，租约防重叠，失败不前移游标。完整扫描后重新遍历历史以补偿延迟索引。大量地址或长历史会增加到账延迟；扩大规模前需改成分片队列及增量扫描+定期回补，并按 TronGrid 配额调整预算。
 - `/health` 只报告密钥是否存在，不保证上游实时健康。后台 heartbeat、Cloudflare `wallet_scan` / `wallet_scan_failed` 日志及账本平衡需持续检查；尚未接入外部告警或自动付款；直接收款无需归集。API Key 缺失时任务不访问链服务，资金功能保持关闭。
-- 检查命令：`npm run typecheck`、`npm test`、`npm run build`、`LIVE_SUPABASE=1 npm run test:browser`。浏览器资金接口使用测试夹具，不写生产交易。`tests/wallet-runtime.test.mjs` 在真实 workerd 运行时中拦截全部外部请求，覆盖扫描、204 响应以及重定向拒绝；不能仅以 Node 的 Fetch 模拟代替 Worker 验收。钱包 Worker 单独部署，不随 Pages 静态构建自动更新。
+- 检查命令：`npm run typecheck`、`npm test`、`npm run build`、`AUTH_FIXTURES=1 npm run test:browser`。浏览器资金接口使用测试夹具，不写生产交易。`tests/wallet-runtime.test.mjs` 在真实 workerd 运行时中拦截全部外部请求，覆盖扫描、204 响应以及重定向拒绝；不能仅以 Node 的 Fetch 模拟代替 Worker 验收。钱包 Worker 单独部署，不随 Pages 静态构建自动更新。
 
 协议依据：[TRON 最终确认](https://developers.tron.network/docs/confirmation-semantics)、[TRC20 历史查询](https://developers.tron.network/docs/get-trc20-transaction-history)、[Tether 官方合约](https://tether.to/en/supported-protocols/)。
 
@@ -181,3 +181,7 @@ Supabase Auth 经现有 Resend SMTP 发送 8 位验证码，10 分钟过期、�
 资金开关、提现、提现审核和付款核验通过统一服务端校验：当前 JWT 对应的 Auth 会话必须存在，邮箱已确认，且数据库中的 OTP 认证记录在最近 10 分钟内。刷新 token 不延长期限；撤销会话立即失效。拒绝带电话身份的 OTP 证明，以免短信验证码被当作邮箱证明。当前项目使用邮箱与 OAuth，不提供电话登录。它是邮箱再次验证，不是 Supabase AAL2；旧 `wallet_require_mfa` 仅作为历史入口兼容代理调用新校验。开启资金操作仍需总管理员主动确认。
 
 浏览器测试使用 `AUTH_FIXTURES=1` 和模拟接口；统一拦截全部未模拟外部请求，并禁用 Service Worker。真实收信与用户验收由账户本人在网站触发。
+
+### 商家积分市场
+
+总管理员可设置商家、发行或收回商家额度；商家生成一次性兑换码，用户站外购买后兑换到充值积分。发行、占用、兑换和作废均进入原有不可变双边账本。操作入口与恢复说明见 [积分市场文档](docs/points-market.md)。

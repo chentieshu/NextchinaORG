@@ -1,0 +1,11 @@
+// Bearer codes have 128 bits of randomness. Only their SHA-256 digest reaches the database.
+export function normalizeVoucher(value:string){return value.normalize('NFKC').toUpperCase().replace(/[\s-]/g,'').replace(/^CT/,'');}
+export function createVoucher(){const bytes=crypto.getRandomValues(new Uint8Array(16));return 'CT-'+Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('').toUpperCase().match(/.{8}/g)!.join('-');}
+export async function voucherDigest(value:string){const normalized=normalizeVoucher(value);if(!/^[A-F0-9]{32}$/.test(normalized))return null;return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(normalized))),b=>b.toString(16).padStart(2,'0')).join('');}
+export function marketUnits(value:string){return /^[1-9]\d{0,6}$/.test(value)&&BigInt(value)<=1000000n?(BigInt(value)*10000n).toString():null;}
+export function safeMerchantContact(value:string){try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password?u.href:null;}catch{return null;}}
+export type Merchant={id:string;user_id:string;name:string;contact_url:string;description:string;enabled:boolean;updated_at:string;display_name:string;handle:string;avatar_key:string|null;available?:string;reserved?:string};
+export type Voucher={id:string;suffix:string;units:string;status:'active'|'expired'|'cancelled'|'redeemed';created_at:string;expires_at:string;redeemed_at:string|null};
+export type Allocation={id:string;kind:'merchant_issue'|'merchant_revoke';units:string;note:string;created_at:string;merchant_name:string;actor_name:string};
+export type MarketSnapshot={merchant:(Merchant&{available:string;reserved:string})|null;frozen:boolean;summary:Record<'issued'|'revoked'|'available'|'reserved'|'redeemed',string>|null};
+export function marketError(error:unknown){const e=error as {message?:string;code?:string};if(e.message?.includes('Recent email verification'))return 'emailRequired';if(e.code==='PT402')return 'insufficient';if(e.code==='PT409')return 'changed';if(e.code==='PT404')return 'userMissing';if(e.code==='PT403')return 'restricted';if(e.code==='PT429')return 'limited';if(e.code==='PT400'||e.code==='23514')return 'invalid';return 'unknown';}

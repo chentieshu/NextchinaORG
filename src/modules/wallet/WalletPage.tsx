@@ -1,4 +1,6 @@
 'use client';
+import Link from 'next/link';
+import {marketCopy} from './market-copy';
 import {useEffect,useRef,useState} from 'react';
 import {FiArrowDownLeft,FiArrowUpRight,FiRefreshCw} from 'react-icons/fi';
 import {useApp} from '@/components/Provider';
@@ -20,7 +22,7 @@ function Wallet(){const{locale}=useApp(),c=walletCopy[locale],wallet=useWallet()
  return <main id="main" className="wallet-page page-wrap content-wrap"><header className="wallet-heading"><div><h1>{c.title}</h1><p>{c.rate}</p></div><button className="icon-button" aria-label={c.retry} disabled={wallet.loading} onClick={()=>{void wallet.refresh();walletChanged();}}><FiRefreshCw/></button></header>
  {wallet.error&&<p className="inline-error" role="alert">{c.error}<button onClick={()=>void wallet.refresh()}>{c.retry}</button></p>}
  {!wallet.data?wallet.loading&&<p role="status">{c.loading}</p>:<><section className="wallet-balance" aria-label={c.available}><span>{c.available}</span><strong>{formatPoints(BigInt(wallet.data.purchased)+BigInt(wallet.data.earned),locale)}<small>{c.points}</small></strong><dl>{(['purchased','earned','held'] as const).map(k=><div key={k}><dt>{c[k]}</dt><dd>{formatPoints(wallet.data![k],locale)}</dd></div>)}</dl></section>
- <div className="wallet-actions"><button className="button" disabled={wallet.error||wallet.loading||wallet.data.frozen} onClick={()=>setDeposit(true)}><FiArrowDownLeft/>{c.deposit}</button><button className="button" disabled={wallet.error||wallet.loading||wallet.data.frozen||!wallet.data.withdrawals_enabled} onClick={()=>setWithdraw(true)}><FiArrowUpRight/>{c.withdraw}</button></div>
+ <div className="wallet-actions"><button className="button" disabled={wallet.error||wallet.loading||wallet.data.frozen} onClick={()=>setDeposit(true)}><FiArrowDownLeft/>{c.deposit}</button><button className="button" disabled={wallet.error||wallet.loading||wallet.data.frozen||!wallet.data.withdrawals_enabled} onClick={()=>setWithdraw(true)}><FiArrowUpRight/>{c.withdraw}</button><Link className="button" href={`/${locale}/market/`}>{marketCopy[locale].title}</Link></div>
  {wallet.data.frozen?<p className="wallet-notice" role="status">{c.frozen}</p>:(!wallet.data.deposits_enabled||!wallet.data.withdrawals_enabled)&&<p className="wallet-notice" role="status">{c.paused}</p>}
  <p className="form-note">{c.withdrawalNote}</p><p className="form-note">{gatewayCopy[locale].feeNote}</p></>}
  <nav className="wallet-tabs" aria-label={c.history}>{(['history','requests'] as const).map(k=><button key={k} aria-pressed={tab===k} onClick={()=>setTab(k)}>{c[k]}</button>)}</nav>
@@ -30,7 +32,7 @@ function Wallet(){const{locale}=useApp(),c=walletCopy[locale],wallet=useWallet()
 }
 function History(){const{locale}=useApp(),c=walletCopy[locale],list=useWalletRows<WalletEntry>('omni_wallet_history');
  return <section aria-label={c.history}>{list.error&&<p className="inline-error" role="alert">{c.error}<button onClick={()=>void list.load()}>{c.retry}</button></p>}
- {!list.loading&&!list.error&&!list.rows.length&&<p className="wallet-empty">{c.empty}</p>}<ul className="wallet-list">{list.rows.map(row=>{const kind=row.kind==='deposit'?'deposit_kind':row.kind==='tip'?'tip_kind':row.kind,delta=BigInt(row.delta);return <li key={row.id}><div><b>{c[kind]}{row.kind==='tip'&&` · ${delta<0?c.sent:c.received}`}</b><time dateTime={row.created_at}>{new Date(row.created_at).toLocaleString(locale)}</time></div><strong>{delta>0?'+':delta<0?'−':''}{formatPoints(row.units,locale)}<small>{c.points}</small></strong></li>;})}</ul>
+ {!list.loading&&!list.error&&!list.rows.length&&<p className="wallet-empty">{c.empty}</p>}<ul className="wallet-list">{list.rows.map(row=>{const marketLabel=marketCopy[locale][row.kind as keyof typeof marketCopy.en];const kind=row.kind==='deposit'?'deposit_kind':row.kind==='tip'?'tip_kind':row.kind,delta=BigInt(row.delta);return <li key={row.id}><div><b>{marketLabel??c[kind as keyof typeof c]}{row.kind==='tip'&&` · ${delta<0?c.sent:c.received}`}</b><time dateTime={row.created_at}>{new Date(row.created_at).toLocaleString(locale)}</time></div><strong>{delta>0?'+':delta<0?'−':''}{formatPoints(row.units,locale)}<small>{c.points}</small></strong></li>;})}</ul>
  {list.loading&&<p role="status">{c.loading}</p>}{list.hasMore&&<button className="button" disabled={list.loading} onClick={()=>void list.load(true)}>{c.more}</button>}</section>;
 }
 export function WithdrawalList({admin=false}:{admin?:boolean}){const{locale,db,online}=useApp(),c=walletCopy[locale],list=useWalletRows<Withdrawal>('omni_wallet_requests',admin),[busy,setBusy]=useState(''),[error,setError]=useState('');const pending=useRef(false),mounted=useRef(true);

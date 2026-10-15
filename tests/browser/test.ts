@@ -7,7 +7,7 @@ export const test=base.extend<{isolateNetwork:void}>({
  isolateNetwork:[async({context},use)=>{
   await context.route('**/*',route=>{
    const url=new URL(route.request().url());
-   if(url.origin==='http://127.0.0.1:3000')return route.continue();
+   if(url.origin===`http://127.0.0.1:${process.env.PLAYWRIGHT_PORT??'3000'}`)return route.continue();
    return route.abort('blockedbyclient');
   });
   await use();

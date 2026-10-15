@@ -3,7 +3,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import {usePathname,useRouter} from 'next/navigation';
 import {useEffect,useRef,useState,type ReactNode} from 'react';
-import {FiHome,FiSearch,FiFileText,FiBookmark,FiUser,FiSettings,FiEdit3,FiLogOut,FiMoreHorizontal,FiHash,FiX,FiCreditCard} from 'react-icons/fi';
+import {FiHome,FiSearch,FiFileText,FiBookmark,FiUser,FiSettings,FiEdit3,FiLogOut,FiMoreHorizontal,FiHash,FiX,FiCreditCard,FiShoppingBag} from 'react-icons/fi';
 import {Avatar} from './Avatar';
 import {Onboarding} from './Onboarding';
 import {useApp} from './Provider';
@@ -11,6 +11,7 @@ import {useTheme} from '@/lib/use-theme';
 import {shellCopy} from '@/lib/shell-copy';
 import {socialCopy} from '@/lib/social-copy';
 import {forumCopy} from '@/lib/forum-copy';
+import {marketCopy} from '@/modules/wallet/market-copy';
 import {walletCopy} from '@/modules/wallet/copy';
 import {profileCopy} from '@/lib/profile-copy';
 import {isLocale} from '@/lib/i18n';
@@ -29,7 +30,7 @@ function MobileNavigation({home,admin,canCompose,onCompose,onLogin,onEditProfile
  useEffect(()=>{setOpen(false);},[pathname]);
  useEffect(()=>{const desktop=matchMedia('(min-width: 901px)');const close=()=>{if(desktop.matches)setOpen(false);};desktop.addEventListener('change',close);return()=>desktop.removeEventListener('change',close);},[]);
  function action(callback:()=>void){setOpen(false);callback();}
- const accountPage=['profile/','bookmarks/','settings/','admin/','wallet/'].some(path=>pathname===base+path);
+ const accountPage=['profile/','bookmarks/','settings/','admin/','wallet/','market/'].some(path=>pathname===base+path);
  return <>
   <nav className="mobile-nav" aria-label={c.navigation}>
    <Link href={base} aria-label={c.home} aria-current={home?'page':undefined}><FiHome/><span>{c.home}</span></Link>
@@ -43,7 +44,7 @@ function MobileNavigation({home,admin,canCompose,onCompose,onLogin,onEditProfile
     <h2>{c.account}</h2>
     {user?<Link className="mobile-menu-profile" href={base+'profile/?id='+user.id}><Avatar name={profile?.display_name??'U'} avatarKey={profile?.avatar_key} size={44}/><span><b>{profile?.display_name??s.profile}</b><small>{needsProfile?c.profileSetup:'@'+(profile?.handle??'')}</small></span></Link>:<Logo small/>}
     <nav className="mobile-menu-links" aria-label={c.account}>
-     {user&&<><Link href={base+'profile/?id='+user.id}><FiUser/>{s.profile}</Link><Link href={base+'?scope=mine'}><FiFileText/>{f.mine}</Link><Link href={base+'bookmarks/'}><FiBookmark/>{t.bookmarks}</Link><Link href={base+'wallet/'}><FiCreditCard/>{walletCopy[locale].title}</Link><button onClick={()=>action(onEditProfile)}><FiEdit3/>{profileCopy[locale].title}</button></>}
+     {user&&<><Link href={base+'profile/?id='+user.id}><FiUser/>{s.profile}</Link><Link href={base+'?scope=mine'}><FiFileText/>{f.mine}</Link><Link href={base+'bookmarks/'}><FiBookmark/>{t.bookmarks}</Link><Link href={base+'wallet/'}><FiCreditCard/>{walletCopy[locale].title}</Link><Link href={base+'market/'}><FiShoppingBag/>{marketCopy[locale].title}</Link><button onClick={()=>action(onEditProfile)}><FiEdit3/>{profileCopy[locale].title}</button></>}
      <Link href={base+'settings/'}><FiSettings/>{s.settings}</Link>
      {admin&&<Link href={base+'admin/'}><FiSettings/>{t.admin}</Link>}
      {authStatus==='loading'?<span className="mobile-account-status" role="status">{t.loading}</span>:authStatus==='error'?<button onClick={()=>void retryAuth()}>{t.retry}</button>:user?<button onClick={()=>action(()=>void logout())}><FiLogOut/>{t.logout}</button>:<button onClick={()=>action(onLogin)}><FiUser/>{t.login}</button>}
@@ -66,7 +67,7 @@ export function Shell({children}:{children:ReactNode}){
  function login(next?:string){try{sessionStorage.setItem('nextchina-auth-return',next??location.pathname+location.search+location.hash);}catch{}setAuthOpen(true);}
  function compose(){if(!user){login(`${base}write/`);return;}router.push(`${base}write/`);}
  const canCompose=authStatus!=='loading'&&!profile?.disabled&&(settings.ugc_enabled||admin)&&!demo;
- const links=[{path:'',label:c.home,Icon:FiHome,active:home},{path:'search/',label:c.search,Icon:FiSearch},{path:'news/',label:t.news,Icon:FiFileText},...(user?[{path:'bookmarks/',label:t.bookmarks,Icon:FiBookmark},{path:'wallet/',label:walletCopy[locale].title,Icon:FiCreditCard},{path:`profile/?id=${user.id}`,label:s.profile,Icon:FiUser}]:[]),{path:'settings/',label:s.settings,Icon:FiSettings},...(admin?[{path:'admin/',label:t.admin,Icon:FiSettings}]:[])];
+ const links=[{path:'',label:c.home,Icon:FiHome,active:home},{path:'search/',label:c.search,Icon:FiSearch},{path:'news/',label:t.news,Icon:FiFileText},...(user?[{path:'bookmarks/',label:t.bookmarks,Icon:FiBookmark},{path:'wallet/',label:walletCopy[locale].title,Icon:FiCreditCard},{path:'market/',label:marketCopy[locale].title,Icon:FiShoppingBag},{path:`profile/?id=${user.id}`,label:s.profile,Icon:FiUser}]:[]),{path:'settings/',label:s.settings,Icon:FiSettings},...(admin?[{path:'admin/',label:t.admin,Icon:FiSettings}]:[])];
  const exempt=/\/(auth\/callback|settings|about|privacy|terms)\//.test(pathname),onboarding=authStatus==='ready'&&needsProfile&&!profile?.disabled&&!exempt;
  return <><a className="skip-link" href="#main">{t.explore}</a><div className={`app-shell ${pathname.includes('/admin/')?'app-shell-admin':''}`}><aside className="app-sidebar"><Link href={base} aria-label="ChinaTeam" className="sidebar-brand"><span className="sidebar-brand-full"><Logo/></span><span className="sidebar-brand-short" aria-hidden="true">C<span>.</span></span></Link><nav className="app-nav" aria-label={c.navigation}>{links.map(({path,label,Icon,active})=>{const selected=active??pathname===base+path.split('?')[0];return <Link key={path} href={base+path} title={label} aria-label={label} aria-current={selected?'page':undefined}><Icon/><span>{label}</span></Link>;})}<button className="sidebar-compose" title={forumCopy[locale].write} aria-label={forumCopy[locale].write} disabled={!canCompose} onClick={compose}><FiEdit3/><span>{forumCopy[locale].write}</span></button></nav><details className="sidebar-categories"><summary title={c.categories}><FiHash/><span>{c.categories}</span></summary><div>{activeCategories.map(row=><Link key={row.key} onClick={e=>{e.currentTarget.closest('details')?.removeAttribute('open');}} href={`${base}?category=${row.key}`}>{categoryName(row.key)}</Link>)}</div></details><div className="sidebar-account">{authStatus==='loading'?<span className="account-placeholder" aria-label={t.loading}/>:authStatus==='error'?<button className="sidebar-login" onClick={()=>void retryAuth()}>{t.retry}</button>:user?<details className="user-menu"><summary title={profile?.display_name??s.profile}><Avatar name={profile?.display_name??'U'} avatarKey={profile?.avatar_key} size={36}/><span className="sidebar-account-name"><b>{profile?.display_name}</b><small>{needsProfile?c.profileSetup:`@${profile?.handle??''}`}</small></span><FiMoreHorizontal/></summary><div className="dropdown"><Link href={`${base}profile/?id=${user.id}`}>{s.profile}</Link><Link href={`${base}?scope=mine`}>{forumCopy[locale].mine}</Link><Link href={`${base}settings/`}>{s.settings}</Link><button onClick={()=>{setProfileOpen(true);document.querySelector<HTMLDetailsElement>('.user-menu')?.removeAttribute('open');}}>{profileCopy[locale].title}</button><button onClick={()=>void logout()}><FiLogOut/>{t.logout}</button></div></details>:<button className="sidebar-login" aria-label={t.login} title={t.login} onClick={()=>login()}><FiUser/><span>{s.login}</span></button>}</div><nav className="sidebar-legal" aria-label={t.about}><Link href={`${base}about/`}>{t.about}</Link><Link href={`${base}privacy/`}>{t.privacy}</Link><Link href={`${base}terms/`}>{t.terms}</Link></nav></aside><div className="app-body">{settings.notice&&<div className="announcement">{settings.notice}</div>}{onboarding?<Onboarding key={user?.id}/>:children}<footer className="footer"><span>© {new Date().getFullYear()} ChinaTeam</span><nav><Link href={`${base}about/`}>{t.about}</Link><Link href={`${base}privacy/`}>{t.privacy}</Link><Link href={`${base}terms/`}>{t.terms}</Link><a href="https://github.com/chentieshu/NextchinaORG" target="_blank" rel="noreferrer">GitHub</a></nav></footer></div></div><MobileNavigation key={user?.id??'guest'} home={home} admin={admin} canCompose={canCompose} onCompose={compose} onLogin={()=>login()} onEditProfile={()=>setProfileOpen(true)}/>{profileOpen&&profile&&<ProfileDialog key={profile.id} onClose={()=>setProfileOpen(false)}/>} {authOpen&&!user&&<AuthDialog/>}</>;
 }
