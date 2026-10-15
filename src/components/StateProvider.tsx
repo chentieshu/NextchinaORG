@@ -14,7 +14,7 @@ function useAppState(locale:Locale){
  const [articles,setArticles]=useState<Article[]>([]),[loading,setLoading]=useState(!demo),[loadError,setLoadError]=useState(false),[contentVersion,setContentVersion]=useState(0);
  const [liked,setLiked]=useState<string[]>([]),[bookmarked,setBookmarked]=useState<string[]>([]),[reposted,setReposted]=useState<string[]>([]),[authOpen,setAuthOpen]=useState(false),[toast,setToast]=useState(''),[online,setOnline]=useState(true);
  const [categories,setCategories]=useState<ContentCategory[]>([]);
- const categoryName=useCallback((key:string)=>categories.find(c=>c.key===key)?.labels[locale]??key,[categories,locale]);
+ const categoryName=useCallback((key:string|null)=>categories.find(c=>c.key===key)?.labels[locale]??key??'',[categories,locale]);
  const activeCategories=categories.filter(c=>c.enabled);
  const interactionEpoch=useRef(0),profileEpoch=useRef(0);
  const [settings,setSettings]=useState<SiteSettings>({id:true,notice:'',comments_enabled:true,ugc_enabled:true});

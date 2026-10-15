@@ -34,7 +34,7 @@ test('every email uses only variables supported for its event and remains below 
     assert.ok(!/<script|<form|<iframe|<svg|<img|@import|display:\s*(flex|grid)/i.test(html),name);
     for(const table of html.matchAll(/<table\b[^>]*>/g))assert.ok(table[0].includes('role="presentation"'),name);
     const subject=await read(name+'.subject.txt');
-    assert.ok(subject.startsWith('ChinaTeam'),name);
+    assert.ok(subject.startsWith('Teamcn'),name);
     assert.ok(!subject.includes('{{'),`${name}: no token or personal information in subject`);
     assert.ok(html.includes('mailto:chentieshu520@gmail.com'),name);
   }

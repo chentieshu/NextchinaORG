@@ -3,7 +3,7 @@ import {fixture,member} from './fixtures';
 test.skip(!process.env.AUTH_FIXTURES,'Authenticated market tests use isolated fixtures.');
 const other='20000000-0000-4000-8000-000000000002';
 async function marketFixture(page:Page,role='member',seller=false){
- const account=await fixture(page,role),merchant={id:seller?member:other,user_id:seller?member:other,name:'ChinaTeam 积分商店',display_name:'Test seller',handle:'market_seller',avatar_key:null,contact_url:'https://example.test/contact',description:'联系商家确认价格、付款方式与交付时间。',enabled:true,status:'approved',collateral:'1000000000',updated_at:new Date().toISOString(),available:'10000000',reserved:'0'};
+ const account=await fixture(page,role),merchant={id:seller?member:other,user_id:seller?member:other,name:'Teamcn 积分商店',display_name:'Test seller',handle:'market_seller',avatar_key:null,contact_url:'https://example.test/contact',description:'联系商家确认价格、付款方式与交付时间。',enabled:true,status:'approved',collateral:'1000000000',updated_at:new Date().toISOString(),available:'10000000',reserved:'0'};
  const state={merchant,snapshot:{merchant:seller?merchant:null,frozen:false,summary:role==='super_admin'?{issued:'10000000',revoked:'0',available:'10000000',reserved:'0',redeemed:'0'}:null},codes:[] as any[],writes:[] as any[]};
  await page.route('**/rest/v1/rpc/omni_c2c_read',route=>route.fulfill({json:{rows:[{...merchant,currency:'USDT',price_micros:'10000',min_units:'1000000',max_units:'10000000',payment_method:'Bank',completed:0}],config:{fee_bps:100,enabled:true,minimum_collateral:'1000000000',updated_at:merchant.updated_at},merchant:seller?{...merchant,status:'approved',collateral:'1000000000'}:null,offer:null,server_time:new Date().toISOString()}}));
  await page.route('**/rest/v1/rpc/omni_market_*',async route=>{const name=new URL(route.request().url()).pathname.split('/').at(-1),p=route.request().postDataJSON();let data:any={};
@@ -14,7 +14,7 @@ async function marketFixture(page:Page,role='member',seller=false){
  });return{account,state};
 }
 test('market lists real merchant contacts and fits all locales on mobile',async({page})=>{
- await marketFixture(page);for(const locale of ['zh-CN','en','ja','es','zh-TW']){await page.goto(`/${locale}/market/`);await expect(page.locator('.market-merchants')).toContainText('ChinaTeam 积分商店');await expect(page.locator('.c2c-offers')).toContainText('USDT');for(const width of [320,390,768,1440]){await page.setViewportSize({width,height:900});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}}
+ await marketFixture(page);for(const locale of ['zh-CN','en','ja','es','zh-TW']){await page.goto(`/${locale}/market/`);await expect(page.locator('.market-merchants')).toContainText('Teamcn 积分商店');await expect(page.locator('.c2c-offers')).toContainText('USDT');for(const width of [320,390,768,1440]){await page.setViewportSize({width,height:900});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}}
  await page.goto('/zh-CN/market/');await page.setViewportSize({width:390,height:900});await page.screenshot({path:test.info().outputPath('market-mobile.png'),fullPage:true});
 });
 test('redemption validates locally, sends only a digest and retries lost responses without storing the code',async({page})=>{

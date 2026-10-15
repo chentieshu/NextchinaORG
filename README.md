@@ -1,21 +1,21 @@
-# ChinaTeam
+# Teamcn
 
 当前部署与 C2C 规则见 [架构与运营说明](docs/teamcn-architecture.md)。前台 `teamcn.org / www.teamcn.org`；后台独立部署于 `tree.teamcn.org`。商家是用户，最低押金 1,000 USDT，出售自有积分；订单和兑换码共享押金限额。旧新增发行入口已停用。
 
 
-当前品牌统一为 **ChinaTeam**，正式域名使用 `teamcn.org`，GitHub、Supabase 项目和 Cloudflare 资源标识保留，已有账号与内容不迁移。
+当前品牌统一为 **Teamcn**，正式域名使用 `teamcn.org`，GitHub、Supabase 项目和 Cloudflare 资源标识保留，已有账号与内容不迁移。
 
 支持转发/取消转发、带原帖或新闻文章卡片的引用、帖子详情与引用列表。列表继续使用正文在左、素材在右的样式。帖子发布器共用富文本编辑器，支持粘贴图片、四图排序、代码和外链。阅读偏好可独立选择新闻语言、外部播放器加载方式和转发显示；账户设置使用邮箱安全验证码，已移除验证器扫码方式。
 
 已发布内容的修改可保存为私密云端草稿，保存时线上版本继续展示；新闻按当前选中语言发布，其他未发布译文留在草稿中。并发版本不一致时拒绝覆盖并保留输入。
 
-2026-10-15 已通过官方 CLI 将 ChinaTeam 发件人、13 类邮件主题/正文及 7 项安全通知保存到 Supabase，回读一致；没有替换 Resend 密钥。邮件仍为中英双语，真实投递与第三方 OAuth 品牌审核需要真实账号验证。
+2026-10-15 已通过官方 CLI 将 Teamcn 发件人、13 类邮件主题/正文及 7 项安全通知保存到 Supabase，回读一致；没有替换 Resend 密钥。邮件仍为中英双语，真实投递与第三方 OAuth 品牌审核需要真实账号验证。
 
 后台支持动态五语言分类、内容搜索与状态筛选、总管理员权限和受保护的数据库/R2 监控。操作方式、状态管理边界和剩余生产缺口见 [后台与运维说明](docs/admin-and-operations.md)。
 
 开放论坛与新闻社区。Next.js 16 App Router、React 19、Tailwind CSS v4、React Icons、Supabase。
 
-正式网站：[ChinaTeam](https://teamcn.org)。`www.teamcn.org` 同时可访问，canonical 指向主域。
+正式网站：[Teamcn](https://teamcn.org)。`www.teamcn.org` 同时可访问，canonical 指向主域。
 
 域名迁移、Google / X / GitHub、Supabase 与 Resend 的逐项填写指南见 [登录与域名配置](docs/auth-and-domains.md)。全部 13 类品牌邮件的 [配置说明](supabase/templates/README.md) 与 [可视化复制页面](supabase/templates/preview.html) 已备齐；需单独保存到 Supabase Auth，不会随网站部署自动生效。
 
@@ -130,13 +130,13 @@ tests/                   PostgreSQL 权限与浏览器交互验证
 
 2026-10-12 上线复查时邮箱、Google、GitHub 已启用；Google、GitHub、X 三个授权入口均返回正确的服务商跳转。当前项目的公开 Auth settings 没有返回 `x` 字段，因此在验证 X OAuth 2.0 授权入口后，设置 `NEXT_PUBLIC_SUPABASE_X_ENABLED=true` 作为该字段缺失时的显示回退。服务端明确返回 `x:false` 时仍禁用按钮。网站登录面板读取提供商状态，未启用项显示“暂未开放”。
 
-站长已在原 Cloudflare Pages 域名完成 Google 登录并确认进入管理中心。2026-10-12 迁移到 ChinaTeam 后，需要按配置指南保存新的 Auth 返回地址，并在新域名重新登录。GitHub / X 完整授权与 Resend SMTP 真实收件仍需联调；服务商入口可访问不代表完整授权已验证。
+站长已在原 Cloudflare Pages 域名完成 Google 登录并确认进入管理中心。2026-10-12 迁移到 Teamcn 后，需要按配置指南保存新的 Auth 返回地址，并在新域名重新登录。GitHub / X 完整授权与 Resend SMTP 真实收件仍需联调；服务商入口可访问不代表完整授权已验证。
 
 ### OAuth 应用配置值
 
 | 项目 | 值 |
 | --- | --- |
-| 应用名称 | ChinaTeam |
+| 应用名称 | Teamcn |
 | 网站 | `https://teamcn.org` |
 | Google / GitHub / X 服务商回调 | `https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback` |
 | 隐私说明 | `https://teamcn.org/zh-CN/privacy/` |

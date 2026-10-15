@@ -1,5 +1,6 @@
 import type {Locale} from './i18n';
 import {c2cLegal} from './c2c-legal';
+import {identityLegal} from './identity-legal';
 export const supportEmail="chentieshu520@gmail.com";
 export const legalUpdated='2026-10-15';
 export const googleDataPolicy="https://developers.google.com/terms/api-services-user-data-policy";
@@ -8,8 +9,8 @@ type Document={title:string;intro:string;sections:Section[]};
 type LegalCopy={purposeTitle:string;purpose:string;signIn:string;updated:string;contact:string;policyLink:string;revokeLink:string;privacy:Document;terms:Document};
 export const legalCopy:Record<Locale,LegalCopy>={
   "zh-CN": {
-    "purposeTitle": "ChinaTeam · 新闻与论坛",
-    "purpose": "ChinaTeam 是一个新闻与开放论坛社区。任何人都可以直接阅读公开新闻和帖子；登录成员可以发帖、点赞、收藏和评论。新闻由管理员编辑发布。",
+    "purposeTitle": "Teamcn · 文章与论坛",
+    "purpose": "Teamcn 是一个文章与开放论坛社区。任何人都可以直接阅读公开文章和帖子；登录成员可以发帖、点赞、收藏和评论。文章由管理员编辑发布。",
     "signIn": "Google、GitHub、X 或邮箱登录用于建立社区账号、保存收藏和参与讨论。Google 登录仅用于身份验证，不读取 Gmail 邮件、云端硬盘文件、日历或通讯录。",
     "updated": "更新日期",
     "contact": "支持与隐私联系",
@@ -17,7 +18,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "管理 Google 第三方连接",
     "privacy": {
       "title": "隐私政策",
-      "intro": "本政策说明 ChinaTeam 网站运营团队如何处理访问者和注册用户的信息，适用于 teamcn.org 及其 www 入口。阅读公开新闻与本政策无需登录。",
+      "intro": "本政策说明 Teamcn 网站运营团队如何处理访问者和注册用户的信息，适用于 teamcn.org 及其 www 入口。阅读公开文章与本政策无需登录。",
       "sections": [
         {
           "title": "1. 我们收集哪些信息",
@@ -70,7 +71,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
         {
           "title": "7. 撤回 Google 授权",
           "paragraphs": [
-            "你可以在 Google 账号的第三方连接页面撤销 ChinaTeam 的访问。撤销授权不会自动删除已在本站保存的社区数据；如需删除本站账号，请另行联系我们。你仍可不登录阅读公开内容。"
+            "你可以在 Google 账号的第三方连接页面撤销 Teamcn 的访问。撤销授权不会自动删除已在本站保存的社区数据；如需删除本站账号，请另行联系我们。你仍可不登录阅读公开内容。"
           ]
         },
         {
@@ -88,20 +89,20 @@ export const legalCopy:Record<Locale,LegalCopy>={
         {
           "title": "账号设置与显示偏好",
           "paragraphs": [
-            "我们保存你选择的唯一用户名、资料完成时间、界面语言和主题偏好。账号偏好在登录时应用，访客偏好保存在当前浏览器。帖子只展示作者原文；新闻可以具有管理员维护的不同语言版本。统一搜索仅索引公开内容，不展示草稿、私人收藏或账号偏好。",
-            "我们保存新闻语言、外部媒体加载方式和是否显示转发等阅读偏好。转发关系和已发布引用是公开内容；撤销转发不删除原帖。引用原帖被下架或删除后不再展示其正文。敏感操作使用邮箱验证码。Supabase 验证代码并保存认证记录，Resend 负责发送邮件；网站不保存你输入的验证码。"
+            "我们保存你选择的唯一用户名、资料完成时间、界面语言和主题偏好。账号偏好在登录时应用，访客偏好保存在当前浏览器。帖子只展示作者原文；文章可以具有管理员维护的不同语言版本。统一搜索仅索引公开内容，不展示草稿、私人收藏或账号偏好。",
+            "我们保存文章语言、外部媒体加载方式和是否显示转发等阅读偏好。转发关系和已发布引用是公开内容；撤销转发不删除原帖。引用原帖被下架或删除后不再展示其正文。敏感操作使用邮箱验证码。Supabase 验证代码并保存认证记录，Resend 负责发送邮件；网站不保存你输入的验证码。"
           ]
         }
       ]
     },
     "terms": {
       "title": "使用条款",
-      "intro": "ChinaTeam 是科技新闻与讨论网站。使用互动功能时，请遵守以下规则。",
+      "intro": "Teamcn 是科技文章与讨论网站。使用互动功能时，请遵守以下规则。",
       "sections": [
         {
           "title": "1. 服务与账号",
           "paragraphs": [
-            "公开新闻、帖子与政策无需登录即可阅读。已登录且未停用的成员可以发表帖子、管理自己的帖子、点赞、收藏和评论；新闻由管理员发布。管理员可以编辑、置顶、锁定、下架或删除帖子、新闻和评论。请保护你的账户，不要冒充他人。"
+            "公开文章、帖子与政策无需登录即可阅读。已登录且未停用的成员可以发表帖子、管理自己的帖子、点赞、收藏和评论；文章由管理员发布。管理员可以编辑、置顶、锁定、下架或删除帖子、文章和评论。请保护你的账户，不要冒充他人。"
           ]
         },
         {
@@ -113,13 +114,13 @@ export const legalCopy:Record<Locale,LegalCopy>={
         {
           "title": "3. 科技报道与人工智能",
           "paragraphs": [
-            "本站报道科技和人工智能相关新闻，不提供图像、视频或私密影像生成服务。Google 登录只用于社区身份验证，不用于生成内容，也不将 Google 用户数据用于通用人工智能模型训练。"
+            "本站报道科技和人工智能相关文章，不提供图像、视频或私密影像生成服务。Google 登录只用于社区身份验证，不用于生成内容，也不将 Google 用户数据用于通用人工智能模型训练。"
           ]
         },
         {
           "title": "4. 来源与权利",
           "paragraphs": [
-            "你保留自己帖子和评论的权利，并允许本站为提供社区服务而存储、展示和管理这些内容。尊重他人的著作权、来源和隐私，不要上传或链接无权分享的材料。新闻和讨论仅供信息交流，不构成专业建议。"
+            "你保留自己帖子和评论的权利，并允许本站为提供社区服务而存储、展示和管理这些内容。尊重他人的著作权、来源和隐私，不要上传或链接无权分享的材料。文章和讨论仅供信息交流，不构成专业建议。"
           ]
         },
         {
@@ -132,8 +133,8 @@ export const legalCopy:Record<Locale,LegalCopy>={
     }
   },
   "en": {
-    "purposeTitle": "ChinaTeam · News and forum",
-    "purpose": "ChinaTeam is an open news and forum community. Anyone can read public news and posts. Signed-in members can publish posts, like, bookmark and comment. Administrators edit and publish news.",
+    "purposeTitle": "Teamcn · Articles and forum",
+    "purpose": "Teamcn is an open articles and forum community. Anyone can read public articles and posts. Signed-in members can publish posts, like, bookmark and comment. Administrators edit and publish articles.",
     "signIn": "Sign in with Google, GitHub, X or email to create a community account, save bookmarks and join discussions. Google is used only for authentication; we do not access Gmail, Drive, Calendar or Contacts.",
     "updated": "Last updated",
     "contact": "Support and privacy contact",
@@ -141,7 +142,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "Manage Google third-party connections",
     "privacy": {
       "title": "Privacy Policy",
-      "intro": "This policy explains how the ChinaTeam website operators handle visitor and member information on teamcn.org and its www entry point. Public news and this policy are available without signing in.",
+      "intro": "This policy explains how the Teamcn website operators handle visitor and member information on teamcn.org and its www entry point. Public articles and this policy are available without signing in.",
       "sections": [
         {
           "title": "1. Information we collect",
@@ -194,7 +195,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
         {
           "title": "7. Revoking Google access",
           "paragraphs": [
-            "You can revoke ChinaTeam access in your Google account’s third-party connections. Revocation does not automatically delete community data already stored by this website. Contact us separately to delete your website account. Public content remains readable without signing in."
+            "You can revoke Teamcn access in your Google account’s third-party connections. Revocation does not automatically delete community data already stored by this website. Contact us separately to delete your website account. Public content remains readable without signing in."
           ]
         },
         {
@@ -212,20 +213,20 @@ export const legalCopy:Record<Locale,LegalCopy>={
         {
           "title": "Account setup and display preferences",
           "paragraphs": [
-            "We store your chosen unique username, profile completion time, display language and theme preference. Account preferences apply when you sign in; guest preferences stay in the current browser. Posts display their original text, while news may have translations maintained by administrators. Public search covers public content and does not expose drafts, private bookmarks or account preferences.",
-            "We store reading preferences for news language, external media and repost visibility. Repost relationships and published quotes are public; undoing a repost does not delete the original. When an original is unpublished or deleted, its text is no longer shown in quote cards. Sensitive actions use email verification codes. Supabase verifies codes and keeps authentication records; Resend delivers the email. The website does not store the codes you enter."
+            "We store your chosen unique username, profile completion time, display language and theme preference. Account preferences apply when you sign in; guest preferences stay in the current browser. Posts display their original text, while articles may have translations maintained by administrators. Public search covers public content and does not expose drafts, private bookmarks or account preferences.",
+            "We store reading preferences for articles language, external media and repost visibility. Repost relationships and published quotes are public; undoing a repost does not delete the original. When an original is unpublished or deleted, its text is no longer shown in quote cards. Sensitive actions use email verification codes. Supabase verifies codes and keeps authentication records; Resend delivers the email. The website does not store the codes you enter."
           ]
         }
       ]
     },
     "terms": {
       "title": "Terms of Service",
-      "intro": "ChinaTeam is a technology news and discussion website. These rules apply when using its community features.",
+      "intro": "Teamcn is a technology articles and discussion website. These rules apply when using its community features.",
       "sections": [
         {
           "title": "1. Service and accounts",
           "paragraphs": [
-            "Public news, posts and policies can be read without signing in. Active signed-in members can publish and manage their own posts, like, bookmark and comment. Administrators publish news and may edit, pin, lock, unpublish or delete posts, news and comments. Protect your account and do not impersonate others."
+            "Public articles, posts and policies can be read without signing in. Active signed-in members can publish and manage their own posts, like, bookmark and comment. Administrators publish articles and may edit, pin, lock, unpublish or delete posts, articles and comments. Protect your account and do not impersonate others."
           ]
         },
         {
@@ -243,7 +244,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
         {
           "title": "4. Sources and rights",
           "paragraphs": [
-            "You retain rights to your posts and comments and permit us to store, display and moderate them to provide the community service. Respect copyright, sources and privacy; do not share materials without permission. News and discussions provide information, not professional advice."
+            "You retain rights to your posts and comments and permit us to store, display and moderate them to provide the community service. Respect copyright, sources and privacy; do not share materials without permission. Articles and discussions provide information, not professional advice."
           ]
         },
         {
@@ -256,8 +257,8 @@ export const legalCopy:Record<Locale,LegalCopy>={
     }
   },
   "zh-TW": {
-    "purposeTitle": "ChinaTeam · 新聞與論壇",
-    "purpose": "ChinaTeam 是新聞與開放論壇社群。任何人都能閱讀公開新聞和貼文；登入成員可發文、按讚、收藏和留言。新聞由管理員編輯發布。",
+    "purposeTitle": "Teamcn · 文章與論壇",
+    "purpose": "Teamcn 是文章與開放論壇社群。任何人都能閱讀公開文章和貼文；登入成員可發文、按讚、收藏和留言。文章由管理員編輯發布。",
     "signIn": "使用 Google、GitHub、X 或電子郵件建立社群帳號、儲存收藏並參與討論。Google 僅用於身分驗證，不讀取 Gmail、雲端硬碟、日曆或聯絡人。",
     "updated": "更新日期",
     "contact": "支援與隱私聯絡",
@@ -265,7 +266,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "管理 Google 第三方連結",
     "privacy": {
       "title": "隱私政策",
-      "intro": "本政策說明 ChinaTeam 網站營運團隊如何處理 teamcn.org 及 www 入口的訪客與會員資料。公開新聞和本政策無需登入即可閱讀。",
+      "intro": "本政策說明 Teamcn 網站營運團隊如何處理 teamcn.org 及 www 入口的訪客與會員資料。公開文章和本政策無需登入即可閱讀。",
       "sections": [
         {
           "title": "1. 收集的資料",
@@ -329,20 +330,20 @@ export const legalCopy:Record<Locale,LegalCopy>={
         {
           "title": "帳號設定與顯示偏好",
           "paragraphs": [
-            "我們儲存你選擇的唯一使用者名稱、資料完成時間、介面語言及主題偏好。帳號偏好在登入時套用，訪客偏好儲存在目前瀏覽器。貼文只顯示作者原文，新聞可有管理員維護的不同語言版本。公開搜尋不顯示草稿、私人收藏或帳號偏好。",
-            "我們儲存新聞語言、外部媒體載入方式及是否顯示轉發等閱讀偏好。轉發關係與已發佈引用為公開內容；取消轉發不會刪除原文。原文下架或刪除後不再顯示其內容。敏感操作使用信箱驗證碼。Supabase 驗證代碼並儲存認證紀錄，Resend 負責傳送郵件；網站不儲存你輸入的驗證碼。"
+            "我們儲存你選擇的唯一使用者名稱、資料完成時間、介面語言及主題偏好。帳號偏好在登入時套用，訪客偏好儲存在目前瀏覽器。貼文只顯示作者原文，文章可有管理員維護的不同語言版本。公開搜尋不顯示草稿、私人收藏或帳號偏好。",
+            "我們儲存文章語言、外部媒體載入方式及是否顯示轉發等閱讀偏好。轉發關係與已發佈引用為公開內容；取消轉發不會刪除原文。原文下架或刪除後不再顯示其內容。敏感操作使用信箱驗證碼。Supabase 驗證代碼並儲存認證紀錄，Resend 負責傳送郵件；網站不儲存你輸入的驗證碼。"
           ]
         }
       ]
     },
     "terms": {
       "title": "使用條款",
-      "intro": "ChinaTeam 為科技新聞與討論網站，使用社群功能請遵守下列規則。",
+      "intro": "Teamcn 為科技文章與討論網站，使用社群功能請遵守下列規則。",
       "sections": [
         {
           "title": "1. 服務與帳號",
           "paragraphs": [
-            "公開新聞、貼文與政策無須登入即可閱讀。未停用的登入成員可發表及管理自己的貼文、按讚、收藏和留言；新聞由管理員發布。管理員可以編輯、置頂、鎖定、下架或刪除貼文、新聞和留言。請保護帳戶，不要冒充他人。"
+            "公開文章、貼文與政策無須登入即可閱讀。未停用的登入成員可發表及管理自己的貼文、按讚、收藏和留言；文章由管理員發布。管理員可以編輯、置頂、鎖定、下架或刪除貼文、文章和留言。請保護帳戶，不要冒充他人。"
           ]
         },
         {
@@ -354,21 +355,21 @@ export const legalCopy:Record<Locale,LegalCopy>={
         {
           "title": "3. 科技與人工智慧",
           "paragraphs": [
-            "本站報導科技與人工智慧新聞，不提供圖像、影片或私密影像生成服務。Google 登入僅供身分驗證，不用於內容生成，也不將 Google 資料用於通用人工智慧模型訓練。"
+            "本站報導科技與人工智慧文章，不提供圖像、影片或私密影像生成服務。Google 登入僅供身分驗證，不用於內容生成，也不將 Google 資料用於通用人工智慧模型訓練。"
           ]
         },
         {
           "title": "4. 權利與聯絡",
           "paragraphs": [
-            "你保留自己貼文與留言的權利，並允許本站為提供服務而儲存、顯示和管理內容。尊重著作權、來源與隱私，不要分享無權使用的素材。新聞和討論僅供資訊交流，不構成專業建議。"
+            "你保留自己貼文與留言的權利，並允許本站為提供服務而儲存、顯示和管理內容。尊重著作權、來源與隱私，不要分享無權使用的素材。文章和討論僅供資訊交流，不構成專業建議。"
           ]
         }
       ]
     }
   },
   "ja": {
-    "purposeTitle": "ChinaTeam · ニュースとフォーラム",
-    "purpose": "ChinaTeam はニュースと公開フォーラムのコミュニティです。公開ニュースと投稿は誰でも閲覧できます。ログインしたメンバーは投稿、いいね、保存、コメントを利用でき、管理者がニュースを編集・公開します。",
+    "purposeTitle": "Teamcn · 記事とフォーラム",
+    "purpose": "Teamcn は記事と公開フォーラムのコミュニティです。公開記事と投稿は誰でも閲覧できます。ログインしたメンバーは投稿、いいね、保存、コメントを利用でき、管理者が記事を編集・公開します。",
     "signIn": "Google、GitHub、X、メールでコミュニティに参加できます。Google は本人認証のためだけに使用し、Gmail、Drive、Calendar、Contacts にはアクセスしません。",
     "updated": "更新日",
     "contact": "サポート・プライバシー窓口",
@@ -376,7 +377,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "Google のサードパーティ接続を管理",
     "privacy": {
       "title": "プライバシーポリシー",
-      "intro": "ChinaTeam 運営チームによる teamcn.org および www 入口の利用者情報の取り扱いを説明します。公開記事と本ポリシーはログイン不要です。",
+      "intro": "Teamcn 運営チームによる teamcn.org および www 入口の利用者情報の取り扱いを説明します。公開記事と本ポリシーはログイン不要です。",
       "sections": [
         {
           "title": "1. 収集する情報",
@@ -440,20 +441,20 @@ export const legalCopy:Record<Locale,LegalCopy>={
         {
           "title": "アカウント設定と表示設定",
           "paragraphs": [
-            "選択した一意のユーザー名、プロフィール設定完了日時、表示言語、テーマを保存します。ログイン時にアカウント設定を適用し、ゲストの設定は現在のブラウザーに保存します。投稿は原文を表示し、ニュースは管理者が翻訳を用意できます。検索では公開内容のみを表示し、下書き、非公開の保存一覧、アカウント設定は公開しません。",
-            "ニュースの言語、外部メディア、リポスト表示の設定を保存します。リポストと公開済み引用は公開情報です。リポストの取り消しでは原文は削除されません。原文が非公開化または削除されると引用カードに本文を表示しません。重要な操作にはメール確認コードを使用します。Supabase が検証と認証記録を管理し、Resend がメールを配信します。サイトは入力されたコードを保存しません。"
+            "選択した一意のユーザー名、プロフィール設定完了日時、表示言語、テーマを保存します。ログイン時にアカウント設定を適用し、ゲストの設定は現在のブラウザーに保存します。投稿は原文を表示し、記事は管理者が翻訳を用意できます。検索では公開内容のみを表示し、下書き、非公開の保存一覧、アカウント設定は公開しません。",
+            "記事の言語、外部メディア、リポスト表示の設定を保存します。リポストと公開済み引用は公開情報です。リポストの取り消しでは原文は削除されません。原文が非公開化または削除されると引用カードに本文を表示しません。重要な操作にはメール確認コードを使用します。Supabase が検証と認証記録を管理し、Resend がメールを配信します。サイトは入力されたコードを保存しません。"
           ]
         }
       ]
     },
     "terms": {
       "title": "利用規約",
-      "intro": "ChinaTeam はテクノロジーニュースと議論のサイトです。コミュニティ機能には以下のルールが適用されます。",
+      "intro": "Teamcn はテクノロジー記事と議論のサイトです。コミュニティ機能には以下のルールが適用されます。",
       "sections": [
         {
           "title": "1. サービスとアカウント",
           "paragraphs": [
-            "公開ニュース、投稿、ポリシーはログインせずに閲覧できます。有効なアカウントのメンバーは自分の投稿を公開・管理し、いいね、保存、コメントができます。管理者はニュースを公開し、投稿・ニュース・コメントを編集、固定、ロック、非公開化、削除できます。アカウントを保護し、なりすましをしないでください。"
+            "公開記事、投稿、ポリシーはログインせずに閲覧できます。有効なアカウントのメンバーは自分の投稿を公開・管理し、いいね、保存、コメントができます。管理者は記事を公開し、投稿・記事・コメントを編集、固定、ロック、非公開化、削除できます。アカウントを保護し、なりすましをしないでください。"
           ]
         },
         {
@@ -471,15 +472,15 @@ export const legalCopy:Record<Locale,LegalCopy>={
         {
           "title": "4. 権利とお問い合わせ",
           "paragraphs": [
-            "自分の投稿とコメントの権利を保持し、サービス提供に必要な保存、表示、管理を許可します。他者の著作権、出典、プライバシーを尊重し、共有権限のない素材を使用しないでください。ニュースと議論は情報提供であり、専門的助言ではありません。"
+            "自分の投稿とコメントの権利を保持し、サービス提供に必要な保存、表示、管理を許可します。他者の著作権、出典、プライバシーを尊重し、共有権限のない素材を使用しないでください。記事と議論は情報提供であり、専門的助言ではありません。"
           ]
         }
       ]
     }
   },
   "es": {
-    "purposeTitle": "ChinaTeam · Noticias y foro",
-    "purpose": "ChinaTeam es una comunidad abierta de noticias y foro. Cualquier persona puede leer noticias y publicaciones públicas. Los miembros pueden publicar, dar me gusta, guardar y comentar; la administración edita y publica noticias.",
+    "purposeTitle": "Teamcn · Artículos y foro",
+    "purpose": "Teamcn es una comunidad abierta de artículos y foro. Cualquier persona puede leer artículos y publicaciones públicas. Los miembros pueden publicar, dar me gusta, guardar y comentar; la administración edita y publica artículos.",
     "signIn": "Accede con Google, GitHub, X o correo para crear tu cuenta, guardar artículos y participar. Google se usa solo para autenticarte; no accedemos a Gmail, Drive, Calendar ni Contacts.",
     "updated": "Última actualización",
     "contact": "Contacto de soporte y privacidad",
@@ -487,7 +488,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "Gestionar conexiones de terceros de Google",
     "privacy": {
       "title": "Política de privacidad",
-      "intro": "Esta política explica cómo el equipo de ChinaTeam trata la información de visitantes y miembros en teamcn.org y su entrada www. Las noticias públicas y esta política no requieren iniciar sesión.",
+      "intro": "Esta política explica cómo el equipo de Teamcn trata la información de visitantes y miembros en teamcn.org y su entrada www. Los artículos públicas y esta política no requieren iniciar sesión.",
       "sections": [
         {
           "title": "1. Información recopilada",
@@ -551,20 +552,20 @@ export const legalCopy:Record<Locale,LegalCopy>={
         {
           "title": "Configuración de cuenta y preferencias",
           "paragraphs": [
-            "Guardamos tu usuario único, fecha de configuración del perfil, idioma de interfaz y tema. Las preferencias de cuenta se aplican al entrar; las de visitantes se guardan en el navegador actual. Las publicaciones muestran el original; las noticias pueden tener traducciones de la administración. La búsqueda pública no expone borradores, favoritos privados ni preferencias.",
-            "Guardamos preferencias de idioma de noticias, contenido externo y visibilidad de reposts. Los reposts y las citas publicadas son públicos; deshacer un repost no elimina el original. Cuando el original se retira o elimina, su texto deja de aparecer en la cita. Las acciones sensibles usan códigos por correo. Supabase verifica los códigos y conserva los registros de autenticación; Resend entrega el correo. El sitio no almacena los códigos introducidos."
+            "Guardamos tu usuario único, fecha de configuración del perfil, idioma de interfaz y tema. Las preferencias de cuenta se aplican al entrar; las de visitantes se guardan en el navegador actual. Las publicaciones muestran el original; las artículos pueden tener traducciones de la administración. La búsqueda pública no expone borradores, favoritos privados ni preferencias.",
+            "Guardamos preferencias de idioma de artículos, contenido externo y visibilidad de reposts. Los reposts y las citas publicadas son públicos; deshacer un repost no elimina el original. Cuando el original se retira o elimina, su texto deja de aparecer en la cita. Las acciones sensibles usan códigos por correo. Supabase verifica los códigos y conserva los registros de autenticación; Resend entrega el correo. El sitio no almacena los códigos introducidos."
           ]
         }
       ]
     },
     "terms": {
       "title": "Condiciones de uso",
-      "intro": "ChinaTeam es un sitio de noticias y debates tecnológicos. Estas reglas se aplican a las funciones comunitarias.",
+      "intro": "Teamcn es un sitio de artículos y debates tecnológicos. Estas reglas se aplican a las funciones comunitarias.",
       "sections": [
         {
           "title": "1. Servicio y cuentas",
           "paragraphs": [
-            "Las noticias, publicaciones y políticas públicas se pueden leer sin iniciar sesión. Los miembros activos pueden publicar y gestionar sus propias entradas, dar me gusta, guardar y comentar. La administración publica noticias y puede editar, fijar, bloquear, retirar o eliminar publicaciones, noticias y comentarios. Protege tu cuenta y no suplantes a otras personas."
+            "Los artículos, publicaciones y políticas públicas se pueden leer sin iniciar sesión. Los miembros activos pueden publicar y gestionar sus propias entradas, dar me gusta, guardar y comentar. La administración publica artículos y puede editar, fijar, bloquear, retirar o eliminar publicaciones, artículos y comentarios. Protege tu cuenta y no suplantes a otras personas."
           ]
         },
         {
@@ -582,7 +583,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
         {
           "title": "4. Derechos y contacto",
           "paragraphs": [
-            "Conservas los derechos de tus publicaciones y comentarios y permites almacenarlos, mostrarlos y moderarlos para prestar el servicio. Respeta los derechos de autor, las fuentes y la privacidad. No compartas material sin permiso. Las noticias y conversaciones son informativas, no asesoramiento profesional."
+            "Conservas los derechos de tus publicaciones y comentarios y permites almacenarlos, mostrarlos y moderarlos para prestar el servicio. Respeta los derechos de autor, las fuentes y la privacidad. No compartas material sin permiso. Los artículos y conversaciones son informativas, no asesoramiento profesional."
           ]
         }
       ]
@@ -674,3 +675,4 @@ const walletLegal:Record<Locale,{privacy:Section;terms:Section}>={
 };
 for(const locale of Object.keys(walletLegal) as Locale[]){legalCopy[locale].privacy.sections.push(walletLegal[locale].privacy);legalCopy[locale].terms.sections.push(walletLegal[locale].terms);}
 for(const locale of Object.keys(c2cLegal) as Locale[]){const c=c2cLegal[locale];legalCopy[locale].privacy.sections.push({title:c.title,paragraphs:[c.privacy]});legalCopy[locale].terms.sections.push({title:c.title,paragraphs:[c.terms]});}
+for(const locale of Object.keys(identityLegal) as Locale[]){const c=identityLegal[locale];legalCopy[locale].privacy.sections.push({title:c.title,paragraphs:[c.privacy]});legalCopy[locale].terms.sections.push({title:c.title,paragraphs:[c.terms]});}

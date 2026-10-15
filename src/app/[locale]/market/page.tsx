@@ -1,3 +1,3 @@
-import {C2CPage as MarketPage} from '@/modules/wallet/C2CPage';
+import {redirect} from 'next/navigation';
 export const metadata={robots:{index:false,follow:false}};
-export default MarketPage;
+export default async function MarketPage({params}:{params:Promise<{locale:string}>}){const{locale}=await params;redirect(`/${locale}/wallet/market/`);}

@@ -1,9 +1,9 @@
-ChinaTeam
-你的 ChinaTeam 验证码
-Your ChinaTeam verification code
+Teamcn
+你的 Teamcn 验证码
+Your Teamcn verification code
 
-我们收到了你的登录或安全验证请求。请返回 ChinaTeam 输入下方验证码。请勿将验证码告诉任何人。
-We received a sign-in or security verification request. Return to ChinaTeam and enter the code below. Never share it with anyone.
+我们收到了你的登录或安全验证请求。请返回 Teamcn 输入下方验证码。请勿将验证码告诉任何人。
+We received a sign-in or security verification request. Return to Teamcn and enter the code below. Never share it with anyone.
 
 验证码 / Verification code: {{ .Token }}
 或通过链接登录 · Sign in with a link

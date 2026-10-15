@@ -1,9 +1,9 @@
-ChinaTeam
-验证邮箱，加入 ChinaTeam
+Teamcn
+验证邮箱，加入 Teamcn
 Confirm your email address
 
-欢迎加入 ChinaTeam。请点击下方按钮验证邮箱并完成注册。你可以阅读科技新闻，并在登录后点赞、收藏和参与评论。
-Welcome to ChinaTeam. Confirm your email to complete signup, then like, bookmark, and comment on technology news.
+欢迎加入 Teamcn。请点击下方按钮验证邮箱并完成注册。你可以阅读文章，并在登录后点赞、收藏和参与评论。
+Welcome to Teamcn. Confirm your email to complete signup, then like, bookmark, and comment on articles.
 
 验证邮箱 · Confirm email
 {{ .ConfirmationURL }}

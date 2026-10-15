@@ -1,6 +1,6 @@
-# ChinaTeam：域名、社交登录与邮件配置
+# Teamcn：域名、社交登录与邮件配置
 
-更新日期：2026-10-15。品牌为 **ChinaTeam**，主站为 `https://teamcn.org`。域名大小写不影响访问；配置统一使用小写。
+更新日期：2026-10-15。品牌为 **Teamcn**，主站为 `https://teamcn.org`。域名大小写不影响访问；配置统一使用小写。
 
 独立后台入口为 `https://tree.teamcn.org`，各语言认证回跳已加入 Supabase。完整部署与 C2C 操作见 [架构说明](teamcn-architecture.md)。
 
@@ -64,7 +64,7 @@ https://teamcn.org/zh-TW/auth/callback/
 
 打开 [现有 Google Cloud 项目](https://console.cloud.google.com/auth/overview?project=shuxue-508602)，进入 Google Auth Platform。
 
-1. **Branding**：App name 改为 `ChinaTeam`；User support email 选择站长已验证邮箱。
+1. **Branding**：App name 改为 `Teamcn`；User support email 选择站长已验证邮箱。
 2. App home page 填 `https://teamcn.org`。
 3. Privacy policy 填 `https://teamcn.org/zh-CN/privacy/`；Terms of service 填 `https://teamcn.org/zh-CN/terms/`。
 4. Authorized domains 添加 `teamcn.org`（不带协议或路径）。保留当前 Supabase 回调域相关配置；Google 如提示域名所有权验证，按页面要求在 Search Console 验证根域。
@@ -82,7 +82,7 @@ https://teamcn.org/zh-TW/auth/callback/
 
 | 字段 | 填写值 |
 | --- | --- |
-| Application name | `ChinaTeam` |
+| Application name | `Teamcn` |
 | Homepage URL | `https://teamcn.org` |
 | Application description | `An independent technology news community.` |
 | Authorization callback URL | `https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback` |
@@ -95,7 +95,7 @@ https://teamcn.org/zh-TW/auth/callback/
 
 打开 [现有 X 开发者账号](https://console.x.com/accounts/2102246578647973888)，选择目前用于登录的应用 → Settings / User authentication settings。
 
-1. 应用名称改为 `ChinaTeam`。
+1. 应用名称改为 `Teamcn`。
 2. 使用 OAuth 2.0；Type of App 选择 **Web App / Automated App or Bot**（名称以控制台实际选项为准）。
 3. 开启 **Request email from users**；仅登录时使用 Read 权限，不申请发推或私信写入权限。
 4. Callback URI / Redirect URL 填上方 Supabase 回调。
@@ -117,7 +117,7 @@ Supabase 负责注册、一次性链接与会话；Resend 通过 SMTP 发送邮�
 
 打开 [Resend API Keys](https://resend.com/api-keys) 创建专用密钥：
 
-- Name：`ChinaTeam Supabase SMTP`
+- Name：`Teamcn Supabase SMTP`
 - Permission：`Sending access`
 - Domain：`mail.nextchina.org`
 
@@ -130,7 +130,7 @@ Supabase 负责注册、一次性链接与会话；Resend 通过 SMTP 发送邮�
 | 字段 | 值 |
 | --- | --- |
 | Sender email | `login@mail.nextchina.org` |
-| Sender name | `ChinaTeam` |
+| Sender name | `Teamcn` |
 | Host | `smtp.resend.com` |
 | Port | `465` |
 | Username | `resend` |
@@ -140,7 +140,7 @@ Supabase 负责注册、一次性链接与会话；Resend 通过 SMTP 发送邮�
 
 ### 邮件模板
 
-全部 6 类验证邮件与 7 类安全通知已分别准备，使用中英双语 ChinaTeam 样式。请下载并在浏览器打开 [`supabase/templates/preview.html`](../supabase/templates/preview.html)，逐项复制对应主题和 HTML 正文；不要把 Magic Link 正文重复用在 Confirm signup 或其他不同操作中。
+全部 6 类验证邮件与 7 类安全通知已分别准备，使用中英双语 Teamcn 样式。请下载并在浏览器打开 [`supabase/templates/preview.html`](../supabase/templates/preview.html)，逐项复制对应主题和 HTML 正文；不要把 Magic Link 正文重复用在 Confirm signup 或其他不同操作中。
 
 完整文件对应表、SMTP 填写值、批量保存脚本和功能限制见 [邮件配置指南](../supabase/templates/README.md)。七项安全通知建议保存后全部开启；通知开关不会开启网站里的密码、电话或 MFA 功能。
 
@@ -152,7 +152,7 @@ Supabase 负责注册、一次性链接与会话；Resend 通过 SMTP 发送邮�
 
 1. 打开 `https://teamcn.org/en/` 和 `https://www.teamcn.org/en/`，确认两者正常显示。
 2. 从新站重新进行 Google / GitHub / X 登录，确认回到当前语言首页；已有管理员账号从头像进入管理中心。
-3. 在新站输入自己的邮箱，点击发送登录链接。在**发起登录的同一浏览器**打开邮件，确认发件人为 `ChinaTeam <login@mail.nextchina.org>`，返回新站并显示登录状态。不要用另一个浏览器或邮箱内置浏览器打开 PKCE 链接。
+3. 在新站输入自己的邮箱，点击发送登录链接。在**发起登录的同一浏览器**打开邮件，确认发件人为 `Teamcn <login@mail.nextchina.org>`，返回新站并显示登录状态。不要用另一个浏览器或邮箱内置浏览器打开 PKCE 链接。
 4. 邮件问题查 Resend Emails / Logs 与 Supabase Auth Logs。`Error sending confirmation email` 优先检查 SMTP 密钥、发件域和端口；跳回旧域名或 localhost 优先检查 Site URL 与 Redirect URLs；链接失效则重新请求，不复用旧链接。
 
 网站静态构建、匿名访问和模拟邮件提交验证不能替代真实收件与完整授权验证。本次没有自动发送邮件，也没有代替用户完成服务商授权。

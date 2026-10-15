@@ -1,6 +1,6 @@
-# ChinaTeam：独立后台与 C2C 架构
+# Teamcn：独立后台与 C2C 架构
 
-更新日期：2026-10-15。品牌仍是 ChinaTeam，主域名改为 teamcn.org。
+更新日期：2026-10-15。品牌仍是 Teamcn，主域名改为 teamcn.org。
 
 ## 部署边界
 
@@ -70,7 +70,7 @@
 
 Supabase Site URL 为 `https://teamcn.org`；仅列出前后台各语言的精确 `/auth/callback/` 地址，并保留旧入口回跳用于过渡。Google、GitHub、X 服务商的 OAuth callback 仍是 `https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback`，无需更换应用密钥。
 
-在 Google Auth Platform Branding 更新主页 `https://teamcn.org`、隐私 `https://teamcn.org/zh-CN/privacy/`、条款 `https://teamcn.org/zh-CN/terms/`，应用名保持 ChinaTeam；用当前 Cloud 项目账号在 Search Console 验证 teamcn.org 的网域所有权，并将其加入授权网域。GitHub OAuth App 的 Homepage URL、X 应用的 Website/Privacy/Terms 同步这些地址。服务商的域名所有权与品牌审核不等同于 Cloudflare 证书激活。
+在 Google Auth Platform Branding 更新主页 `https://teamcn.org`、隐私 `https://teamcn.org/zh-CN/privacy/`、条款 `https://teamcn.org/zh-CN/terms/`，应用名保持 Teamcn；用当前 Cloud 项目账号在 Search Console 验证 teamcn.org 的网域所有权，并将其加入授权网域。GitHub OAuth App 的 Homepage URL、X 应用的 Website/Privacy/Terms 同步这些地址。服务商的域名所有权与品牌审核不等同于 Cloudflare 证书激活。
 
 Resend 已验证的旧发件域名继续使用，避免未经 DNS 验证直接切换发件地址导致邮件中断。如需统一为 `login@mail.teamcn.org`，先在 Resend 验证该域名的全部 SPF/DKIM/MX 记录，再修改 Supabase SMTP sender；不把 Resend API Key 放到前端。
 

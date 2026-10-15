@@ -1,9 +1,9 @@
-ChinaTeam
+Teamcn
 已关联新的登录方式
 A sign-in method was linked
 
-一个登录方式已关联到你的 ChinaTeam 账户。
-A sign-in method was linked to your ChinaTeam account.
+一个登录方式已关联到你的 Teamcn 账户。
+A sign-in method was linked to your Teamcn account.
 
 登录服务商 / Sign-in provider: {{ .Provider }}
 账户邮箱 / Account email: {{ .Email }}

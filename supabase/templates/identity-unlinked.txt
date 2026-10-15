@@ -1,9 +1,9 @@
-ChinaTeam
+Teamcn
 一个登录方式已移除
 A sign-in method was removed
 
-以下登录方式已从你的 ChinaTeam 账户中移除。请确认你仍可通过其他已关联方式登录。
-This sign-in method was removed from your ChinaTeam account. Make sure you can still sign in with another linked method.
+以下登录方式已从你的 Teamcn 账户中移除。请确认你仍可通过其他已关联方式登录。
+This sign-in method was removed from your Teamcn account. Make sure you can still sign in with another linked method.
 
 登录服务商 / Sign-in provider: {{ .Provider }}
 账户邮箱 / Account email: {{ .Email }}

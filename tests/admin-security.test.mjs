@@ -12,6 +12,8 @@ test('categories and settings serialize edits; owner can manage all content whil
  let cat=(await as(owner,save))[0].rows[0].c;
  await assert.rejects(as(owner,`select omni_save_category('invalid','{"en":"Missing"}',1,true)`),/Five translated names/);
  const post=(await as(member,`insert into omni_articles(category,original_locale,translations,author_id,content_type,status) values('tools','en','{"en":{"title":"","summary":"","body":"Member original"}}','${member}','post','published') returning id`))[0].rows[0].id;
+ assert.equal((await as(owner,`select category from omni_articles where id='${post}'`))[0].rows[0].category,null);
+ const categorized=(await as(owner,`insert into omni_articles(category,original_locale,translations,author_id,content_type,status) values('tools','en','{"en":{"title":"An article","summary":"Summary","body":"Article body"}}','${owner}','news','draft') returning id`))[0].rows[0].id;
  await as(owner,`select omni_save_category('tools','${labels}',3,false,'${cat.updated_at}')`);
  await assert.rejects(as(owner,`select omni_save_category('tools','${labels}',2,true,'${cat.updated_at}')`),/Category changed/);
  cat=(await as(owner,`select to_jsonb(c) as c from omni_categories c where key='tools'`))[0].rows[0].c;
@@ -31,7 +33,7 @@ test('categories and settings serialize edits; owner can manage all content whil
  const stamp=(await as(owner,'select to_jsonb(s) as s from omni_settings s'))[0].rows[0].s.updated_at;
  await as(owner,`select omni_save_settings('Updated',true,false,'${stamp}')`);await assert.rejects(as(owner,`select omni_save_settings('Stale',false,true,'${stamp}')`),/Settings changed/);
  await assert.rejects(as(editor,`select omni_save_settings('',true,true,'${stamp}')`),/Forbidden/);
- await as(owner,`delete from omni_articles where id in ('${post}','${news}');select omni_delete_category('tools','${cat.updated_at}')`);
+ await as(owner,`delete from omni_articles where id in ('${post}','${news}','${categorized}');select omni_delete_category('tools','${cat.updated_at}')`);
  await db.exec("reset role;set role anon;select set_config('request.jwt.claim.sub','',false)");assert.equal((await db.query('select count(*) n from omni_categories')).rows[0].n,5);await assert.rejects(db.exec('select omni_admin_metrics()'),/permission denied/);
  }finally{await db.close();}
 });

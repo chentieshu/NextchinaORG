@@ -13,7 +13,7 @@ test('submitting a new query then immediately changing type keeps the submitted 
 });
 
 test('username suggestions support keyboard navigation and do not submit during IME composition',async({page})=>{
- const state=await fixture(page);state.users.push(person());await page.goto('/zh-CN/search/');const input=page.getByRole('combobox',{name:'搜索帖子、新闻、用户和回复'});
+ const state=await fixture(page);state.users.push(person());await page.goto('/zh-CN/search/');const input=page.getByRole('combobox',{name:'搜索帖子、文章、用户和回复'});
  await input.focus();await input.dispatchEvent('compositionstart');await input.fill('@needle');await input.press('Enter');await page.waitForTimeout(350);expect(state.searches).toHaveLength(0);await expect(page).not.toHaveURL(/q=/);
  await input.dispatchEvent('compositionend');await expect(page.getByRole('option').filter({hasText:'Needle 开发者'})).toBeVisible();await input.press('ArrowDown');await input.press('ArrowDown');await input.press('Enter');await expect(page).toHaveURL(new RegExp(`profile/\\?id=${other}$`));
 });
@@ -40,8 +40,8 @@ test('failed pagination retries the same page without duplicates or skipped resu
 });
 
 test('media filters retain cards and news opens the matching translation',async({page})=>{
- const state=await fixture(page);state.articles.push(story(articleId,'needle picture',{media:[{type:'image',url:'https://media.teamcn.org/fixture.webp'}]}),story('20000000-0000-4000-8000-000000000012','needle plain'),story('20000000-0000-4000-8000-000000000013','',{content_type:'news',translations:{'zh-CN':{title:'中文新闻',summary:'摘要',body:'中文内容'},ja:{title:'needle ニュース',summary:'日本語の概要',body:'日本語の本文'}}}));
- await page.goto('/zh-CN/search/?q=needle&type=media');await expect(page.locator('.article-card')).toHaveCount(1);await expect(page.locator('.post-media-preview')).toBeVisible();await page.locator('.search-types').getByRole('button',{name:'新闻',exact:true}).click();await expect(page.locator('.article-card')).toContainText('needle ニュース');await page.locator('.article-card h3 a').click();await expect(page).toHaveURL(/lang=ja/);await expect(page.locator('.article-heading h1')).toHaveText('needle ニュース');
+ const state=await fixture(page);state.articles.push(story(articleId,'needle picture',{media:[{type:'image',url:'https://media.teamcn.org/fixture.webp'}]}),story('20000000-0000-4000-8000-000000000012','needle plain'),story('20000000-0000-4000-8000-000000000013','',{content_type:'news',translations:{'zh-CN':{title:'中文文章',summary:'摘要',body:'中文内容'},ja:{title:'needle ニュース',summary:'日本語の概要',body:'日本語の本文'}}}));
+ await page.goto('/zh-CN/search/?q=needle&type=media');await expect(page.locator('.article-card')).toHaveCount(1);await expect(page.locator('.post-media-preview')).toBeVisible();await page.locator('.search-types').getByRole('button',{name:'文章',exact:true}).click();await expect(page.locator('.article-card')).toContainText('needle ニュース');await page.locator('.article-card h3 a').click();await expect(page).toHaveURL(/lang=ja/);await expect(page.locator('.article-heading h1')).toHaveText('needle ニュース');
 });
 
 test('five locales remain usable on mobile with long identities and queries',async({page})=>{

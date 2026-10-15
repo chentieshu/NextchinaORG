@@ -1,8 +1,8 @@
 import {test,expect} from './test';
 import {fixture,story,member,articleId} from './fixtures';
 test('article quotes preserve a title in the quote and publish as a title-free post',async({page})=>{
- const state=await fixture(page),news='20000000-0000-4000-8000-000000000098';state.articles.push(story(news,'可引用的新闻',{content_type:'news'}));
- await page.goto(`/zh-CN/news/?id=${news}`);await page.getByRole('link',{name:'引用文章',exact:true}).click();await expect(page.locator('.quote-excerpt strong')).toHaveText('可引用的新闻');await expect(page.getByRole('textbox',{name:'标题',exact:true})).toHaveCount(0);await page.locator('.tiptap').fill('我对这篇文章的看法');await page.getByRole('button',{name:'发布',exact:true}).click();await expect(page).toHaveURL(new RegExp('/community/'));expect(state.writes.at(-1)?.quoted_article_id).toBe(news);expect(state.writes.at(-1)?.content_type).toBe('post');await expect(page.locator('.quote-excerpt strong')).toHaveText('可引用的新闻');
+ const state=await fixture(page),news='20000000-0000-4000-8000-000000000098';state.articles.push(story(news,'可引用的文章',{content_type:'news'}));
+ await page.goto(`/zh-CN/news/?id=${news}`);await page.getByRole('link',{name:'引用文章',exact:true}).click();await expect(page.locator('.quote-excerpt strong')).toHaveText('可引用的文章');await expect(page.getByRole('textbox',{name:'标题',exact:true})).toHaveCount(0);await page.locator('.tiptap').fill('我对这篇文章的看法');await page.getByRole('button',{name:'发布',exact:true}).click();await expect(page).toHaveURL(new RegExp('/community/'));expect(state.writes.at(-1)?.quoted_article_id).toBe(news);expect(state.writes.at(-1)?.content_type).toBe('post');await expect(page.locator('.quote-excerpt strong')).toHaveText('可引用的文章');
 });
 test('linked ownership badges have separate external links; profile totals stay off the feed',async({page})=>{
  const state=await fixture(page);state.connections.push({user_id:member,provider:'github',provider_id:'123',handle:'example',url:'https://github.com/example'},{user_id:member,provider:'x',provider_id:'456',handle:'example_x',url:'https://x.com/example_x'});state.articles.push(story());

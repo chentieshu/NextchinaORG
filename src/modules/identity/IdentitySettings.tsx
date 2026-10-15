@@ -1,0 +1,13 @@
+'use client';
+import {useEffect,useRef,useState} from 'react';
+import {useApp} from '@/components/Provider';
+import {formatPoints} from '../wallet/money';
+import {identityCopy} from './copy';
+import {invalidateIdentity,type Identity} from './use-identity';
+import './identity.css';
+export type OwnIdentity=Identity&{hide_level:boolean;hide_title:boolean;xp:string;wealth:string;next:string|null;basis:'received'|'sent'|'both';level_override:number|null;title_override:number|null;updated_at:string|null;frozen?:boolean};
+export function IdentitySettings(){const{db,user,locale,online}=useApp(),c=identityCopy[locale],[data,setData]=useState<OwnIdentity|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState(false),[attempt,setAttempt]=useState(0);const pending=useRef(false),alive=useRef(true);
+ useEffect(()=>{alive.current=true;const a=new AbortController();setData(null);setError(false);if(db&&user)void db.rpc('omni_identity_own').abortSignal(AbortSignal.any([a.signal,AbortSignal.timeout(12000)])).then(r=>{if(a.signal.aborted)return;if(r.error||typeof r.data?.xp!=='string'||typeof r.data?.wealth!=='string')setError(true);else setData(r.data);});return()=>{alive.current=false;a.abort();};},[db,user?.id,attempt]);
+ async function save(level:boolean,title:boolean){if(!db||pending.current||!online)return;pending.current=true;const previous=data;setData(old=>old?{...old,hide_level:level,hide_title:title}:old);setBusy(true);setError(false);try{const r=await db.rpc('omni_identity_privacy',{level_hidden:level,title_hidden:title}).abortSignal(AbortSignal.timeout(12000));if(r.error)throw r.error;invalidateIdentity();if(alive.current)setData(old=>({...old!,...r.data}));}catch{if(alive.current){setData(previous);setError(true);}}finally{pending.current=false;if(alive.current)setBusy(false);}}
+ return <section id="identity"><h2>{c.identity}</h2>{error&&<p role="alert">{c.error}<button className="text-link" onClick={()=>setAttempt(n=>n+1)}>{c.retry}</button></p>}{data&&<><div className="identity-summary"><strong>{c.level} {data.level}</strong><span>{data.title?.[locale]??data.title?.en??c.none}</span></div><p className="form-note">{c[data.basis]}: {formatPoints(data.xp,locale)}{data.next&&` · ${c.next}: ${formatPoints(data.next,locale)}`}</p><label className="checkbox-label"><input type="checkbox" checked={data.hide_level} disabled={busy||!online} onChange={e=>void save(e.target.checked,data.hide_title)}/>{c.hideLevel}</label><label className="checkbox-label"><input type="checkbox" checked={data.hide_title} disabled={busy||!online} onChange={e=>void save(data.hide_level,e.target.checked)}/>{c.hideTitle}</label><p className="form-note">{c.rulesNote}</p></>}</section>;
+}

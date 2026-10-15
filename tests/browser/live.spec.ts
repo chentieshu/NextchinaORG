@@ -8,7 +8,7 @@ test('public content requests succeed with fixtures and anonymous administration
  const settings=page.waitForResponse(r=>r.url().includes('/rest/v1/omni_settings?'));
  await page.goto('/zh-CN/');
  for(const response of await Promise.all([articles,settings]))expect(response.status()).toBe(200);
- await expect(page.getByText('以下为界面演示文章，用于展示阅读体验，并非实时新闻。')).toHaveCount(0);
+ await expect(page.getByText('以下为界面演示文章，用于展示阅读体验，并非实时文章。')).toHaveCount(0);
  await page.goto('/zh-CN/admin/');
  await expect(page.getByText('此页面仅向管理员开放。')).toBeVisible();
  await expect(page.getByRole('button',{name:'新建文章',exact:true})).toHaveCount(0);
