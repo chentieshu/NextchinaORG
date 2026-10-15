@@ -3,7 +3,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import {usePathname} from 'next/navigation';
 import {createContext,useContext,useEffect,useState,type ReactNode} from 'react';
-import {FiGrid,FiMessageSquare,FiFileText,FiMessageCircle,FiUsers,FiHash,FiSettings,FiActivity,FiClock,FiCreditCard,FiShoppingBag,FiArrowUpRight,FiChevronRight,FiMenu,FiSidebar,FiLogOut} from 'react-icons/fi';
+import {FiBarChart2,FiGrid,FiMessageSquare,FiFileText,FiMessageCircle,FiUsers,FiHash,FiSettings,FiActivity,FiClock,FiCreditCard,FiShoppingBag,FiArrowUpRight,FiChevronRight,FiMenu,FiSidebar,FiLogOut} from 'react-icons/fi';
 import {useApp} from '@/components/Provider';
 import {Avatar} from '@/components/Avatar';
 import {Modal} from '@/components/Shell';
@@ -12,6 +12,7 @@ import {useTheme} from '@/lib/use-theme';
 import {socialCopy} from '@/lib/social-copy';
 import {forumCopy} from '@/lib/forum-copy';
 import {adminCopy} from '@/lib/admin-copy';
+import {exchangeCopy} from '@/modules/predictions/exchange-copy';
 import {walletCopy} from '@/modules/wallet/copy';
 import {marketCopy} from '@/modules/wallet/market-copy';
 import {workspaceCopy} from './copy';
@@ -22,7 +23,7 @@ type View={tab:AdminTab;status:string};
 type Navigation=View&{selectTab:(tab:AdminTab,status?:string)=>void;setStatus:(value:string)=>void;setNavigationLocked:(value:boolean)=>void};
 const NavigationContext=createContext<Navigation|null>(null);
 export function useAdminNavigation(){const value=useContext(NavigationContext);if(!value)throw Error('Admin navigation is unavailable');return value;}
-const icons={dashboard:FiGrid,posts:FiMessageSquare,articles:FiFileText,moderation:FiMessageCircle,members:FiUsers,categories:FiHash,settings:FiSettings,audit:FiClock,monitor:FiActivity,wallet:FiCreditCard,market:FiShoppingBag};
+const icons={predictions:FiBarChart2,dashboard:FiGrid,posts:FiMessageSquare,articles:FiFileText,moderation:FiMessageCircle,members:FiUsers,categories:FiHash,settings:FiSettings,audit:FiClock,monitor:FiActivity,wallet:FiCreditCard,market:FiShoppingBag};
 export function AdminShell({children}:{children:ReactNode}){
  const{locale,t,user,profile,authOpen,logout,online,authStatus}=useApp(),pathname=usePathname(),theme=useTheme(),c=workspaceCopy[locale],s=socialCopy[locale],a=adminCopy[locale],f=forumCopy[locale];
  const owner=profile?.role==='super_admin',authorized=authStatus==='ready'&&!!profile&&!profile.disabled&&profile.role!=='member',base=`/${locale}/`,workspace=!/\/(write|settings|auth)\//.test(pathname);
@@ -36,8 +37,8 @@ export function AdminShell({children}:{children:ReactNode}){
   if(!workspace){location.assign(base+'#'+hash);return;}setView({tab,status});history.pushState(null,'','#'+hash);
  }
  function setStatus(status:string){const next={...view,status};setView(next);history.replaceState(null,'','#'+view.tab+(status!=='all'?`?status=${encodeURIComponent(status)}`:''));}
- const label=(tab:AdminTab)=>tab==='market'?marketCopy[locale].admin:tab==='wallet'?walletCopy[locale].admin:tab==='posts'?f.posts:tab==='articles'?f.news:tab==='categories'||tab==='monitor'?a[tab]:t[tab];
- const groups:{label:string;tabs:AdminTab[]}[]=[{label:c.workspace,tabs:['dashboard']},{label:c.content,tabs:['posts','articles','moderation','categories']},{label:c.community,tabs:['members']},{label:c.finance,tabs:['wallet','market']},{label:c.system,tabs:['monitor','audit','settings']}];
+ const label=(tab:AdminTab)=>tab==='predictions'?exchangeCopy[locale].manage:tab==='market'?marketCopy[locale].admin:tab==='wallet'?walletCopy[locale].admin:tab==='posts'?f.posts:tab==='articles'?f.news:tab==='categories'||tab==='monitor'?a[tab]:t[tab];
+ const groups:{label:string;tabs:AdminTab[]}[]=[{label:c.workspace,tabs:['dashboard']},{label:c.content,tabs:['posts','articles','moderation','categories']},{label:c.community,tabs:['members']},{label:c.finance,tabs:['wallet','market','predictions']},{label:c.system,tabs:['monitor','audit','settings']}];
  const navigation=<nav className="admin-navigation" aria-label={c.navigation}>{groups.map(group=>{const tabs=group.tabs.filter(tab=>canOpenTab(tab,owner));return tabs.length>0&&<div className="admin-nav-group" key={group.label}><span>{group.label}</span>{tabs.map(tab=>{const Icon=icons[tab];return <button key={tab} type="button" title={label(tab)} aria-label={label(tab)} aria-current={workspace&&view.tab===tab?'page':undefined} disabled={navigationLocked} onClick={()=>selectTab(tab)}><Icon aria-hidden="true"/><span>{label(tab)}</span></button>;})}</div>;})}</nav>;
  const account=<div className="admin-account"><Avatar name={profile?.display_name??'U'} avatarKey={profile?.avatar_key} size={34}/><div><b>{profile?.display_name}</b><small>{profile?t[profile.role]:''}</small></div></div>;
  const dialog=authOpen&&!user?<AuthDialog/>:null;

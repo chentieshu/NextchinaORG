@@ -37,7 +37,7 @@ test('account sheet keeps categories and account links usable, restores focus an
 test('mobile compose retains dirty-draft protection, guest return path and posting permissions',async({page})=>{
  const state=await fixture(page);await page.setViewportSize({width:390,height:844});await page.goto('/zh-CN/');
  const nav=page.locator('.mobile-nav');await nav.getByRole('link',{name:'发表帖子',exact:true}).click();await expect(page).toHaveURL(/write\/$/);await page.locator('.tiptap').fill('保留移动端尚未发布的内容');
- page.once('dialog',d=>d.dismiss());await nav.getByRole('link',{name:'文章',exact:true}).click();await expect(page).toHaveURL(/write\/$/);await expect(page.locator('.tiptap')).toHaveText('保留移动端尚未发布的内容');
+ page.once('dialog',d=>d.dismiss());await nav.getByRole('link',{name:'预测市场',exact:true}).click();await expect(page).toHaveURL(/write\/$/);await expect(page.locator('.tiptap')).toHaveText('保留移动端尚未发布的内容');
  page.once('dialog',d=>d.accept());await nav.getByRole('link',{name:'首页',exact:true}).click();await expect(page).toHaveURL('/zh-CN/');
  state.settings.ugc_enabled=false;await page.reload();await expect(nav.getByRole('button',{name:'发表帖子',exact:true})).toBeDisabled();
  state.settings.ugc_enabled=true;await page.reload();await nav.getByRole('button',{name:'我的',exact:true}).click();await page.getByRole('dialog').getByRole('button',{name:'退出登录',exact:true}).click();await expect(page.getByRole('dialog')).toHaveCount(0);

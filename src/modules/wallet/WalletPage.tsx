@@ -3,6 +3,7 @@ import Link from 'next/link';
 import {WalletNav} from './WalletNav';
 import dynamic from 'next/dynamic';
 const LedgerTable=dynamic(()=>import('./LedgerTable').then(m=>m.LedgerTable));
+import {exchangeCopy} from '../predictions/exchange-copy';
 import {marketCopy} from './market-copy';
 import {useEffect,useRef,useState} from 'react';
 import {FiArrowDownLeft,FiArrowUpRight,FiRefreshCw} from 'react-icons/fi';
@@ -24,7 +25,7 @@ export function WalletPage(){const{user,profile,authStatus,t,setAuthOpen,locale}
 function Wallet(){const{locale}=useApp(),c=walletCopy[locale],wallet=useWallet(),[withdraw,setWithdraw]=useState(false),[deposit,setDeposit]=useState(false),[tab,setTab]=useState<'history'|'requests'>('history');
  return <main id="main" className="wallet-page page-wrap content-wrap"><WalletNav active="balance"/><header className="wallet-heading"><div><h1>{c.title}</h1><p>{c.rate}</p></div><button className="icon-button" aria-label={c.retry} disabled={wallet.loading} onClick={()=>{void wallet.refresh();walletChanged();}}><FiRefreshCw/></button></header>
  {wallet.error&&<p className="inline-error" role="alert">{c.error}<button onClick={()=>void wallet.refresh()}>{c.retry}</button></p>}
- {!wallet.data?wallet.loading&&<p role="status">{c.loading}</p>:<><section className="wallet-balance" aria-label={c.available}><span>{c.available}</span><strong>{formatPoints(BigInt(wallet.data.purchased)+BigInt(wallet.data.earned),locale)}<small>{c.points}</small></strong><dl>{(['purchased','earned','held'] as const).map(k=><div key={k}><dt>{c[k]}</dt><dd>{formatPoints(wallet.data![k],locale)}</dd></div>)}</dl></section>
+ {!wallet.data?wallet.loading&&<p role="status">{c.loading}</p>:<><section className="wallet-balance" aria-label={c.available}><span>{c.available}</span><strong>{formatPoints(BigInt(wallet.data.purchased)+BigInt(wallet.data.earned),locale)}<small>{c.points}</small></strong><dl>{(['purchased','earned','held'] as const).map(k=><div key={k}><dt>{c[k]}</dt><dd>{formatPoints(wallet.data![k],locale)}</dd></div>)}<div><dt>{exchangeCopy[locale].held}</dt><dd>{formatPoints(wallet.data.prediction_held??'0',locale)}</dd></div></dl></section>
  <div className="wallet-actions"><button className="button" disabled={wallet.error||wallet.loading||wallet.data.frozen} onClick={()=>setDeposit(true)}><FiArrowDownLeft/>{c.deposit}</button><button className="button" disabled={wallet.error||wallet.loading||wallet.data.frozen||!wallet.data.withdrawals_enabled} onClick={()=>setWithdraw(true)}><FiArrowUpRight/>{c.withdraw}</button><Link className="button" href={`/${locale}/wallet/market/`}>{marketCopy[locale].title}</Link></div>
  {wallet.data.frozen?<p className="wallet-notice" role="status">{c.frozen}</p>:(!wallet.data.deposits_enabled||!wallet.data.withdrawals_enabled)&&<p className="wallet-notice" role="status">{c.paused}</p>}
  <p className="form-note">{c.withdrawalNote}</p><p className="form-note">{gatewayCopy[locale].feeNote}</p></>}

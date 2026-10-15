@@ -1,4 +1,4 @@
-export const adminTabs=['dashboard','posts','articles','moderation','members','categories','settings','audit','monitor','wallet','market'] as const;
+export const adminTabs=['dashboard','posts','articles','moderation','members','categories','settings','audit','monitor','wallet','market','predictions'] as const;
 export type AdminTab=typeof adminTabs[number];
 export const contentTabs:AdminTab[]=['dashboard','posts','articles','moderation'];
 export const canOpenTab=(value:string,owner:boolean):value is AdminTab=>adminTabs.includes(value as AdminTab)&&(owner||contentTabs.includes(value as AdminTab));
