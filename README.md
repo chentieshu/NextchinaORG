@@ -1,18 +1,21 @@
 # ChinaTeam
 
-当前品牌统一为 **ChinaTeam**，正式域名使用 `chinateam.org`，GitHub、Supabase 项目和 Cloudflare 资源标识保留，已有账号与内容不迁移。
+当前部署与 C2C 规则见 [架构与运营说明](docs/teamcn-architecture.md)。前台 `teamcn.org / www.teamcn.org`；后台独立部署于 `tree.teamcn.org`。商家是用户，最低押金 1,000 USDT，出售自有积分；订单和兑换码共享押金限额。旧新增发行入口已停用。
+
+
+当前品牌统一为 **ChinaTeam**，正式域名使用 `teamcn.org`，GitHub、Supabase 项目和 Cloudflare 资源标识保留，已有账号与内容不迁移。
 
 支持转发/取消转发、带原帖或新闻文章卡片的引用、帖子详情与引用列表。列表继续使用正文在左、素材在右的样式。帖子发布器共用富文本编辑器，支持粘贴图片、四图排序、代码和外链。阅读偏好可独立选择新闻语言、外部播放器加载方式和转发显示；账户设置使用邮箱安全验证码，已移除验证器扫码方式。
 
 已发布内容的修改可保存为私密云端草稿，保存时线上版本继续展示；新闻按当前选中语言发布，其他未发布译文留在草稿中。并发版本不一致时拒绝覆盖并保留输入。
 
-2026-10-14 已通过官方 CLI 将 ChinaTeam 发件人、13 类邮件主题/正文及 7 项安全通知保存到 Supabase，回读一致；没有替换 Resend 密钥。邮件仍为中英双语，真实投递与第三方 OAuth 品牌审核需要真实账号验证。
+2026-10-15 已通过官方 CLI 将 ChinaTeam 发件人、13 类邮件主题/正文及 7 项安全通知保存到 Supabase，回读一致；没有替换 Resend 密钥。邮件仍为中英双语，真实投递与第三方 OAuth 品牌审核需要真实账号验证。
 
 后台支持动态五语言分类、内容搜索与状态筛选、总管理员权限和受保护的数据库/R2 监控。操作方式、状态管理边界和剩余生产缺口见 [后台与运维说明](docs/admin-and-operations.md)。
 
 开放论坛与新闻社区。Next.js 16 App Router、React 19、Tailwind CSS v4、React Icons、Supabase。
 
-正式网站：[ChinaTeam](https://chinateam.org)。`www.chinateam.org` 自动跳转主域并保留路径及查询参数。
+正式网站：[ChinaTeam](https://teamcn.org)。`www.teamcn.org` 同时可访问，canonical 指向主域。
 
 域名迁移、Google / X / GitHub、Supabase 与 Resend 的逐项填写指南见 [登录与域名配置](docs/auth-and-domains.md)。全部 13 类品牌邮件的 [配置说明](supabase/templates/README.md) 与 [可视化复制页面](supabase/templates/preview.html) 已备齐；需单独保存到 Supabase Auth，不会随网站部署自动生效。
 
@@ -42,7 +45,7 @@ npm run build
 
 构建输出为 `out/`。使用 Next.js 官方静态导出；数据读取与权限操作由 Supabase 完成，不需要 Node 服务。Webpack 构建避免部分 Windows 环境的 Turbopack 子进程问题。
 
-浏览器验证：安装 Playwright Chromium 后执行 `npm run test:browser`。已接入 Supabase 的构建请设置 `LIVE_SUPABASE=1`，验证真实数据读取、后台保护、登录选项、五语言布局和邮箱回调参数。邮箱提交测试拦截请求，不发送邮件；真实 OAuth 需在已配置的提供商项目中联调。
+浏览器验证：安装 Playwright Chromium 后执行 `npm run test:browser`。已接入 Supabase 的构建请设置 `AUTH_FIXTURES=1`，通过隔离模拟请求验证数据读取、后台保护、登录选项、五语言布局和邮箱回调参数。邮箱提交测试拦截请求，不发送邮件；真实 OAuth 需在已配置的提供商项目中联调。
 
 ## 路由与国际化
 
@@ -57,7 +60,7 @@ npm run build
 - `/{locale}/about/` 组织理念、社区公约及政策入口
 - `/{locale}/privacy/` 五语言独立隐私政策
 - `/{locale}/terms/` 五语言独立使用条款
-- `/{locale}/admin/` 管理后台
+- `/{locale}/admin/` 跳转独立后台 `https://tree.teamcn.org/{locale}/`
 - `/{locale}/auth/callback/` OAuth 和邮箱登录回调
 
 UI 文案具有五种语言版本，不包含占位文章。真实文章按语言编辑，缺少翻译时提示并展示原文。语言切换保留页面及查询参数。主题与语言偏好保存在浏览器。真实新闻在浏览器加载，适合首版社区；内容专属 SEO、社交卡片及带索引的全文检索可在后续引入服务端渲染或 Supabase 索引。
@@ -68,7 +71,7 @@ UI 文案具有五种语言版本，不包含占位文章。真实文章按语�
 
 1. 按顺序应用 `supabase/migrations/` 内的迁移。目标项目的已执行版本可在 Supabase migration history 中核对，不要重复执行。它们创建 `omni_` 前缀的表、RLS、受控 RPC、注册触发器、评论节流、审计日志、头像配额及首次管理员预约。内部提权函数位于不对 API 暴露的 `omni_private` schema；公开入口使用显式授权的 invoker 函数。
 2. 将项目 URL 与 **Publishable key 或 legacy anon key** 设置为 `NEXT_PUBLIC_SUPABASE_URL` 和 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`。它们用于浏览器；绝对不要填入 `service_role`、数据库密码或 OAuth client secret。
-3. Supabase Authentication 设置 Site URL 为正式站点源地址；Redirect URLs 添加五个语言的完整回调地址，例如 `https://chinateam.org/zh-CN/auth/callback/`。其他部署域名和本地地址也需逐个加入允许列表。
+3. Supabase Authentication 设置 Site URL 为正式站点源地址；Redirect URLs 添加五个语言的完整回调地址，例如 `https://teamcn.org/zh-CN/auth/callback/`。其他部署域名和本地地址也需逐个加入允许列表。
 4. 在 Providers 中启用 Google、GitHub、**X OAuth 2.0（provider: x）** 和 Email。分别在服务商控制台配置 OAuth 应用，把 client ID / secret 放入 Supabase 提供商设置。提供商回调为 `https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback`。
 5. 邮箱支持一次性登录链接及密码登录、密码恢复。当前生产项目已使用 Resend SMTP；仍需实际收件验证送达。账号绑定已启用，正式站与 Sites 各五个精确回调已保存。新部署请检查 SMTP、邮件配额以及 `supabase/config.toml` 的声明配置。
 6. 当前项目已根据站长明确指定的邮箱，在不公开的 `omni_private.owner_claim` 中设置一次性预约。只有该准确邮箱通过 Supabase 验证后才能领取总管理员权限；用户元数据里的验证标记无效。领取后预约删除，其他注册者保持普通用户。新部署可由数据库管理者设置自己的预约邮箱，或在注册后按准确 UUID 授权，不要使用“第一个注册者自动成为管理员”的逻辑。
@@ -88,7 +91,7 @@ where id = 'VERIFIED-USER-UUID';
 
 仓库：`https://github.com/chentieshu/NextchinaORG`。
 
-已为 Cloudflare Pages 项目 `omniremix` 配置 GitHub 源、`main` 生产分支、`npm run build` 构建命令和 `out` 输出目录。正式站点源地址为 `https://chinateam.org`。实际部署是否成功请以 Cloudflare deployment 状态为准。
+已为 Cloudflare Pages 项目 `omniremix` 配置 GitHub 源、`main` 生产分支、`npm run build` 构建命令和 `out` 输出目录。正式站点源地址为 `https://teamcn.org`。实际部署是否成功请以 Cloudflare deployment 状态为准。
 
 在 Pages 的 production build 环境设置上面的两个 Supabase 公开变量；变量在构建时写入前端，所以变更后需要重新构建。项目中的 `.env.example` 只是示例，不包含真实公钥。没有公钥的构建展示接入提示和空列表。
 
@@ -134,11 +137,11 @@ tests/                   PostgreSQL 权限与浏览器交互验证
 | 项目 | 值 |
 | --- | --- |
 | 应用名称 | ChinaTeam |
-| 网站 | `https://chinateam.org` |
+| 网站 | `https://teamcn.org` |
 | Google / GitHub / X 服务商回调 | `https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback` |
-| 隐私说明 | `https://chinateam.org/zh-CN/privacy/` |
-| 使用条款 | `https://chinateam.org/zh-CN/terms/` |
-| Supabase Site URL | `https://chinateam.org` |
+| 隐私说明 | `https://teamcn.org/zh-CN/privacy/` |
+| 使用条款 | `https://teamcn.org/zh-CN/terms/` |
+| Supabase Site URL | `https://teamcn.org` |
 
 Google 选择 Web application；X 使用 OAuth 2.0 的 Web App，只申请登录所需权限。不要把客户端密钥放入 GitHub、前端或聊天。凭据直接填入 Supabase 的对应 Provider。Supabase Redirect URLs 需要覆盖 Cloudflare 和 Sites 下五个 `/{locale}/auth/callback/` 地址。设置固定域名的 `/**` 可以覆盖五种语言，生产环境也可收窄为十个完整回调 URL。
 

@@ -5,7 +5,7 @@ import {FiRefreshCw} from 'react-icons/fi';
 import {Overview,type OverviewData} from './Overview';
 const AuditTable=dynamic(()=>import('./AuditTable').then(m=>m.AuditTable));
 import {marketCopy} from '@/modules/wallet/market-copy';
-const MarketAdmin=dynamic(()=>import('@/modules/wallet/MarketAdmin').then(m=>m.MarketAdmin));
+const MarketAdmin=dynamic(()=>import('@/modules/wallet/C2CAdmin').then(m=>m.C2CAdmin));
 import {walletCopy} from '@/modules/wallet/copy';
 const WalletAdmin=dynamic(()=>import('@/modules/wallet/WalletAdmin').then(m=>m.WalletAdmin));
 import {useCallback,useEffect,useRef,useState} from 'react';

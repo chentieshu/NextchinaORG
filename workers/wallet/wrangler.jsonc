@@ -1,19 +1,51 @@
 {
- "$schema":"../../node_modules/wrangler/config-schema.json",
- "name":"chinateam-wallet",
- "account_id":"4c7d8ee3a4d2568ad8e306be077f11a1",
- "main":"src/index.ts",
- "compatibility_date":"2026-10-15",
- "compatibility_flags":["nodejs_compat"],
- "workers_dev":true,
- "routes":[{"pattern":"wallet.chinateam.org","custom_domain":true}],
- "triggers":{"crons":["* * * * *"]},
- "observability":{"enabled":true,"head_sampling_rate":0.1},
- "ratelimits":[{"name":"PAYOUT_LIMITER","namespace_id":"1004","simple":{"limit":12,"period":60}}],
- "vars":{
-  "SUPABASE_URL":"https://cznhnupwojmydttdattb.supabase.co",
-  "SUPABASE_PUBLISHABLE_KEY":"sb_publishable_S64GsjK-R_CGycTdquKVxw_17Y13ZlL",
-  "ALLOWED_ORIGINS":"https://chinateam.org,https://www.chinateam.org,https://omniremix.chentieshu520.chatgpt.site,https://omniremix.pages.dev"
- },
- "secrets":{"required":["WALLET_GATEWAY_KEY","TRONGRID_API_KEY"]}
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "chinateam-wallet",
+  "account_id": "4c7d8ee3a4d2568ad8e306be077f11a1",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-15",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "workers_dev": true,
+  "routes": [
+    {
+      "pattern": "wallet.chinateam.org",
+      "custom_domain": true
+    },
+    {
+      "pattern": "wallet.teamcn.org",
+      "custom_domain": true
+    }
+  ],
+  "triggers": {
+    "crons": [
+      "* * * * *"
+    ]
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 0.1
+  },
+  "ratelimits": [
+    {
+      "name": "PAYOUT_LIMITER",
+      "namespace_id": "1004",
+      "simple": {
+        "limit": 12,
+        "period": 60
+      }
+    }
+  ],
+  "vars": {
+    "SUPABASE_URL": "https://cznhnupwojmydttdattb.supabase.co",
+    "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_S64GsjK-R_CGycTdquKVxw_17Y13ZlL",
+    "ALLOWED_ORIGINS": "https://chinateam.org,https://www.chinateam.org,https://omniremix.chentieshu520.chatgpt.site,https://omniremix.pages.dev,https://teamcn.org,https://www.teamcn.org,https://tree.teamcn.org"
+  },
+  "secrets": {
+    "required": [
+      "WALLET_GATEWAY_KEY",
+      "TRONGRID_API_KEY"
+    ]
+  }
 }

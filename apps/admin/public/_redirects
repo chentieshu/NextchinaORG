@@ -1,0 +1,9 @@
+/:locale/profile/* https://teamcn.org/:locale/profile/:splat 302
+/:locale/community/* https://teamcn.org/:locale/community/:splat 302
+/:locale/news/* https://teamcn.org/:locale/news/:splat 302
+/:locale/privacy/* https://teamcn.org/:locale/privacy/:splat 302
+/:locale/terms/* https://teamcn.org/:locale/terms/:splat 302
+/:locale/about/* https://teamcn.org/:locale/about/:splat 302
+/:locale/search/* https://teamcn.org/:locale/search/:splat 302
+/:locale/market/* https://teamcn.org/:locale/market/:splat 302
+/:locale/wallet/* https://teamcn.org/:locale/wallet/:splat 302

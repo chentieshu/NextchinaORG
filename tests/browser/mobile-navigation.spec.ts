@@ -47,5 +47,5 @@ test('mobile compose retains dirty-draft protection, guest return path and posti
 test('mobile admin access is available in the account sheet and follows role changes',async({page})=>{
  const state=await fixture(page,'super_admin');await page.setViewportSize({width:390,height:844});await page.goto('/zh-CN/');
  const account=page.locator('.mobile-nav').getByRole('button',{name:'我的',exact:true});await account.click();await page.getByRole('dialog').getByRole('link',{name:'管理中心',exact:true}).click();await expect(page.locator('.admin-shell')).toBeVisible();await expect(page.getByRole('dialog')).toHaveCount(0);
- state.profile.role='member';await page.reload();await expect(page.locator('.admin-shell')).toHaveCount(0);await account.click();await expect(page.getByRole('dialog').getByRole('link',{name:'管理中心',exact:true})).toHaveCount(0);
+ state.profile.role='member';await page.reload();await expect(page.locator('.admin-shell')).toHaveCount(0);await page.goto('/zh-CN/');await account.click();await expect(page.getByRole('dialog').getByRole('link',{name:'管理中心',exact:true})).toHaveCount(0);
 });

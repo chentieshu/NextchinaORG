@@ -1,0 +1,77 @@
+# ChinaTeam：独立后台与 C2C 架构
+
+更新日期：2026-10-15。品牌仍是 ChinaTeam，主域名改为 teamcn.org。
+
+## 部署边界
+
+| 入口 | 服务 | 构建与权限 |
+| --- | --- | --- |
+| teamcn.org、www.teamcn.org | Cloudflare Pages `omniremix` | 根目录 Next.js，`npm run build` → `out` |
+| tree.teamcn.org | Cloudflare Pages `teamcn-admin` | `npm run build:admin` → `apps/admin/out`，独立应用、无搜索引擎索引 |
+| media.teamcn.org | Worker `nextchina-media` + 原有 R2 bucket | 媒体签名上传、公开内容与外链预览；保留旧素材地址 |
+| wallet.teamcn.org | Worker `chinateam-wallet` | TRON 确认回执读取、人工提现回执核验、订单超时处理 |
+| Supabase `cznhnupwojmydttdattb` | Auth + Postgres | 同一用户身份与权威账本，显式 RPC 权限、私有表禁止客户端直读写 |
+| Supabase SMTP → Resend | 验证邮件 | 沿用已经验证的 `login@mail.nextchina.org` 发件地址；邮件内网站链接更新为 teamcn.org |
+
+两个 Pages 项目从同一个 GitHub 仓库 main 分别构建。共享 `src` 中的类型、组件和数据库接口；后台路由位于 `apps/admin/app`。前台 `/[locale]/admin/` 只负责跳转。不能将域名分离当成授权边界：所有后台与资金权限仍由数据库检查。后台登录会话按浏览器 origin 隔离，需要在 tree.teamcn.org 登录；不共享跨域 access token。
+
+旧网站域名暂保留别名访问，防止旧邮件链接和 OAuth PKCE 回跳被跨域重定向破坏。新增主站 canonical 为 teamcn.org。旧媒体域名继续服务已存储内容，未迁移/复制对象，也没有新增第二套账本。
+
+## 商家与担保
+
+- 商家就是已有用户，申请后状态为待审核。
+- 单独创建押金充值订单，按精确金额支付 TRC20 USDT；后台只接受 Worker 核验过的 solidified 转账。最低押金 **1,000 USDT**。
+- 押金进入 `collateral`，不生成可消费积分。总管理员审核通过后，商家才能上架报价、创建新交易和兑换码。
+- 商家出售自己的 `purchased + earned` 积分。`escrow + codes`（含预留手续费）不能超过押金等值额度；1 USDT = 100 积分。
+- 已完成交易释放担保占用。押金限制的是同时未结清的交易与兑换码，不是累计营业额。
+- 停用商家停止新增交易；已完成订单保留历史，未完成订单继续按状态处理。钱包冻结会阻止放行和兑换。
+
+## C2C 订单
+
+买家下单 → 原子冻结商家积分及手续费 → 买家按订单收款信息站外付款 → 标记已付款 → 商家核对实际到账 → 平台原子释放完整积分给买家。
+
+- 创建订单固定价格、支付币种、收款说明、手续费和截止时间，之后编辑报价不改变旧订单。
+- 付款截止为 30 分钟。Cron 每分钟处理最多 20 笔到期的未付款订单；已付款/申诉订单绝不自动取消。
+- 买家不能自行放行；商家不能在买家未标记付款时放行。已标记付款的订单不能走普通取消。
+- 双方可以提交文字与链接作为沟通/证据记录。申诉保持积分冻结，仅总管理员可记录理由并裁决放行或退回。
+- 私密付款信息仅订单双方和总管理员可见。公开商家列表不包含银行/收款详情。
+- 同一买家最多 3 笔未结订单、每天最多创建 30 笔；订单消息有限长、数量和频率限制。
+
+## 兑换码和费用
+
+- 生成码时已从商家余额冻结积分与手续费，不等到兑换时再扣，防止卖出没有余额支持的码。
+- 128 位随机码仅在生成会话中显示；服务端只存 SHA-256 摘要及末 4 位。兑换一次后积分进入用户充值余额；重复请求返回原结果。
+- 作废/过期未兑换码可退回全部冻结积分。过期码需主动作废释放占用；未释放前不能退押。
+- 总管理员在后台“商家管理 → 市场设置”配置 **0–20%** 手续费，精度 0.01%。费率尚未设置时市场保持关闭。
+- 费用由卖方额外承担，买家获得完整积分；订单或码创建时冻结费用，成交/兑换时收取，取消不收取。计算使用整数并向上取到最小账本单位。
+- 沿用现有提现规则：充值/C2C 获得的积分用于打赏；收到的打赏收入可申请提现。C2C 不改变这一规则。
+- 旧“后台新增发行”接口被停用，历史数据保留，不再凭空发行商家额度。
+
+## 退押
+
+商家提交自己的 TRON 退款地址，系统确认订单与兑换码冻结余额均为零，立即下架报价；总管理员复核后，将押金移入现有人工提现队列，押金退款本身不扣平台提现费。运营者人工转账后仍需核验链上回执；系统不托管转账私钥。取消/拒绝退款会回到押金账户，不能变成可提现收益。平台自己的收款地址不能作为退款地址。
+
+## 状态与生产约束
+
+- 金额全部以整数微 USDT 记账，前端通过字符串/BigInt 处理，报价同样使用整数。
+- 双重记账，交易内总和为零；行锁、账户锁、幂等请求 ID、预期版本共同防止重复入账与覆盖。
+- 前端所有余额来自服务端。读取支持取消旧请求、身份切换清理、可见页面轮询、分页；操作超时保留原请求 ID 重试。
+- C2C 与押金 RPC 不依赖浏览器自报付款状态来入账。重要写操作要求近期邮箱验证码验证；邮箱验证不是双因素 MFA。
+- 两个 Worker 沿用现有资源、密钥、Cron 与 R2，避免新增 VPS、私钥服务或第三方支付依赖。
+- 安全检查中的私有表“RLS 无策略”是拒绝直接访问的设计。Supabase 仍提示未开启泄露密码检测及原生 MFA；用户已明确选择邮箱复核，不重新启用验证器。
+
+## 运营与后续边界
+
+上线后先在独立后台设置费用和市场开关，再审核真实商家。测试均使用本地隔离数据库与模拟链上回执，没有代用户真实充值、转账或发送邮件。首位商家应完成真实小额链上验收，再缴足押金；不要在测试中使用真实兑换码。
+
+站外付款无法由平台自动确认，必须由商家核对实际账户入账；申诉需要运营处理。当前包含文字/链接证据记录，不包含私密图片证据库、自动银行核账、自动押金赔付、多币种换汇或专门的 KYC 服务。未宣称复制交易所完整能力。
+
+### 域名与 OAuth 控制台
+
+Supabase Site URL 为 `https://teamcn.org`；仅列出前后台各语言的精确 `/auth/callback/` 地址，并保留旧入口回跳用于过渡。Google、GitHub、X 服务商的 OAuth callback 仍是 `https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback`，无需更换应用密钥。
+
+在 Google Auth Platform Branding 更新主页 `https://teamcn.org`、隐私 `https://teamcn.org/zh-CN/privacy/`、条款 `https://teamcn.org/zh-CN/terms/`，应用名保持 ChinaTeam；用当前 Cloud 项目账号在 Search Console 验证 teamcn.org 的网域所有权，并将其加入授权网域。GitHub OAuth App 的 Homepage URL、X 应用的 Website/Privacy/Terms 同步这些地址。服务商的域名所有权与品牌审核不等同于 Cloudflare 证书激活。
+
+Resend 已验证的旧发件域名继续使用，避免未经 DNS 验证直接切换发件地址导致邮件中断。如需统一为 `login@mail.teamcn.org`，先在 Resend 验证该域名的全部 SPF/DKIM/MX 记录，再修改 Supabase SMTP sender；不把 Resend API Key 放到前端。
+
+参考： [Binance P2P 操作与安全机制](https://www.binance.com/en/academy/articles/what-is-binance-p2p-and-how-to-use-it)、[P2P 安全注意事项](https://www.binance.com/en/academy/articles/how-to-stay-safe-in-peer-to-peer-p2p-trading)、[Cloudflare Pages 多应用部署](https://developers.cloudflare.com/pages/configuration/monorepos/)。

@@ -1,4 +1,5 @@
 'use client';
+import {SITE_ORIGIN} from '@/lib/site';
 import Link from 'next/link';
 import {useEffect,useRef,useState} from 'react';
 import {FiArrowUpRight,FiArrowRight,FiMail} from 'react-icons/fi';
@@ -33,6 +34,6 @@ export default function AuthDialog(){
   {intent==='login'&&<div className="auth-modes">{(['magic','password','reset'] as const).filter(value=>value!==mode).map(value=><button key={value} type="button" className="text-link" disabled={busy} onClick={()=>{setMode(value);setSent(false);setError('');setPassword('');}}>{value==='magic'?social.magicLogin:value==='password'?social.passwordLogin:social.forgot}</button>)}</div>}
   <p className="auth-switch">{intent==='login'?c.newHere:c.haveAccount} <button className="text-link" disabled={busy} onClick={()=>{setIntent(intent==='login'?'signup':'login');setMode('magic');setError('');setSent(false);}}>{intent==='login'?c.join:social.login}</button></p>
   {!online&&<p role="status" className="form-note">{experienceCopy[locale].offline}</p>}{(!db||error)&&<p role="status" className="form-note">{error||t.setup}</p>}
-  <p className="auth-terms"><Link onClick={()=>setAuthOpen(false)} href={`/${locale}/terms/`}>{t.terms}</Link> · <Link onClick={()=>setAuthOpen(false)} href={`/${locale}/privacy/`}>{t.privacy}</Link><br/>{t.authTerms}</p>
+  <p className="auth-terms"><Link onClick={()=>setAuthOpen(false)} href={`${SITE_ORIGIN}/${locale}/terms/`}>{t.terms}</Link> · <Link onClick={()=>setAuthOpen(false)} href={`${SITE_ORIGIN}/${locale}/privacy/`}>{t.privacy}</Link><br/>{t.authTerms}</p>
  </Modal>;
 }

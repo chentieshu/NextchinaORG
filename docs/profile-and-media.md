@@ -14,7 +14,7 @@ Google、GitHub、X 的头像在首次进入网站时由服务端依据 Supabase
 ## Cloudflare
 
 - 私有 R2 桶：`nextchina-media`。
-- Worker：`nextchina-media`；域名：`media.chinateam.org`。
+- Worker：`nextchina-media`；域名：`media.teamcn.org`。
 - `/v1/profile`：Supabase Bearer 身份验证、账号状态、并发版本校验；替换头像后清理旧对象，保存冲突时回滚新对象。
 - `/v1/images`：与头像共享认证及上传限制，供统一富文本编辑器上传配图。客户端去除原图元数据并压缩为最大边 2048 像素 WebP。
 - 图片通过不可预测的对象地址公开展示；请不要上传私密文件。R2 桶不开启公开桶域名，只由 Worker 提供图片响应。

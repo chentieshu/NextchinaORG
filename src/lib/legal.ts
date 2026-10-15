@@ -1,4 +1,5 @@
 import type {Locale} from './i18n';
+import {c2cLegal} from './c2c-legal';
 export const supportEmail="chentieshu520@gmail.com";
 export const legalUpdated='2026-10-15';
 export const googleDataPolicy="https://developers.google.com/terms/api-services-user-data-policy";
@@ -16,7 +17,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "管理 Google 第三方连接",
     "privacy": {
       "title": "隐私政策",
-      "intro": "本政策说明 ChinaTeam 网站运营团队如何处理访问者和注册用户的信息，适用于 chinateam.org 及其 www 入口。阅读公开新闻与本政策无需登录。",
+      "intro": "本政策说明 ChinaTeam 网站运营团队如何处理访问者和注册用户的信息，适用于 teamcn.org 及其 www 入口。阅读公开新闻与本政策无需登录。",
       "sections": [
         {
           "title": "1. 我们收集哪些信息",
@@ -140,7 +141,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "Manage Google third-party connections",
     "privacy": {
       "title": "Privacy Policy",
-      "intro": "This policy explains how the ChinaTeam website operators handle visitor and member information on chinateam.org and its www entry point. Public news and this policy are available without signing in.",
+      "intro": "This policy explains how the ChinaTeam website operators handle visitor and member information on teamcn.org and its www entry point. Public news and this policy are available without signing in.",
       "sections": [
         {
           "title": "1. Information we collect",
@@ -264,7 +265,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "管理 Google 第三方連結",
     "privacy": {
       "title": "隱私政策",
-      "intro": "本政策說明 ChinaTeam 網站營運團隊如何處理 chinateam.org 及 www 入口的訪客與會員資料。公開新聞和本政策無需登入即可閱讀。",
+      "intro": "本政策說明 ChinaTeam 網站營運團隊如何處理 teamcn.org 及 www 入口的訪客與會員資料。公開新聞和本政策無需登入即可閱讀。",
       "sections": [
         {
           "title": "1. 收集的資料",
@@ -375,7 +376,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "Google のサードパーティ接続を管理",
     "privacy": {
       "title": "プライバシーポリシー",
-      "intro": "ChinaTeam 運営チームによる chinateam.org および www 入口の利用者情報の取り扱いを説明します。公開記事と本ポリシーはログイン不要です。",
+      "intro": "ChinaTeam 運営チームによる teamcn.org および www 入口の利用者情報の取り扱いを説明します。公開記事と本ポリシーはログイン不要です。",
       "sections": [
         {
           "title": "1. 収集する情報",
@@ -486,7 +487,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "Gestionar conexiones de terceros de Google",
     "privacy": {
       "title": "Política de privacidad",
-      "intro": "Esta política explica cómo el equipo de ChinaTeam trata la información de visitantes y miembros en chinateam.org y su entrada www. Las noticias públicas y esta política no requieren iniciar sesión.",
+      "intro": "Esta política explica cómo el equipo de ChinaTeam trata la información de visitantes y miembros en teamcn.org y su entrada www. Las noticias públicas y esta política no requieren iniciar sesión.",
       "sections": [
         {
           "title": "1. Información recopilada",
@@ -672,3 +673,4 @@ const walletLegal:Record<Locale,{privacy:Section;terms:Section}>={
   }
 };
 for(const locale of Object.keys(walletLegal) as Locale[]){legalCopy[locale].privacy.sections.push(walletLegal[locale].privacy);legalCopy[locale].terms.sections.push(walletLegal[locale].terms);}
+for(const locale of Object.keys(c2cLegal) as Locale[]){const c=c2cLegal[locale];legalCopy[locale].privacy.sections.push({title:c.title,paragraphs:[c.privacy]});legalCopy[locale].terms.sections.push({title:c.title,paragraphs:[c.terms]});}

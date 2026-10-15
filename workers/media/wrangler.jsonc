@@ -44,8 +44,8 @@
   "vars": {
     "SUPABASE_URL": "https://cznhnupwojmydttdattb.supabase.co",
     "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_S64GsjK-R_CGycTdquKVxw_17Y13ZlL",
-    "MEDIA_ORIGIN": "https://media.chinateam.org",
-    "ALLOWED_ORIGINS": "https://chinateam.org,https://www.chinateam.org,https://omniremix.pages.dev,https://omniremix.chentieshu520.chatgpt.site,https://nextchina.org,https://www.nextchina.org"
+    "MEDIA_ORIGIN": "https://media.teamcn.org",
+    "ALLOWED_ORIGINS": "https://chinateam.org,https://www.chinateam.org,https://omniremix.pages.dev,https://omniremix.chentieshu520.chatgpt.site,https://nextchina.org,https://www.nextchina.org,https://teamcn.org,https://www.teamcn.org,https://tree.teamcn.org"
   },
   "routes": [
     {
@@ -54,6 +54,10 @@
     },
     {
       "pattern": "media.nextchina.org",
+      "custom_domain": true
+    },
+    {
+      "pattern": "media.teamcn.org",
       "custom_domain": true
     }
   ]

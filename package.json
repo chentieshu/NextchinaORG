@@ -10,7 +10,9 @@
     "test:browser": "playwright test",
     "emails:build": "node scripts/build-auth-emails.mjs",
     "media:check": "wrangler types workers/media/worker-configuration.d.ts --config workers/media/wrangler.jsonc --include-runtime=false && tsc -p workers/media/tsconfig.json && wrangler deploy --dry-run --outdir ../../media-dist --config workers/media/wrangler.jsonc",
-    "wallet:check": "wrangler types workers/wallet/worker-configuration.d.ts --config workers/wallet/wrangler.jsonc --include-runtime=false && tsc -p workers/wallet/tsconfig.json && wrangler deploy --dry-run --outdir ../../wallet-dist --config workers/wallet/wrangler.jsonc"
+    "wallet:check": "wrangler types workers/wallet/worker-configuration.d.ts --config workers/wallet/wrangler.jsonc --include-runtime=false && tsc -p workers/wallet/tsconfig.json && wrangler deploy --dry-run --outdir ../../wallet-dist --config workers/wallet/wrangler.jsonc",
+    "build:admin": "node scripts/build-admin.mjs",
+    "typecheck:admin": "tsc --noEmit -p apps/admin/tsconfig.json"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.117.3",

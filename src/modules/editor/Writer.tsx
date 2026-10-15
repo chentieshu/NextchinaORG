@@ -22,6 +22,7 @@ import {locales,languageNames,type Locale} from '@/lib/i18n';
 import {normalizeDocument,documentText,hasDocumentContent} from '@/lib/rich-content';
 import {readDraft,writingData,type WritingData,type LocalDraft} from '@/lib/drafts';
 import {safeSource} from '@/lib/content';
+import {SITE_ORIGIN,ADMIN_ORIGIN} from '@/lib/site';
 import {contentHref} from '@/lib/content-href';
 import type {Article,Translation} from '@/lib/types';
 type Draft={payload:WritingData;updated_at:string;base_updated_at:string};
@@ -72,7 +73,7 @@ function WritingRoom({id,kind:requestedKind,quoteId,appendId}:{id:string|null;ki
    if(!mounted.current)return;const rows=result.data as Article[];if(!rows.length)throw Error('missing');
    committed.current=status==='published'||id!==rows[0].id;const stored=rows[0],next=threadWritingData(writingData(stored,locale),rows);dirtyRef.current=false;setSaved(true);setArticle(stored);setForm(next);setBaseline(JSON.stringify(next));setCloud(null);
    try{localStorage.removeItem(key);localStorage.removeItem(key+':request');}catch{}void refresh();
-   if(status==='published')router.push(contentHref(stored,locale));else if(id!==stored.id)router.replace('/'+locale+'/write/?id='+stored.id);
+   if(status==='published'){const href=contentHref(stored,locale);if(window.location.origin===ADMIN_ORIGIN)window.location.assign(SITE_ORIGIN+href);else router.push(href);}else if(id!==stored.id)router.replace('/'+locale+'/write/?id='+stored.id);
   }catch(e){if(mounted.current){const err=e as {code?:string;message?:string};setError(err.code==='PT409'?x.conflict:err.code==='PT403'?tc.unavailable:err.message?.includes('30 seconds')?c.postRate:err.message?.includes('limit')?tc.tooMany:t.error);}}
   finally{pending.current=false;if(mounted.current)setBusy(false);}
  }
@@ -93,7 +94,7 @@ function WritingRoom({id,kind:requestedKind,quoteId,appendId}:{id:string|null;ki
    const remaining=kind==='news'&&status==='published'&&Object.keys(form.translations).some(l=>l!==publishLocale&&JSON.stringify(form.translations[l as Locale])!==JSON.stringify(publishedTranslations[l as Locale]))?form:null;
    const result=status==='published'?await db.rpc('omni_publish_content',{target_article:article?.id??null,new_payload:payload,expected_article_at:article?.updated_at??null,expected_draft_at:cloud?.updated_at??null,remaining_payload:remaining}):article?await db.from('omni_articles').update({...payload,status}).eq('id',article.id).eq('updated_at',article.updated_at).select('*').single():await db.from('omni_articles').insert({...payload,status,author_id:user.id}).select('*').single();
    if(result.error)throw result.error;if(!mounted.current)return;const stored=result.data as Article;committed.current=status==='published'||!id;dirtyRef.current=false;setSaved(true);setArticle(stored);const next=stored.content_type==='post'&&stored.status==='draft'?threadWritingData(writingData(stored,locale),[stored]):writingData(stored,locale);setForm(next);setBaseline(JSON.stringify(next));try{localStorage.removeItem(key);}catch{}void refresh();
-   if(status==='published')router.push(contentHref(stored,locale));else if(!id)router.replace(`/${locale}/write/?id=${stored.id}`);
+   if(status==='published'){const href=contentHref(stored,locale);if(window.location.origin===ADMIN_ORIGIN)window.location.assign(SITE_ORIGIN+href);else router.push(href);}else if(!id)router.replace(`/${locale}/write/?id=${stored.id}`);
   }catch(e){if(mounted.current){const err=e as {code?:string;message?:string};setError(err.code==='PT409'||err.code==='PGRST116'?x.conflict:err.code==='PT404'?ct.unavailable:err.message?.includes('30 seconds')?c.postRate:t.error);}}finally{pending.current=false;if(mounted.current)setBusy(false);}
  }
  async function discard(){if(!db||!article||!cloud||pending.current||!confirm(ct.discardConfirm))return;pending.current=true;setBusy(true);try{const{error}=await db.rpc('omni_discard_content_draft',{target_article:article.id,expected_draft_at:cloud.updated_at});if(error)throw error;try{localStorage.removeItem(key);}catch{}dirtyRef.current=false;setCloud(null);setAttempt(n=>n+1);}catch{setError(x.conflict);}finally{pending.current=false;setBusy(false);}}

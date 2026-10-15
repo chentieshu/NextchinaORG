@@ -1,12 +1,14 @@
 # ChinaTeam：域名、社交登录与邮件配置
 
-更新日期：2026-10-14。品牌为 **ChinaTeam**，主站为 `https://chinateam.org`。域名大小写不影响访问；配置统一使用小写。
+更新日期：2026-10-15。品牌为 **ChinaTeam**，主站为 `https://teamcn.org`。域名大小写不影响访问；配置统一使用小写。
+
+独立后台入口为 `https://tree.teamcn.org`，各语言认证回跳已加入 Supabase。完整部署与 C2C 操作见 [架构说明](teamcn-architecture.md)。
 
 ## 已完成与待保存的项目
 
-- Cloudflare Pages 已绑定 `chinateam.org` 和 `www.chinateam.org`，两者验证和证书状态均为 active。
-- `www.chinateam.org` 通过 Cloudflare 301 跳转主站，保留路径与查询参数。
-- 全站五语言品牌、标题、登录面板、后台与页脚已替换；生产构建的 `NEXT_PUBLIC_SITE_URL` 已改为 `https://chinateam.org`。
+- Cloudflare Pages 已绑定 `teamcn.org` 和 `www.teamcn.org`，两者验证和证书状态均为 active。
+- `www.teamcn.org` 同时可访问，canonical 使用主域；保留各来源的认证回跳。
+- 全站五语言品牌、标题、登录面板、后台与页脚已替换；生产构建的 `NEXT_PUBLIC_SITE_URL` 已改为 `https://teamcn.org`。
 - Resend 中 `mail.nextchina.org` 已 verified，Sending enabled，打开跟踪与点击跟踪均关闭。
 - Supabase Site URL、五语言新旧域名回调、13 类邮件链接已通过官方工具保存；Google / GitHub / X 控制台的品牌网址仍需按下文填写。邮件沿用已验证的 login@mail.nextchina.org，避免切换未经验证的发件域。
 
@@ -25,7 +27,7 @@ https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback
 Supabase 的 Redirect URLs 是登录完成后回到本站的地址，例如：
 
 ```text
-https://chinateam.org/zh-CN/auth/callback/
+https://teamcn.org/zh-CN/auth/callback/
 ```
 
 这两个位置不能互换，也不要将服务商的回调填成网站首页。
@@ -37,17 +39,17 @@ https://chinateam.org/zh-CN/auth/callback/
 Site URL 设置为：
 
 ```text
-https://chinateam.org
+https://teamcn.org
 ```
 
 在 Redirect URLs 中逐条添加并保存：
 
 ```text
-https://chinateam.org/zh-CN/auth/callback/
-https://chinateam.org/en/auth/callback/
-https://chinateam.org/ja/auth/callback/
-https://chinateam.org/es/auth/callback/
-https://chinateam.org/zh-TW/auth/callback/
+https://teamcn.org/zh-CN/auth/callback/
+https://teamcn.org/en/auth/callback/
+https://teamcn.org/ja/auth/callback/
+https://teamcn.org/es/auth/callback/
+https://teamcn.org/zh-TW/auth/callback/
 ```
 
 `www` 会在加载应用前转到主域，因此网站在主域发起和完成登录，无需从 `www` 发起独立登录。原先的 Pages 与 Sites 预览地址可以在继续使用它们时保留；不要将生产 Site URL 再设为 localhost。生产回调推荐逐条配置准确路径。
@@ -63,10 +65,10 @@ https://chinateam.org/zh-TW/auth/callback/
 打开 [现有 Google Cloud 项目](https://console.cloud.google.com/auth/overview?project=shuxue-508602)，进入 Google Auth Platform。
 
 1. **Branding**：App name 改为 `ChinaTeam`；User support email 选择站长已验证邮箱。
-2. App home page 填 `https://chinateam.org`。
-3. Privacy policy 填 `https://chinateam.org/zh-CN/privacy/`；Terms of service 填 `https://chinateam.org/zh-CN/terms/`。
-4. Authorized domains 添加 `chinateam.org`（不带协议或路径）。保留当前 Supabase 回调域相关配置；Google 如提示域名所有权验证，按页面要求在 Search Console 验证根域。
-5. **Clients**：打开现有 Web application OAuth 客户端。Authorized JavaScript origins 添加 `https://chinateam.org` 和 `https://www.chinateam.org`。
+2. App home page 填 `https://teamcn.org`。
+3. Privacy policy 填 `https://teamcn.org/zh-CN/privacy/`；Terms of service 填 `https://teamcn.org/zh-CN/terms/`。
+4. Authorized domains 添加 `teamcn.org`（不带协议或路径）。保留当前 Supabase 回调域相关配置；Google 如提示域名所有权验证，按页面要求在 Search Console 验证根域。
+5. **Clients**：打开现有 Web application OAuth 客户端。Authorized JavaScript origins 添加 `https://teamcn.org` 和 `https://www.teamcn.org`。
 6. Authorized redirect URIs 保持上方 Supabase 完整回调地址。
 7. **Audience**：测试阶段将测试账号加入 Test users；向公众开放时按 Google 控制台完成 Publish / verification 流程。保存品牌不等于 Google 已完成审核。
 8. **Data Access**：登录只需 `openid`、`userinfo.email`、`userinfo.profile`，不要额外申请 Drive、Gmail 等权限。
@@ -81,7 +83,7 @@ https://chinateam.org/zh-TW/auth/callback/
 | 字段 | 填写值 |
 | --- | --- |
 | Application name | `ChinaTeam` |
-| Homepage URL | `https://chinateam.org` |
+| Homepage URL | `https://teamcn.org` |
 | Application description | `An independent technology news community.` |
 | Authorization callback URL | `https://cznhnupwojmydttdattb.supabase.co/auth/v1/callback` |
 
@@ -97,7 +99,7 @@ https://chinateam.org/zh-TW/auth/callback/
 2. 使用 OAuth 2.0；Type of App 选择 **Web App / Automated App or Bot**（名称以控制台实际选项为准）。
 3. 开启 **Request email from users**；仅登录时使用 Read 权限，不申请发推或私信写入权限。
 4. Callback URI / Redirect URL 填上方 Supabase 回调。
-5. Website URL 填 `https://chinateam.org`；Terms of service 与 Privacy policy 使用 Google 配置部分的两个完整链接。
+5. Website URL 填 `https://teamcn.org`；Terms of service 与 Privacy policy 使用 Google 配置部分的两个完整链接。
 6. 保存。Keys and tokens 中的 **OAuth 2.0 Client ID / Client Secret** 对应 Supabase → X / Twitter (OAuth 2.0)。不要混用旧版 API Key / API Secret 或 OAuth 1.0a。
 7. 已正常配置的密钥不需要因改名而重新生成。如果主动轮换，立即在 Supabase 对应 Provider 中同步保存。
 
@@ -148,7 +150,7 @@ Supabase 负责注册、一次性链接与会话；Resend 通过 SMTP 发送邮�
 
 ## 保存后的验证
 
-1. 打开 `https://www.chinateam.org/en/`，确认地址栏变为 `https://chinateam.org/en/`。
+1. 打开 `https://teamcn.org/en/` 和 `https://www.teamcn.org/en/`，确认两者正常显示。
 2. 从新站重新进行 Google / GitHub / X 登录，确认回到当前语言首页；已有管理员账号从头像进入管理中心。
 3. 在新站输入自己的邮箱，点击发送登录链接。在**发起登录的同一浏览器**打开邮件，确认发件人为 `ChinaTeam <login@mail.nextchina.org>`，返回新站并显示登录状态。不要用另一个浏览器或邮箱内置浏览器打开 PKCE 链接。
 4. 邮件问题查 Resend Emails / Logs 与 Supabase Auth Logs。`Error sending confirmation email` 优先检查 SMTP 密钥、发件域和端口；跳回旧域名或 localhost 优先检查 Site URL 与 Redirect URLs；链接失效则重新请求，不复用旧链接。

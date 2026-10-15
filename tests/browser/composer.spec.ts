@@ -4,10 +4,10 @@ test.skip(!process.env.AUTH_FIXTURES,'Media uploads and database writes are inte
 
 async function media(page:Page){
  const control={calls:0,fail:new Set<number>(),delay:0,stored:new Map<string,Buffer>(),order:[] as string[]};
- await page.route('https://media.chinateam.org/**',async route=>{const req=route.request();if(req.method()==='OPTIONS')return route.fulfill({status:204,headers:{'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'*','Access-Control-Allow-Methods':'POST,GET,OPTIONS'}});
+ await page.route('https://media.teamcn.org/**',async route=>{const req=route.request();if(req.method()==='OPTIONS')return route.fulfill({status:204,headers:{'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'*','Access-Control-Allow-Methods':'POST,GET,OPTIONS'}});
   if(req.method()==='GET'){const body=control.stored.get(req.url());return body?route.fulfill({contentType:'image/webp',body}):route.fulfill({status:404});}
   const number=++control.calls;if(control.delay)await new Promise(r=>setTimeout(r,control.delay));if(control.fail.has(number))return route.fulfill({status:500,json:{error:'upload_failed'}});
-  const url=`https://media.chinateam.org/content/${member}/20000000-0000-4000-8000-${String(number).padStart(12,'0')}.webp`;control.stored.set(url,req.postDataBuffer()!);control.order.push(url);await route.fulfill({json:{url}});
+  const url=`https://media.teamcn.org/content/${member}/20000000-0000-4000-8000-${String(number).padStart(12,'0')}.webp`;control.stored.set(url,req.postDataBuffer()!);control.order.push(url);await route.fulfill({json:{url}});
  });return control;
 }
 async function photos(page:Page,count:number){const base64=await page.evaluate(()=>{const canvas=document.createElement('canvas');canvas.width=600;canvas.height=360;const ctx=canvas.getContext('2d')!;ctx.fillStyle='#adc7bd';ctx.fillRect(0,0,600,360);ctx.fillStyle='#426e62';ctx.fillRect(30,30,220,300);ctx.fillStyle='#ecddba';ctx.beginPath();ctx.arc(420,140,80,0,Math.PI*2);ctx.fill();return canvas.toDataURL('image/png').split(',')[1];});return Array.from({length:count},(_,i)=>({name:`photo-${i}.png`,mimeType:'image/png',buffer:Buffer.from(base64,'base64')}));}

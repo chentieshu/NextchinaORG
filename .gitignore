@@ -15,3 +15,6 @@ media-dist/
 
 workers/wallet/worker-configuration.d.ts
 wallet-dist/
+
+apps/admin/.next/
+apps/admin/out/

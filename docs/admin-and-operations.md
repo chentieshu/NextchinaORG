@@ -1,6 +1,6 @@
 # 后台与生产缺口（2026-10-13）
 
-管理入口：`https://chinateam.org/zh-CN/admin/`。使用现有总管理员账号登录。
+管理入口：`https://tree.teamcn.org/zh-CN/`。使用现有总管理员账号登录。
 
 ## 当前后台
 
@@ -45,7 +45,7 @@ R2 缓存 5 分钟，单次最多 20 页且限制扫描耗时；超过边界显�
 
 尚未接入 Cloudflare 官方流量、CPU、错误率、历史趋势、部署历史、费用，也没有 Supabase CPU/内存/出站流量及费用。这些信息通过提供商控制台链接查看。当前 Cloudflare connector 查询账户 token 权限组返回 Unauthorized，因此没有创建或假称已配置长期凭据。
 
-后续接入 Cloudflare 官方监控可使用只读服务端 token：当前账户的 `Account Analytics Read`，如需要 Pages 部署再加 `Pages Read`；站点级 HTTP 指标还需仅 chinateam.org zone 的 `Analytics Read`。将其存入 Worker secret，固定账户、bucket、script/project，不能接受浏览器传任意 GraphQL。当前代码不读取此 token，也未虚设一个可用配置入口；接入时需要新增实际采集器和测试。
+后续接入 Cloudflare 官方监控可使用只读服务端 token：当前账户的 `Account Analytics Read`，如需要 Pages 部署再加 `Pages Read`；站点级 HTTP 指标还需仅 teamcn.org zone 的 `Analytics Read`。将其存入 Worker secret，固定账户、bucket、script/project，不能接受浏览器传任意 GraphQL。当前代码不读取此 token，也未虚设一个可用配置入口；接入时需要新增实际采集器和测试。
 
 Supabase 完整监控需要独立服务端 Metrics API 采集。不要为了简易面板把 secret key 放入网页。R2 官方 bandwidth 数据集排除小于 100 KiB 的传输，尤其不能把头像流量当作精确总流量。
 

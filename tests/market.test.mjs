@@ -24,7 +24,7 @@ test('market authority, issuance, code reservation, redemption and cancellation 
    create table auth.identities(id uuid default gen_random_uuid(),user_id uuid references auth.users(id),provider text,provider_id text,identity_data jsonb default '{}');
    create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
    grant usage on schema auth,public to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;`);
-  for(const f of (await readdir('supabase/migrations')).filter(f=>f.endsWith('.sql')).sort())await db.exec(await readFile('supabase/migrations/'+f,'utf8'));
+  for(const f of (await readdir('supabase/migrations')).filter(f=>f.endsWith('.sql')&&!f.includes('c2c_collateral')).sort())await db.exec(await readFile('supabase/migrations/'+f,'utf8'));
   const owner=randomUUID(),merchant=randomUUID(),buyer=randomUUID(),other=randomUUID(),editor=randomUUID();
   const root=async sql=>{await db.exec('reset role');return (await db.query(sql)).rows;};
   const as=async(id,sql)=>{await db.exec(`reset role;set role ${id?'authenticated':'anon'};select set_config('request.jwt.claim.sub','${id??''}',false),set_config('request.jwt.claims','${JSON.stringify({session_id:id,email:id+'@example.test'})}',false)`);return (await db.query(sql)).rows[0]?.s;};

@@ -17,7 +17,7 @@ test('the root homepage and all policies are readable without login or JavaScrip
     await expect(page.locator('main')).toHaveAttribute('lang',locale);
     await expect(page.locator('.legal-sections')).toContainText('Google');
     await expect(page.getByRole('link',{name:'chentieshu520@gmail.com',exact:true})).toHaveAttribute('href','mailto:chentieshu520@gmail.com');
-    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href',`https://chinateam.org/${locale}/${kind}/`);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href',`https://teamcn.org/${locale}/${kind}/`);
    }
   }
  }finally{await context.close();}

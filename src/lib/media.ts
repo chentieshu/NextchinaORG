@@ -1,9 +1,9 @@
 import {getSupabase} from './supabase';
 import type {Profile} from './types';
-export const MEDIA_ORIGIN='https://media.chinateam.org';
+export const MEDIA_ORIGIN='https://media.teamcn.org';
 const keyPattern=/^(avatars|content)\/[0-9a-f-]{36}\/[0-9a-f-]{36}\.(webp|png|jpg)$/;
 export function mediaUrl(key:string|null|undefined){return key&&keyPattern.test(key)?`${MEDIA_ORIGIN}/${key}`:null;}
-export function isStoredImage(url:string){try{const parsed=new URL(url);return [MEDIA_ORIGIN,'https://media.nextchina.org'].includes(parsed.origin)&&keyPattern.test(parsed.pathname.slice(1))&&!parsed.search&&!parsed.hash;}catch{return false;}}
+export function isStoredImage(url:string){try{const parsed=new URL(url);return [MEDIA_ORIGIN,'https://media.chinateam.org','https://media.nextchina.org'].includes(parsed.origin)&&keyPattern.test(parsed.pathname.slice(1))&&!parsed.search&&!parsed.hash;}catch{return false;}}
 export class UploadError extends Error {constructor(public code:string){super(code);}}
 type Progress=(percent:number)=>void;
 async function request(path:string,body:Blob|null,settings:Record<string,unknown>|null,signal?:AbortSignal,progress?:Progress){
