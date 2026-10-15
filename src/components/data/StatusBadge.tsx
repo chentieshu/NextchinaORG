@@ -1,0 +1,2 @@
+import {FiCheckCircle,FiClock,FiMinusCircle,FiAlertCircle} from 'react-icons/fi';
+export function StatusBadge({children,tone='neutral'}:{children:React.ReactNode;tone?:'positive'|'neutral'|'warning'|'danger'}){const Icon=tone==='positive'?FiCheckCircle:tone==='warning'?FiClock:tone==='danger'?FiAlertCircle:FiMinusCircle;return <span className={`data-status status-${tone}`}><Icon aria-hidden="true"/>{children}</span>;}

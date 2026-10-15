@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import {SITE_ORIGIN} from '@/lib/site';
 import {useMemo} from 'react';
 import type {ColumnDef} from '@tanstack/react-table';
 import {RecordTable} from '@/components/data/RecordTable';
@@ -12,7 +13,7 @@ export function AuditTable({rows}:{rows:AuditRow[]}){
   {accessorKey:'created_at',header:c.date,cell:({row})=><time dateTime={row.original.created_at}>{new Date(row.original.created_at).toLocaleString(locale)}</time>},
   {accessorKey:'action',header:c.action},
   {accessorKey:'target',header:c.target,cell:({getValue})=><code>{String(getValue()??'—')}</code>},
-  {accessorKey:'actor_id',header:c.actor,cell:({row})=>row.original.actor_id?<Link title={row.original.actor_id} href={`/${locale}/profile/?id=${encodeURIComponent(row.original.actor_id)}`}><code>{row.original.actor_id.slice(0,8)}…</code></Link>:'—'}
+  {accessorKey:'actor_id',header:c.actor,cell:({row})=>row.original.actor_id?<Link title={row.original.actor_id} href={`${SITE_ORIGIN}/${locale}/profile/?id=${encodeURIComponent(row.original.actor_id)}`}><code>{row.original.actor_id.slice(0,8)}…</code></Link>:'—'}
  ],[locale,c]);
  return <RecordTable rows={rows} columns={columns} locale={locale} caption={t.audit} empty={c.empty} initialSort={[{id:'created_at',desc:true}]}/>;
 }
