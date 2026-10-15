@@ -18,6 +18,7 @@ test('Teamcn category separation, private identity, audited points and role enfo
  const market=await as(null,"select omni_prediction_read() s");assert.equal(market.trading_enabled,false);assert.equal(market.rows[0].review_note,'');assert.ok(!('request_id' in market.rows[0]));
  await assert.rejects(action(member,'adjust',{user_id:member,delta:'10000',bucket:'earned',note:'wrong role'}),/denied/);
  await assert.rejects(action(editor,'adjust',{user_id:member,delta:'10000',bucket:'earned',note:'wrong role'}),/denied/);
+ await as(owner,`select omni_points_admin_action('${randomUUID()}','issue','{"amount":"1000100000000","note":"Issue test inventory"}') s`);
  const payload={user_id:sender,delta:'100000000',bucket:'purchased',note:'test funding'},key=randomUUID();
  await action(owner,'adjust',payload,key);await action(owner,'adjust',payload,key);
  assert.equal((await as(sender,'select omni_wallet_snapshot() s')).purchased,'100000000');
@@ -35,5 +36,5 @@ test('Teamcn category separation, private identity, audited points and role enfo
  const own=await as(member,'select omni_identity_own() s');await action(owner,'member',{user_id:member,level_override:60,title_override:2,frozen:true,expected:own.updated_at,note:'review override'});assert.equal((await pub(member)).level,60);assert.equal((await pub(member)).title['zh-CN'],'小有盈余');
  await assert.rejects(as(sender,`select omni_wallet_tip('${randomUUID()}','${article}',10000) s`),/frozen/);
  const rules=await as(owner,"select omni_identity_admin_read('') s");await action(owner,'rules',{basis:'sent',levels:rules.levels,titles:rules.titles,expected:rules.rules.updated_at,note:'calculation test'});assert.equal((await pub(sender)).level,2);
- const net=await root('select sum(balance)::text total from omni_private.wallet_accounts');assert.equal(net[0].total,'0');assert.equal((await root("select count(*)::integer n from public.omni_audit where action='identity:adjust'"))[0].n,2);
+ const net=await root('select sum(balance)::text total from omni_private.wallet_accounts');assert.equal(net[0].total,'0');assert.equal((await root("select count(*)::integer n from public.omni_audit where action='points:grant'"))[0].n,2);
 }finally{await db.close();}});

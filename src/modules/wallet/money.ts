@@ -23,7 +23,7 @@ export async function isTronAddress(value:string):Promise<boolean> {
  return bytes.slice(21).every((byte,i)=>byte===digest[i]);
 }
 export type WalletSnapshot={purchased:string;earned:string;held:string;deposits_enabled:boolean;tipping_enabled:boolean;withdrawals_enabled:boolean;withdrawal_min_units:string;withdrawal_fee_bps:string;frozen:boolean};
-export type WalletEntry={id:string;sequence:string;kind:'admin_adjust'|'deposit'|'tip'|'withdraw_hold'|'withdraw_cancel'|'withdraw_reject'|'withdraw_paid'|'merchant_issue'|'merchant_revoke'|'code_create'|'code_cancel'|'code_redeem'|'c2c_hold'|'c2c_release'|'c2c_cancel'|'collateral_refund'|'collateral_lock';units:string;delta:string;created_at:string};
+export type WalletEntry={id:string;sequence:string;kind:'points_issue'|'points_grant'|'admin_adjust'|'deposit'|'tip'|'withdraw_hold'|'withdraw_cancel'|'withdraw_reject'|'withdraw_paid'|'merchant_issue'|'merchant_revoke'|'code_create'|'code_cancel'|'code_redeem'|'c2c_hold'|'c2c_release'|'c2c_cancel'|'collateral_refund'|'collateral_lock';units:string;delta:string;created_at:string};
 export type Withdrawal={id:string;user_id:string;display_name:string;handle:string;units:string;fee_units:string;destination:string;status:'pending'|'processing'|'cancelled'|'rejected'|'paid';created_at:string;tx_hash:string|null;};
 // Preserve the same key across a timeout/reload. No balance or auth token is persisted.
 export function walletRequest(actor:string,kind:string,payload:string):string {
