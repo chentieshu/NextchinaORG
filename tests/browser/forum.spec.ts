@@ -1,8 +1,8 @@
-import {test,expect} from '@playwright/test';
+import {test,expect} from './test';
 import {mkdir} from 'node:fs/promises';
 import path from 'node:path';
 import {fixture,story,member,articleId} from './fixtures';
-test.skip(!process.env.LIVE_SUPABASE,'Requires the public Supabase URL; authenticated backend calls are mocked.');
+test.skip(!process.env.AUTH_FIXTURES,'Requires the public Supabase URL; authenticated backend calls are mocked.');
 test('shared editor restores member drafts, publishes rich posts and edits rich comments',async({page})=>{
  const state=await fixture(page);const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:390,height:844});await page.goto('/zh-CN/write/');

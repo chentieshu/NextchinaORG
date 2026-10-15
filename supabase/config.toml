@@ -21,3 +21,16 @@ additional_redirect_urls = [
   "https://omniremix.chentieshu520.chatgpt.site/es/auth/callback/",
   "https://omniremix.chentieshu520.chatgpt.site/zh-TW/auth/callback/"
 ]
+
+[auth.email]
+otp_length = 8
+otp_expiry = 600
+max_frequency = "1m"
+
+[auth.email.template.magic_link]
+subject = "ChinaTeam · 邮箱验证码 / Email verification"
+content_path = "./supabase/templates/magic-link.html"
+
+[auth.mfa.totp]
+enroll_enabled = false
+verify_enabled = false

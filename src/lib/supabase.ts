@@ -16,3 +16,10 @@ export function getSupabase(){
  if(!client)client=createClient(url,key,{auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
  return client;
 }
+// Code verification must not replace a different account's session if the user
+// signs out or switches accounts while the verification request is in flight.
+export function getEmailVerificationClient(){
+ const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+ if(!url||!key)throw Error('Auth unavailable');
+ return createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,storageKey:'chinateam-email-code'}});
+}

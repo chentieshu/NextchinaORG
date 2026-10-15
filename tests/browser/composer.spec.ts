@@ -1,6 +1,6 @@
-import {test,expect,type Page} from '@playwright/test';
+import {test,expect,type Page} from './test';
 import {fixture,articleId,member} from './fixtures';
-test.skip(!process.env.LIVE_SUPABASE,'Media uploads and database writes are intercepted.');
+test.skip(!process.env.AUTH_FIXTURES,'Media uploads and database writes are intercepted.');
 
 async function media(page:Page){
  const control={calls:0,fail:new Set<number>(),delay:0,stored:new Map<string,Buffer>(),order:[] as string[]};

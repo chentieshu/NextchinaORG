@@ -1,4 +1,4 @@
-import {test,expect} from '@playwright/test';
+import {test,expect} from './test';
 
 test('the root homepage and all policies are readable without login or JavaScript',async({browser})=>{
  const context=await browser.newContext({javaScriptEnabled:false});

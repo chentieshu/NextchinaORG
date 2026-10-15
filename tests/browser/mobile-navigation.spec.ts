@@ -1,6 +1,6 @@
-import {test,expect} from '@playwright/test';
+import {test,expect} from './test';
 import {fixture,story,articleId} from './fixtures';
-test.skip(!process.env.LIVE_SUPABASE,'Authenticated requests use intercepted fixtures.');
+test.skip(!process.env.AUTH_FIXTURES,'Authenticated requests use intercepted fixtures.');
 
 test('small screens have full-width content, reachable footer and one navigation in every language',async({page})=>{
  const state=await fixture(page);state.articles.push(story());

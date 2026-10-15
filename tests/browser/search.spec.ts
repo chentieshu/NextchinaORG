@@ -1,6 +1,6 @@
-import {test,expect} from '@playwright/test';
+import {test,expect} from './test';
 import {fixture,story,member,articleId} from './fixtures';
-test.skip(!process.env.LIVE_SUPABASE,'Search requests and follow writes use intercepted fixtures.');
+test.skip(!process.env.AUTH_FIXTURES,'Search requests and follow writes use intercepted fixtures.');
 const other='20000000-0000-4000-8000-000000000002';
 function person(){return {id:other,display_name:'Needle 开发者',handle:'needle',bio:'开源与人工智能',created_at:'2025-01-01T00:00:00Z',disabled:false,profile_completed_at:'2025-01-01T00:00:00Z',avatar_key:null};}
 

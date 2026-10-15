@@ -1,7 +1,8 @@
-import {test,expect} from '@playwright/test';
-test.skip(!process.env.LIVE_SUPABASE,'Run against a build configured with Supabase.');
+import {test,expect} from './test';
+test.skip(!process.env.AUTH_FIXTURES,'Run against a build configured with Supabase.');
 
-test('live content requests succeed and anonymous administration stays locked',async({page})=>{
+test('public content requests succeed with fixtures and anonymous administration stays locked',async({page})=>{
+ await page.route('https://cznhnupwojmydttdattb.supabase.co/rest/v1/**',route=>route.fulfill({json:route.request().url().includes('/omni_settings?')?{id:true,notice:'',comments_enabled:true,ugc_enabled:true}:[]}));
  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
  const articles=page.waitForResponse(r=>r.url().includes('/rpc/omni_content_feed'));
  const settings=page.waitForResponse(r=>r.url().includes('/rest/v1/omni_settings?'));

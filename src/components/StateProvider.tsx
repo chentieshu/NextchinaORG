@@ -12,7 +12,7 @@ function useAppState(locale:Locale){
  const t=dictionaries[locale],copy=experienceCopy[locale],db=getSupabase(),demo=!db;
  const [user,setUser]=useState<User|null>(null),[profile,setProfile]=useState<Profile|null>(null),[authStatus,setAuthStatus]=useState<AuthStatus>(demo?'ready':'loading');
  const [articles,setArticles]=useState<Article[]>([]),[loading,setLoading]=useState(!demo),[loadError,setLoadError]=useState(false),[contentVersion,setContentVersion]=useState(0);
- const [liked,setLiked]=useState<string[]>([]),[bookmarked,setBookmarked]=useState<string[]>([]),[reposted,setReposted]=useState<string[]>([]),[needsMfa,setNeedsMfa]=useState(false),[authOpen,setAuthOpen]=useState(false),[toast,setToast]=useState(''),[online,setOnline]=useState(true);
+ const [liked,setLiked]=useState<string[]>([]),[bookmarked,setBookmarked]=useState<string[]>([]),[reposted,setReposted]=useState<string[]>([]),[authOpen,setAuthOpen]=useState(false),[toast,setToast]=useState(''),[online,setOnline]=useState(true);
  const [categories,setCategories]=useState<ContentCategory[]>([]);
  const categoryName=useCallback((key:string)=>categories.find(c=>c.key===key)?.labels[locale]??key,[categories,locale]);
  const activeCategories=categories.filter(c=>c.enabled);
@@ -40,15 +40,15 @@ function useAppState(locale:Locale){
  const sync=useCallback(async(nextUser:User|null)=>{
   const sequence=++authRequest.current;authController.current?.abort();const controller=new AbortController();authController.current=controller;
   const changed=currentUser.current!==(nextUser?.id??null);currentUser.current=nextUser?.id??null;
-  invalidateConnections();setUser(nextUser);if(changed||!nextUser){profileReady.current=false;setProfile(null);setLiked([]);setBookmarked([]);setReposted([]);setNeedsMfa(false);setArticles(old=>old.filter(a=>a.status==='published'));}if(!profileReady.current)setAuthStatus('loading');
+  invalidateConnections();setUser(nextUser);if(changed||!nextUser){profileReady.current=false;setProfile(null);setLiked([]);setBookmarked([]);setReposted([]);setArticles(old=>old.filter(a=>a.status==='published'));}if(!profileReady.current)setAuthStatus('loading');
   if(!nextUser||!db){setAuthStatus('ready');return;}
   const timeout=setTimeout(()=>controller.abort(),12000),epoch=interactionEpoch.current,profileVersion=profileEpoch.current;
   async function interactions(table:string){const rows:{article_id:string}[]=[];for(let offset=0;;offset+=500){const result=await db!.from(table).select('article_id').eq('user_id',nextUser!.id).order('article_id').range(offset,offset+499).abortSignal(controller.signal);if(result.error)throw result.error;rows.push(...result.data);if(result.data.length<500)return rows;}}
   try{
-   const [p,l,b,r,m]=await Promise.all([db.from('omni_profiles').select('*').eq('id',nextUser.id).abortSignal(controller.signal).single(),interactions('omni_likes'),interactions('omni_bookmarks'),interactions('omni_reposts'),db.auth.mfa.getAuthenticatorAssuranceLevel()]);
+   const [p,l,b,r]=await Promise.all([db.from('omni_profiles').select('*').eq('id',nextUser.id).abortSignal(controller.signal).single(),interactions('omni_likes'),interactions('omni_bookmarks'),interactions('omni_reposts')]);
    if(!mounted.current||sequence!==authRequest.current)return;if(p.error||!p.data)throw Error('Account unavailable');
-   if(m.error)throw m.error;setNeedsMfa(m.data.nextLevel==='aal2'&&m.data.currentLevel!=='aal2');profileReady.current=true;if(profileVersion===profileEpoch.current)setProfile(p.data);if(epoch===interactionEpoch.current&&!mutations.current.size){setLiked(l.map(x=>x.article_id));setBookmarked(b.map(x=>x.article_id));setReposted(r.map(x=>x.article_id));}setAuthStatus('ready');
-  }catch{if(mounted.current&&sequence===authRequest.current){profileReady.current=false;setProfile(null);setLiked([]);setBookmarked([]);setReposted([]);setNeedsMfa(false);setAuthStatus('error');}}finally{clearTimeout(timeout);}
+   profileReady.current=true;if(profileVersion===profileEpoch.current)setProfile(p.data);if(epoch===interactionEpoch.current&&!mutations.current.size){setLiked(l.map(x=>x.article_id));setBookmarked(b.map(x=>x.article_id));setReposted(r.map(x=>x.article_id));}setAuthStatus('ready');
+  }catch{if(mounted.current&&sequence===authRequest.current){profileReady.current=false;setProfile(null);setLiked([]);setBookmarked([]);setReposted([]);setAuthStatus('error');}}finally{clearTimeout(timeout);}
  },[db]);
  const retryAuth=useCallback(async()=>{if(!db)return;if(!profileReady.current)setAuthStatus('loading');try{const{data,error}=await db.auth.getSession();if(error)throw error;await sync(data.session?.user??null);}catch{if(mounted.current)setAuthStatus('error');}},[db,sync]);
  useEffect(()=>{mounted.current=true;let initial=true;
@@ -68,14 +68,14 @@ function useAppState(locale:Locale){
   }catch{if(currentUser.current===actor)notify(t.error);}finally{++interactionEpoch.current;mutations.current.delete(key);}
  }
  async function toggleRepost(id:string){
-  if(!user){setAuthOpen(true);return;}if(!online||!profile||profile.disabled||needsMfa||authStatus!=='ready'||!db)return;
+  if(!user){setAuthOpen(true);return;}if(!online||!profile||profile.disabled||authStatus!=='ready'||!db)return;
   const actor=user.id,key=actor+':repost:'+id;if(mutations.current.has(key))return;mutations.current.add(key);++interactionEpoch.current;
   try{const{data,error}=await db.rpc('omni_set_repost',{target_article:id,new_state:!reposted.includes(id)});if(error)throw error;if(currentUser.current!==actor)return;
    setReposted(old=>data.reposted?[...new Set([...old,id])]:old.filter(v=>v!==id));setArticles(old=>old.map(a=>a.id===id?{...a,repost_count:data.repost_count}:a));setContentVersion(v=>v+1);
   }catch{if(currentUser.current===actor)notify(t.error);}finally{++interactionEpoch.current;mutations.current.delete(key);}
  }
  async function logout(){if(!db)return;setAuthStatus('loading');const{error}=await db.auth.signOut();if(error){setAuthStatus('error');notify(t.error);}else{await sync(null);setAuthOpen(false);void refresh();}}
- return{locale,t,db,demo,user,profile,applyProfile,authStatus,retryAuth,online,articles,rememberArticles,contentVersion,loading,loadError,liked,bookmarked,reposted,toggleRepost,needsMfa,authOpen,setAuthOpen,toast,notify,toggle,logout,settings,categories,activeCategories,categoryName,needsProfile:!!profile&&!profile.profile_completed_at,refresh};
+ return{locale,t,db,demo,user,profile,applyProfile,authStatus,retryAuth,online,articles,rememberArticles,contentVersion,loading,loadError,liked,bookmarked,reposted,toggleRepost,authOpen,setAuthOpen,toast,notify,toggle,logout,settings,categories,activeCategories,categoryName,needsProfile:!!profile&&!profile.profile_completed_at,refresh};
 }
 type App=ReturnType<typeof useAppState>;const Context=createContext<App|null>(null);
 export function Provider({locale,children}:{locale:Locale;children:ReactNode}){const value=useAppState(locale);return <Context.Provider value={value}>{children}{value.toast&&<div className="toast" role="status">{value.toast}</div>}</Context.Provider>;}

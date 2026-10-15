@@ -12,7 +12,7 @@ jobs:
       NEXT_PUBLIC_SUPABASE_URL: https://cznhnupwojmydttdattb.supabase.co
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_S64GsjK-R_CGycTdquKVxw_17Y13ZlL
       NEXT_PUBLIC_SITE_URL: https://chinateam.org
-      LIVE_SUPABASE: '1'
+      AUTH_FIXTURES: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

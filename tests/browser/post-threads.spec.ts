@@ -1,6 +1,6 @@
-import {test,expect,type Page} from '@playwright/test';
+import {test,expect,type Page} from './test';
 import {fixture,story,member,articleId} from './fixtures';
-test.skip(!process.env.LIVE_SUPABASE,'All authentication, media and database writes are intercepted.');
+test.skip(!process.env.AUTH_FIXTURES,'All authentication, media and database writes are intercepted.');
 async function upload(page:Page){let n=0;const images=new Map<string,Buffer>();await page.route('https://media.chinateam.org/**',async route=>{if(route.request().method()==='GET')return route.fulfill({contentType:'image/webp',body:images.get(route.request().url())??Buffer.alloc(0)});const url=`https://media.chinateam.org/content/${member}/30000000-0000-4000-8000-${String(++n).padStart(12,'0')}.webp`;images.set(url,route.request().postDataBuffer()!);return route.fulfill({json:{url}});});}
 async function image(page:Page){const b64=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=200;c.height=120;const ctx=c.getContext('2d')!;ctx.fillStyle='#89a19c';ctx.fillRect(0,0,200,120);return c.toDataURL('image/png').split(',')[1];});return {name:'thread.png',mimeType:'image/png',buffer:Buffer.from(b64,'base64')};}
 

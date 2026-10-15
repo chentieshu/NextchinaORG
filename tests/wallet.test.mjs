@@ -18,7 +18,7 @@ test('point units and TRON checksum reject rounding and wrong-network addresses'
 
 test('wallet ledger is private, balanced, idempotent and holds prevent double spending',async()=>{
  const db=new PGlite({extensions:{pg_trgm}});try{
- await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb default '{}');create table auth.mfa_factors(id uuid,user_id uuid,status text);create table auth.identities(id uuid default gen_random_uuid(),user_id uuid references auth.users(id),provider text,provider_id text,identity_data jsonb default '{}');create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth,public to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;`);
+ await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,phone text,raw_user_meta_data jsonb default '{}');create table auth.sessions(id uuid primary key,user_id uuid,not_after timestamptz);create table auth.mfa_amr_claims(session_id uuid,authentication_method text,updated_at timestamptz);create table auth.mfa_factors(id uuid,user_id uuid,status text);create table auth.identities(id uuid default gen_random_uuid(),user_id uuid references auth.users(id),provider text,provider_id text,identity_data jsonb default '{}');create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth,public to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;`);
  const migrations=(await readdir('supabase/migrations')).filter(f=>f.endsWith('.sql')).sort();
  // Exercise historical binding behavior before its explicit retirement migration.
  const depositMigration=migrations.findIndex(f=>f.endsWith('_chinateam_wallet_deposit_orders.sql'));
@@ -140,20 +140,20 @@ test('wallet ledger is private, balanced, idempotent and holds prevent double sp
  // Migrate the funded ledger in place. New deposits need no injected wallet.
  for(const f of migrations.slice(depositMigration))await root(await readFile('supabase/migrations/'+f,'utf8'));
  const setup=async()=> (await as(owner,'select omni_wallet_admin_setup() s')).rows[0].s;
- assert.equal((await setup()).mfa_verified,false);
- await assert.rejects(as(owner,'select omni_wallet_admin_setup(null,true)'),/MFA required/);
+ assert.equal((await setup()).email_verified,false);
+ await assert.rejects(as(owner,'select omni_wallet_admin_setup(null,true)'),/Recent email verification required/);
  await root("update omni_private.wallet_gateway set last_heartbeat=now()-interval '6 minutes'");
  assert.equal((await setup()).healthy,false);
- await db.exec("select set_config('request.jwt.claims','{\"aal\":\"aal2\"}',false)");
- assert.equal((await setup()).mfa_verified,true);
+ await root(`update auth.users set email='owner@example.test',email_confirmed_at=now() where id='${owner}';insert into auth.sessions(id,user_id) values('${owner}','${owner}') on conflict do nothing;delete from auth.mfa_amr_claims where session_id='${owner}';insert into auth.mfa_amr_claims values('${owner}','otp',now());`);await db.exec(`select set_config('request.jwt.claims','${JSON.stringify({session_id:owner,email:'owner@example.test',aal:'aal1'})}',false)`);
+ assert.equal((await setup()).email_verified,true);
  await assert.rejects(as(owner,'select omni_wallet_admin_setup(null,true)'),/listener unavailable/);
  await root('update omni_private.wallet_gateway set last_heartbeat=now()');
  assert.equal((await setup()).healthy,true);
  assert.equal((await setup()).configured,true);
  await assert.rejects(as(editor,'select omni_wallet_admin_setup()'),/access denied/);
- await db.exec("select set_config('request.jwt.claims','{\"aal\":\"aal2\"}',false)");
+ await root(`update auth.users set email='owner@example.test',email_confirmed_at=now() where id='${owner}';insert into auth.sessions(id,user_id) values('${owner}','${owner}') on conflict do nothing;delete from auth.mfa_amr_claims where session_id='${owner}';insert into auth.mfa_amr_claims values('${owner}','otp',now());`);await db.exec(`select set_config('request.jwt.claims','${JSON.stringify({session_id:owner,email:'owner@example.test',aal:'aal1'})}',false)`);
  const opened=(await as(owner,'select omni_wallet_admin_setup(null,true) s')).rows[0].s;
- assert.equal(opened.enabled,true);assert.equal(opened.mfa_verified,true);
+ assert.equal(opened.enabled,true);assert.equal(opened.email_verified,true);
  const closed=(await as(owner,'select omni_wallet_admin_setup(null,false) s')).rows[0].s;
  assert.equal(closed.enabled,false);
  await assert.rejects(as(newUser,`select omni_wallet_deposit_challenge('${address}')`),/permission denied/);

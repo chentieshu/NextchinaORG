@@ -1,7 +1,7 @@
-import {test,expect} from '@playwright/test';
+import {test,expect} from './test';
 import {fixture,story,articleId} from './fixtures';
 import path from 'node:path';
-test.skip(!process.env.LIVE_SUPABASE,'Authenticated requests use local fixtures.');
+test.skip(!process.env.AUTH_FIXTURES,'Authenticated requests use local fixtures.');
 test('owner manages translated categories, content filters and concurrent settings without stale overwrites',async({page})=>{
  const state=await fixture(page,'super_admin');state.articles.push(story(),story('20000000-0000-4000-8000-000000000011','草稿记录',{status:'draft'}));const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/zh-CN/admin/');await expect(page.locator('.overview-grid')).toContainText('2');await page.locator('.admin-sidebar').getByRole('button',{name:'分类管理',exact:true}).click();await page.getByRole('button',{name:'新增分类',exact:true}).click();await page.getByLabel('固定网址标识',{exact:true}).fill('tools');await page.getByLabel('排序',{exact:true}).fill('1');for(const name of ['简体中文','English','日本語','Español','繁體中文'])await page.getByLabel(name,{exact:true}).fill('Tools');await page.locator('.category-form').getByRole('button',{name:'保存',exact:true}).click();await expect(page.locator('.admin-table article').nth(1)).toContainText('Tools');

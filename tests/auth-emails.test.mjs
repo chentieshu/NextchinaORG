@@ -8,7 +8,7 @@ const read = (name) => readFile(new URL(name, base),'utf8');
 const contract = {
   'confirm-signup':['ConfirmationURL'],
   'invite-user':['ConfirmationURL'],
-  'magic-link':['ConfirmationURL'],
+  'magic-link':['ConfirmationURL','Token'],
   'change-email':['ConfirmationURL','NewEmail'],
   'reset-password':['ConfirmationURL'],
   'reauthentication':['Token'],
@@ -44,7 +44,7 @@ test('login links remain Supabase verification links and never point directly to
     const html=await read(name+'.html');
     assert.equal((html.match(/href="\{\{ \.ConfirmationURL \}\}"/g)??[]).length,2,name);
     assert.ok(!html.includes('/auth/confirm')&&!html.includes('/reset-password/'),name);
-    assert.ok(!html.includes('{{ .Token }}'),name);
+    assert.equal(html.includes('{{ .Token }}'),name==='magic-link',name);
   }
   for(const name of Object.keys(contract).slice(6)){
     const html=await read(name+'.html');

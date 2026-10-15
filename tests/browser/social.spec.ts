@@ -1,6 +1,6 @@
-import {test,expect} from '@playwright/test';
+import {test,expect} from './test';
 import {fixture,story,member,articleId} from './fixtures';
-test.skip(!process.env.LIVE_SUPABASE,'Authenticated writes are mocked, including emails and account changes.');
+test.skip(!process.env.AUTH_FIXTURES,'Authenticated writes are mocked, including emails and account changes.');
 const other='20000000-0000-4000-8000-000000000002';
 test('titleless posts publish pasted embeds and safe code, with media preview on the right',async({page})=>{
  const state=await fixture(page);let embeds=0;

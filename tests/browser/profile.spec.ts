@@ -1,6 +1,6 @@
-import {test,expect} from '@playwright/test';
+import {test,expect} from './test';
 import {fixture,story,member,articleId} from './fixtures';
-test.skip(!process.env.LIVE_SUPABASE,'Authenticated media requests are intercepted.');
+test.skip(!process.env.AUTH_FIXTURES,'Authenticated media requests are intercepted.');
 const key=`avatars/${member}/20000000-0000-4000-8000-000000000099.webp`;
 const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl6QAAAAABJRU5ErkJggg==','base64');
 test('profile crop uploads a square image and synchronizes the author identity without losing failed edits',async({page})=>{

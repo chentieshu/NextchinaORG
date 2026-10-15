@@ -1,6 +1,6 @@
-import {test,expect} from '@playwright/test';
+import {test,expect} from './test';
 import {fixture,story,articleId} from './fixtures';
-test.skip(!process.env.LIVE_SUPABASE,'Uses intercepted authenticated requests.');
+test.skip(!process.env.AUTH_FIXTURES,'Uses intercepted authenticated requests.');
 test('sidebar categories preserve URL filters; private lists clear on logout',async({page})=>{
  const state=await fixture(page);state.articles.push(story(articleId,'开源讨论',{category:'opensource'}),story('20000000-0000-4000-8000-000000000012','人工智能讨论'),story('20000000-0000-4000-8000-000000000013','未发布草稿',{category:'opensource',status:'draft'}));
  await page.goto('/zh-CN/');await expect(page.locator('.article-card')).toHaveCount(2);await expect(page.locator('.app-nav').getByRole('link',{name:'管理中心'})).toHaveCount(0);

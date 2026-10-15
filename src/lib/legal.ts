@@ -88,7 +88,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
           "title": "账号设置与显示偏好",
           "paragraphs": [
             "我们保存你选择的唯一用户名、资料完成时间、界面语言和主题偏好。账号偏好在登录时应用，访客偏好保存在当前浏览器。帖子只展示作者原文；新闻可以具有管理员维护的不同语言版本。统一搜索仅索引公开内容，不展示草稿、私人收藏或账号偏好。",
-            "我们保存新闻语言、外部媒体加载方式和是否显示转发等阅读偏好。转发关系和已发布引用是公开内容；撤销转发不删除原帖。引用原帖被下架或删除后不再展示其正文。开启双重验证时，Supabase 管理验证器因子与验证记录；网站不保存你输入的动态验证码。"
+            "我们保存新闻语言、外部媒体加载方式和是否显示转发等阅读偏好。转发关系和已发布引用是公开内容；撤销转发不删除原帖。引用原帖被下架或删除后不再展示其正文。敏感操作使用邮箱验证码。Supabase 验证代码并保存认证记录，Resend 负责发送邮件；网站不保存你输入的验证码。"
           ]
         }
       ]
@@ -212,7 +212,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
           "title": "Account setup and display preferences",
           "paragraphs": [
             "We store your chosen unique username, profile completion time, display language and theme preference. Account preferences apply when you sign in; guest preferences stay in the current browser. Posts display their original text, while news may have translations maintained by administrators. Public search covers public content and does not expose drafts, private bookmarks or account preferences.",
-            "We store reading preferences for news language, external media and repost visibility. Repost relationships and published quotes are public; undoing a repost does not delete the original. When an original is unpublished or deleted, its text is no longer shown in quote cards. If you enable two-factor authentication, Supabase manages the authenticator factor and verification records; the website does not store the one-time codes you enter."
+            "We store reading preferences for news language, external media and repost visibility. Repost relationships and published quotes are public; undoing a repost does not delete the original. When an original is unpublished or deleted, its text is no longer shown in quote cards. Sensitive actions use email verification codes. Supabase verifies codes and keeps authentication records; Resend delivers the email. The website does not store the codes you enter."
           ]
         }
       ]
@@ -329,7 +329,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
           "title": "帳號設定與顯示偏好",
           "paragraphs": [
             "我們儲存你選擇的唯一使用者名稱、資料完成時間、介面語言及主題偏好。帳號偏好在登入時套用，訪客偏好儲存在目前瀏覽器。貼文只顯示作者原文，新聞可有管理員維護的不同語言版本。公開搜尋不顯示草稿、私人收藏或帳號偏好。",
-            "我們儲存新聞語言、外部媒體載入方式及是否顯示轉發等閱讀偏好。轉發關係與已發佈引用為公開內容；取消轉發不會刪除原文。原文下架或刪除後不再顯示其內容。啟用雙重驗證時，Supabase 管理驗證器因子與驗證紀錄；網站不儲存你輸入的動態驗證碼。"
+            "我們儲存新聞語言、外部媒體載入方式及是否顯示轉發等閱讀偏好。轉發關係與已發佈引用為公開內容；取消轉發不會刪除原文。原文下架或刪除後不再顯示其內容。敏感操作使用信箱驗證碼。Supabase 驗證代碼並儲存認證紀錄，Resend 負責傳送郵件；網站不儲存你輸入的驗證碼。"
           ]
         }
       ]
@@ -440,7 +440,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
           "title": "アカウント設定と表示設定",
           "paragraphs": [
             "選択した一意のユーザー名、プロフィール設定完了日時、表示言語、テーマを保存します。ログイン時にアカウント設定を適用し、ゲストの設定は現在のブラウザーに保存します。投稿は原文を表示し、ニュースは管理者が翻訳を用意できます。検索では公開内容のみを表示し、下書き、非公開の保存一覧、アカウント設定は公開しません。",
-            "ニュースの言語、外部メディア、リポスト表示の設定を保存します。リポストと公開済み引用は公開情報です。リポストの取り消しでは原文は削除されません。原文が非公開化または削除されると引用カードに本文を表示しません。2 要素認証を有効にすると Supabase が認証要素と検証記録を管理します。サイトは入力されたワンタイムコードを保存しません。"
+            "ニュースの言語、外部メディア、リポスト表示の設定を保存します。リポストと公開済み引用は公開情報です。リポストの取り消しでは原文は削除されません。原文が非公開化または削除されると引用カードに本文を表示しません。重要な操作にはメール確認コードを使用します。Supabase が検証と認証記録を管理し、Resend がメールを配信します。サイトは入力されたコードを保存しません。"
           ]
         }
       ]
@@ -551,7 +551,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
           "title": "Configuración de cuenta y preferencias",
           "paragraphs": [
             "Guardamos tu usuario único, fecha de configuración del perfil, idioma de interfaz y tema. Las preferencias de cuenta se aplican al entrar; las de visitantes se guardan en el navegador actual. Las publicaciones muestran el original; las noticias pueden tener traducciones de la administración. La búsqueda pública no expone borradores, favoritos privados ni preferencias.",
-            "Guardamos preferencias de idioma de noticias, contenido externo y visibilidad de reposts. Los reposts y las citas publicadas son públicos; deshacer un repost no elimina el original. Cuando el original se retira o elimina, su texto deja de aparecer en la cita. Si activas la autenticación de dos factores, Supabase gestiona el factor y sus registros de verificación; el sitio no almacena los códigos temporales introducidos."
+            "Guardamos preferencias de idioma de noticias, contenido externo y visibilidad de reposts. Los reposts y las citas publicadas son públicos; deshacer un repost no elimina el original. Cuando el original se retira o elimina, su texto deja de aparecer en la cita. Las acciones sensibles usan códigos por correo. Supabase verifica los códigos y conserva los registros de autenticación; Resend entrega el correo. El sitio no almacena los códigos introducidos."
           ]
         }
       ]
@@ -602,7 +602,7 @@ const walletLegal:Record<Locale,{privacy:Section;terms:Section}>={
       "title": "积分、打赏与提现",
       "paragraphs": [
         "资金功能在完成配置并开放后才可使用。仅支持 TRON（TRC20）USDT；1 USDT = 100 积分。先创建充值订单，再向页面显示的地址发送完整的精确金额。订单金额在所选金额上增加不足 0.01 USDT 以识别付款，全部实际到账金额均兑换积分，不额外收取该差额。可使用支持完整金额的钱包或交易所；提币手续费扣除后须足额到账，不要取整或拆分。充值网络资源费由用户承担。订单有效期 30 分钟，精确金额不会重新分配给其他用户；按原金额支付的迟到款仍在核验后计入原账号。金额错误、订单创建前付款、其他网络或代币不自动入账，请联系支持对账。链上最终确认和索引延迟可能影响到账时间。",
-        "充值积分用于打赏，收到的打赏可申请提现。最低提现 1 USDT（100 积分），手续费为申请金额的 1%，不足 0.000001 USDT 的手续费向上取整；例如申请 1 USDT，到账 0.99 USDT。平台另行承担支付时的 TRON 网络资源费用。提现需双重验证，经后台审核后人工转账，不承诺即时到账。待审核申请可取消；开始处理后资金继续冻结至付款核验或人工对账。打赏确认后立即记账，请核对收款人和金额。"
+        "充值积分用于打赏，收到的打赏可申请提现。最低提现 1 USDT（100 积分），手续费为申请金额的 1%，不足 0.000001 USDT 的手续费向上取整；例如申请 1 USDT，到账 0.99 USDT。平台另行承担支付时的 TRON 网络资源费用。提现需邮箱验证码验证，经后台审核后人工转账，不承诺即时到账。待审核申请可取消；开始处理后资金继续冻结至付款核验或人工对账。打赏确认后立即记账，请核对收款人和金额。"
       ]
     }
   },
@@ -618,7 +618,7 @@ const walletLegal:Record<Locale,{privacy:Section;terms:Section}>={
       "title": "Points, tips and withdrawals",
       "paragraphs": [
         "Payments require configuration and activation. Only TRON (TRC20) USDT is supported; 1 USDT equals 100 points. Create an order before sending the full exact amount to the displayed address. An identifying amount of less than 0.01 USDT is added to your selection; the entire received amount becomes points, so this difference is not a fee. Use a wallet or exchange that supports the full amount; the amount received after withdrawal fees must match. Do not round or split payments. You pay deposit network resources. Orders last 30 minutes. Exact amounts are never reassigned to another user; late payments of the original amount are credited to the same account after verification. Incorrect amounts, transfers before order creation, other networks or tokens are not credited automatically; contact support. Final confirmation and indexing may delay credit.",
-        "Purchased points fund tips; tip earnings can be withdrawn. The minimum is 1 USDT (100 points). The fee is 1% of the requested amount, rounded up to the nearest 0.000001 USDT. A 1 USDT request pays out 0.99 USDT. The platform separately covers TRON network resources for payouts. Withdrawals require two-factor authentication, administrator review and manual payment, with no instant-payment promise. Pending requests may be cancelled; processing funds stay held until payment verification or manual reconciliation. Confirmed tips are booked immediately; check the recipient and amount."
+        "Purchased points fund tips; tip earnings can be withdrawn. The minimum is 1 USDT (100 points). The fee is 1% of the requested amount, rounded up to the nearest 0.000001 USDT. A 1 USDT request pays out 0.99 USDT. The platform separately covers TRON network resources for payouts. Withdrawals require email verification, administrator review and manual payment, with no instant-payment promise. Pending requests may be cancelled; processing funds stay held until payment verification or manual reconciliation. Confirmed tips are booked immediately; check the recipient and amount."
       ]
     }
   },
@@ -634,7 +634,7 @@ const walletLegal:Record<Locale,{privacy:Section;terms:Section}>={
       "title": "積分、打賞與提領",
       "paragraphs": [
         "資金功能完成設定並開放後才可使用。僅支援 TRON（TRC20）USDT；1 USDT = 100 積分。先建立訂單，再向畫面地址發送完整精確金額。訂單在所選金額上增加不足 0.01 USDT 以識別付款，全部實際到帳金額均兌換積分，差額不是手續費。可使用支援完整金額的錢包或交易所；提幣費用扣除後須足額到帳，不要取整或拆分。儲值網路資源費由使用者承擔。訂單有效期 30 分鐘，精確金額不會重新分配給他人；按原金額支付的遲到款仍在核驗後計入原帳號。金額錯誤、訂單建立前付款、其他網路或代幣不自動入帳，請聯絡支援。最終確認及索引延遲可能影響入帳時間。",
-        "儲值積分用於打賞，打賞收入可提領。最低 1 USDT（100 積分），手續費 1%，不足 0.000001 USDT 向上取整；申請 1 USDT 到帳 0.99 USDT。平台另行承擔付款的 TRON 網路資源費用。提領須雙重驗證、後台審核及人工付款，不承諾即時到帳。待審核可取消；處理中持續凍結至付款核驗或人工對帳。打賞確認後立即記帳，請核對對象與金額。"
+        "儲值積分用於打賞，打賞收入可提領。最低 1 USDT（100 積分），手續費 1%，不足 0.000001 USDT 向上取整；申請 1 USDT 到帳 0.99 USDT。平台另行承擔付款的 TRON 網路資源費用。提領須信箱驗證碼驗證、後台審核及人工付款，不承諾即時到帳。待審核可取消；處理中持續凍結至付款核驗或人工對帳。打賞確認後立即記帳，請核對對象與金額。"
       ]
     }
   },
@@ -650,7 +650,7 @@ const walletLegal:Record<Locale,{privacy:Section;terms:Section}>={
       "title": "ポイント、チップ、出金",
       "paragraphs": [
         "設定・有効化後に決済を利用できます。TRON（TRC20）USDT のみ対応し、1 USDT は 100 ポイントです。注文を作成してから表示の宛先へ正確な全額を送金してください。識別用に 0.01 USDT 未満を加算しますが、受取全額をポイントにするため手数料ではありません。正確な金額に対応するウォレットや取引所を利用し、取引所手数料控除後の受取額を一致させてください。丸めや分割はしないでください。入金ネットワーク費用は利用者負担です。注文は 30 分間有効です。金額は他の利用者に再割当てされず、元の金額の遅延入金も検証後に同じアカウントへ反映します。金額違い、注文作成前の送金、他ネットワークや通貨は自動反映されません。サポートへ連絡してください。最終確認や索引の遅延で反映が遅れる場合があります。",
-        "購入ポイントはチップに使用し、受け取ったチップを出金できます。最低額は 1 USDT（100 ポイント）、手数料は申請額の 1%（0.000001 USDT 単位で切り上げ）です。1 USDT の申請では 0.99 USDT を受け取ります。送金の TRON ネットワーク費用は別途プラットフォームが負担します。二要素認証と管理者審査後に手動送金し、即時支払いは保証しません。審査前はキャンセルできますが、処理中は検証または手動照合まで保留します。チップは確定後すぐ記帳されます。"
+        "購入ポイントはチップに使用し、受け取ったチップを出金できます。最低額は 1 USDT（100 ポイント）、手数料は申請額の 1%（0.000001 USDT 単位で切り上げ）です。1 USDT の申請では 0.99 USDT を受け取ります。送金の TRON ネットワーク費用は別途プラットフォームが負担します。メール確認と管理者審査後に手動送金し、即時支払いは保証しません。審査前はキャンセルできますが、処理中は検証または手動照合まで保留します。チップは確定後すぐ記帳されます。"
       ]
     }
   },
@@ -666,7 +666,7 @@ const walletLegal:Record<Locale,{privacy:Section;terms:Section}>={
       "title": "Puntos, propinas y retiros",
       "paragraphs": [
         "Los pagos requieren configuración y activación. Solo admitimos USDT TRON (TRC20); 1 USDT equivale a 100 puntos. Crea una orden y envía el importe exacto completo a la dirección mostrada. Se añaden menos de 0,01 USDT para identificar el pago; todo lo recibido se convierte en puntos, por lo que no es una comisión. Usa una cartera o exchange que admita el importe completo, descontando las comisiones de retiro antes de calcular lo recibido. No redondees ni dividas el pago. Pagas los recursos de red. Las órdenes duran 30 minutos. Los importes nunca se reasignan a otra persona; un pago tardío del importe original se acredita a la misma cuenta tras verificarlo. Los importes incorrectos, envíos anteriores a la orden y otras redes o tokens no se acreditan automáticamente; contacta con soporte. La confirmación final y la indexación pueden retrasar el abono.",
-        "Los puntos comprados sirven para dar propinas; las propinas recibidas se pueden retirar. El mínimo es 1 USDT (100 puntos) y la comisión es el 1%, redondeada hacia arriba a 0,000001 USDT. Una solicitud de 1 USDT entrega 0,99 USDT. La plataforma cubre por separado los recursos de red TRON del pago. Los retiros requieren autenticación de dos factores, revisión y transferencia manual; no son inmediatos. Se pueden cancelar mientras están pendientes; durante el procesamiento siguen retenidos hasta verificar o conciliar el pago. Las propinas se contabilizan al confirmar."
+        "Los puntos comprados sirven para dar propinas; las propinas recibidas se pueden retirar. El mínimo es 1 USDT (100 puntos) y la comisión es el 1%, redondeada hacia arriba a 0,000001 USDT. Una solicitud de 1 USDT entrega 0,99 USDT. La plataforma cubre por separado los recursos de red TRON del pago. Los retiros requieren verificación por correo, revisión y transferencia manual; no son inmediatos. Se pueden cancelar mientras están pendientes; durante el procesamiento siguen retenidos hasta verificar o conciliar el pago. Las propinas se contabilizan al confirmar."
       ]
     }
   }

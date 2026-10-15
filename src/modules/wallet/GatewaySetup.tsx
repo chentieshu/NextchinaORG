@@ -8,8 +8,8 @@ import {gatewayStatusCopy} from './gateway-status-copy';
 import {walletCopy} from './copy';
 import {walletChanged} from './use-wallet';
 
-type Setup={treasury:string;heartbeat:string|null;assigned:number;unmatched:number;enabled:boolean;healthy:boolean;configured:boolean;mfa_verified:boolean};
-type Failure='mfaRequired'|'listenerUnavailable'|'accessDenied'|'uncertain';
+type Setup={treasury:string;heartbeat:string|null;assigned:number;unmatched:number;enabled:boolean;healthy:boolean;configured:boolean;email_verified:boolean};
+type Failure='emailRequired'|'listenerUnavailable'|'accessDenied'|'uncertain';
 
 export function GatewaySetup(){
  const {db,locale,online,t}=useApp(),g={...gatewayCopy[locale],...gatewayStatusCopy[locale]},c=walletCopy[locale];
@@ -53,16 +53,16 @@ export function GatewaySetup(){
     try{const next=await read();if(next.enabled===enable){succeeded(next);return;}if(mounted.current)setData(next);}catch{/* Preserve the last known state and report uncertainty. */}
    }
    if(mounted.current){
-    setError(code==='PT401'?'mfaRequired':code==='PT503'?'listenerUnavailable':code==='PT403'?'accessDenied':'uncertain');
-    if(code==='PT401')setData(old=>old?{...old,mfa_verified:false}:old);
+    setError(code==='PT401'?'emailRequired':code==='PT503'?'listenerUnavailable':code==='PT403'?'accessDenied':'uncertain');
+    if(code==='PT401')setData(old=>old?{...old,email_verified:false}:old);
     if(code==='PT503')setData(old=>old?{...old,healthy:false}:old);
    }
   }finally{pending.current=false;if(mounted.current)setBusy(false);}
  }
- const mfaRequired=!!data&&!data.mfa_verified;
+ const emailRequired=!!data&&!data.email_verified;
  const guidance=<>
   {!online&&<p role="alert" className="inline-error">{g.offline}</p>}
-  {mfaRequired&&<p className="wallet-notice">{g.mfaRequired}<br/><Link className="text-link" href={`/${locale}/settings/#authenticator`}>{g.openSecurity}</Link></p>}
+  {emailRequired&&<p className="wallet-notice">{g.emailRequired}<br/><Link className="text-link" href={`/${locale}/settings/#email-verification`}>{g.openSecurity}</Link></p>}
   {data&&!data.healthy&&<p className="wallet-notice">{data.configured?g.listenerUnavailable:g.gatewayMissing}</p>}
  </>;
  const feedback=<>{readError&&<p role="alert" className="inline-error">{g.readError}</p>}{error&&<p role="alert" className="inline-error">{g[error]}</p>}</>;
@@ -87,7 +87,7 @@ export function GatewaySetup(){
    <div className="wallet-form"><h2>{confirming?g.enable:g.disable}</h2><p>{confirming?g.confirmEnable:g.confirmPause}</p>
     {guidance}{feedback}
     <div className="wallet-actions">
-     <button className="button primary" disabled={busy||loading||!online||readError||mfaRequired||confirming&&!data?.healthy} onClick={()=>void save(confirming)}>{busy?g.saving:g.confirm}</button>
+     <button className="button primary" disabled={busy||loading||!online||readError||emailRequired||confirming&&!data?.healthy} onClick={()=>void save(confirming)}>{busy?g.saving:g.confirm}</button>
      <button className="button" disabled={busy} onClick={()=>setConfirming(null)}>{t.close}</button>
     </div>
    </div>

@@ -3,9 +3,9 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile,readdir} from 'node:fs/promises';
 import {PGlite} from '@electric-sql/pglite';
-test('reposts, quotes, independent drafts and MFA preserve authority and public visibility',async()=>{
+test('reposts, quotes, independent drafts preserve authority and public visibility',async()=>{
  const db=new PGlite({extensions:{pg_trgm}});try{
-  await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb default '{}');create table auth.mfa_factors(id uuid,user_id uuid,status text);create table auth.identities(id uuid default gen_random_uuid(),user_id uuid references auth.users(id),provider text,provider_id text,identity_data jsonb default '{}');create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth,public to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;`);
+  await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,phone text,raw_user_meta_data jsonb default '{}');create table auth.sessions(id uuid primary key,user_id uuid,not_after timestamptz);create table auth.mfa_amr_claims(session_id uuid,authentication_method text,updated_at timestamptz);create table auth.mfa_factors(id uuid,user_id uuid,status text);create table auth.identities(id uuid default gen_random_uuid(),user_id uuid references auth.users(id),provider text,provider_id text,identity_data jsonb default '{}');create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth,public to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;`);
   for(const file of (await readdir('supabase/migrations')).filter(f=>f.endsWith('.sql')).sort())await db.exec(await readFile('supabase/migrations/'+file,'utf8'));
   const a='90000000-0000-4000-8000-000000000001',b='90000000-0000-4000-8000-000000000002',admin='90000000-0000-4000-8000-000000000003';
   await db.exec(`insert into auth.users(id) values('${a}'),('${b}'),('${admin}');update omni_profiles set profile_completed_at=now();update omni_profiles set role='super_admin' where id='${admin}';`);
@@ -43,8 +43,7 @@ test('reposts, quotes, independent drafts and MFA preserve authority and public 
   social=(await as(null,`select omni_social_context(array['${quoted.id}'::uuid]) p`)).rows[0].p;assert.equal(social.has_quote,true);assert.equal(social.quoted_article,null);
   assert.equal((await as(b,`select omni_set_repost('${quoted.id}',false) p`)).rows[0].p.reposted,false);
   await db.exec(`reset role;insert into auth.mfa_factors values(gen_random_uuid(),'${admin}','verified');`);
-  await assert.rejects(as(admin,`select omni_save_content_draft('${news.id}',${quote(newsDraft)},'${news.updated_at}',null)`),/Forbidden/);
   assert.equal((await as(admin,'select omni_private.omni_role() role','aal2')).rows[0].role,'super_admin');
-  assert.equal((await as(admin,'select omni_private.omni_role() role')).rows[0].role,null);
+  assert.equal((await as(admin,'select omni_private.omni_role() role')).rows[0].role,'super_admin','retired TOTP factors do not block normal content roles');
  }finally{await db.close();}
 });

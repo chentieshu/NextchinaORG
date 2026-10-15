@@ -1,6 +1,6 @@
-import {test,expect} from '@playwright/test';
+import {test,expect} from './test';
 import {fixture,story,articleId,member} from './fixtures';
-test.skip(!process.env.LIVE_SUPABASE,'Authenticated calls are mocked using the configured public project URL.');
+test.skip(!process.env.AUTH_FIXTURES,'Authenticated calls are mocked using the configured public project URL.');
 test('account loading and failures do not flash incorrect permissions; logout clears private state',async({page})=>{
  const state=await fixture(page,'editor');state.profileDelay=650;state.profileFailures=1;await page.goto('/zh-CN/admin/');await expect(page.locator('main')).toHaveAttribute('aria-busy','true');await expect(page.getByText('此页面仅向管理员开放。')).toHaveCount(0);await expect(page.getByText('无法读取账号，请重试。')).toBeVisible();state.profileDelay=0;await page.locator('main').getByRole('button',{name:'重试',exact:true}).click();await expect(page.locator('.admin-shell')).toBeVisible();
  await page.locator('.user-menu summary').click();await page.getByRole('button',{name:'退出登录',exact:true}).click();await expect(page.getByText('此页面仅向管理员开放。')).toBeVisible();await expect(page.getByRole('link',{name:'管理中心',exact:true})).toHaveCount(0);

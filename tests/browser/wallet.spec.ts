@@ -1,12 +1,12 @@
-import {test,expect,type Page} from '@playwright/test';
+import {test,expect,type Page} from './test';
 import {fixture,story,articleId} from './fixtures';
-test.skip(!process.env.LIVE_SUPABASE,'Authenticated wallet requests are isolated browser fixtures.');
+test.skip(!process.env.AUTH_FIXTURES,'Authenticated wallet requests are isolated browser fixtures.');
 const treasury='TA2hxtb3asN8LUCiDX9PUMsdYQNNY5SRNA';
 const order=(id='10000000-0000-4000-8000-000000000009')=>({id,address:treasury,requested_micro:'10000000',actual_micro:'10001234',created_at:new Date().toISOString(),expires_at:new Date(Date.now()+1800000).toISOString(),status:'waiting',credited_micro:'0',receipt_count:0});
 const snapshot={purchased:'1000000',earned:'20000000',held:'0',deposits_enabled:false,tipping_enabled:false,withdrawals_enabled:false,withdrawal_min_units:'1000000',withdrawal_fee_bps:'100',frozen:false};
 async function walletFixture(page:Page,role='member'){
  const account=await fixture(page,role),wallet={...snapshot},requests:Record<string,any>[]=[],writes:Record<string,any>[]=[],deposit={treasury,enabled:true,healthy:true,order:null as ReturnType<typeof order>|null};
- const setup={treasury,heartbeat:null as string|null,unmatched:0,assigned:0,enabled:false,healthy:false,configured:true,mfa_verified:true};
+ const setup={treasury,heartbeat:null as string|null,unmatched:0,assigned:0,enabled:false,healthy:false,configured:true,email_verified:true};
  account.articles.push(story(articleId,'可打赏的分享',{author_id:'20000000-0000-4000-8000-000000000002',author_name:'Another writer',author_handle:'another_writer'}));
  await page.route('**/rest/v1/rpc/omni_wallet_*',async route=>{const resource=new URL(route.request().url()).pathname.split('/').at(-1);let data:any=[];
   if(resource==='omni_wallet_snapshot')data=wallet;
@@ -102,12 +102,12 @@ test('payment switch uses an in-page confirmation when native dialogs are blocke
  await expect(panel.getByRole('status')).toHaveText('已暂停新增充值、打赏和提现。');expect(writes).toHaveLength(2);
 });
 
-test('missing MFA has a clear explanation and a working settings link',async({page})=>{
- const{setup,writes}=await walletFixture(page,'super_admin');setup.healthy=true;setup.mfa_verified=false;
+test('missing email verification has a clear explanation and a working settings link',async({page})=>{
+ const{setup,writes}=await walletFixture(page,'super_admin');setup.healthy=true;setup.email_verified=false;
  await openWalletAdmin(page);await page.locator('.wallet-gateway').getByRole('button',{name:'开放资金功能',exact:true}).click();
- const dialog=page.getByRole('dialog');await expect(dialog).toContainText('需要启用并完成双重验证');await expect(dialog.getByRole('button',{name:'确认',exact:true})).toBeDisabled();expect(writes).toHaveLength(0);
+ const dialog=page.getByRole('dialog');await expect(dialog).toContainText('需要完成邮箱验证码验证');await expect(dialog.getByRole('button',{name:'确认',exact:true})).toBeDisabled();expect(writes).toHaveLength(0);
  await page.setViewportSize({width:390,height:900});await page.screenshot({path:test.info().outputPath('wallet-activation-mfa.png'),fullPage:true});
- await dialog.getByRole('link',{name:'前往设置双重验证'}).click();await expect(page).toHaveURL(/settings\/#authenticator$/);await expect(page.locator('#authenticator')).toBeVisible();
+ await dialog.getByRole('link',{name:'前往邮箱验证'}).click();await expect(page).toHaveURL(/settings\/#email-verification$/);await expect(page.locator('#email-verification')).toBeVisible();
 });
 
 test('offline listener blocks opening with a reason but still permits pausing',async({page})=>{
@@ -133,10 +133,10 @@ test('activation shows progress, prevents repeat writes and retains rejected res
  await panel.getByRole('button',{name:'刷新状态'}).click();await expect(panel.getByRole('alert')).toHaveText('只有总管理员可以修改资金开关。');await expect(panel.getByRole('status')).toHaveCount(0);
 });
 
-test('server MFA rejection is actionable and unavailable reads do not show stale readiness',async({page})=>{
+test('server email verification rejection is actionable and unavailable reads do not show stale readiness',async({page})=>{
  const{setup}=await walletFixture(page,'super_admin');setup.healthy=true;let failRead=false;
- await page.route('**/rest/v1/rpc/omni_wallet_admin_setup',async route=>{const body=route.request().postDataJSON();if(typeof body?.enable_payments==='boolean')return route.fulfill({status:401,json:{code:'PT401',message:'Wallet MFA required'}});if(failRead)return route.fulfill({status:503,json:{message:'unavailable'}});return route.fulfill({json:setup});});
+ await page.route('**/rest/v1/rpc/omni_wallet_admin_setup',async route=>{const body=route.request().postDataJSON();if(typeof body?.enable_payments==='boolean')return route.fulfill({status:401,json:{code:'PT401',message:'Wallet email verification required'}});if(failRead)return route.fulfill({status:503,json:{message:'unavailable'}});return route.fulfill({json:setup});});
  await openWalletAdmin(page);const panel=page.locator('.wallet-gateway');await panel.getByRole('button',{name:'开放资金功能',exact:true}).click();const dialog=page.getByRole('dialog');await dialog.getByRole('button',{name:'确认',exact:true}).click();
- await expect(dialog.getByRole('alert')).toContainText('需要启用并完成双重验证');await expect(dialog.getByRole('link',{name:'前往设置双重验证'})).toBeVisible();await dialog.getByRole('button',{name:'关闭',exact:true}).last().click();
+ await expect(dialog.getByRole('alert')).toContainText('需要完成邮箱验证码验证');await expect(dialog.getByRole('link',{name:'前往邮箱验证'})).toBeVisible();await dialog.getByRole('button',{name:'关闭',exact:true}).last().click();
  failRead=true;await panel.getByRole('button',{name:'刷新状态'}).click();await expect(panel.getByRole('alert').first()).toContainText('无法确认最新设置');await expect(panel.getByRole('button',{name:'开放资金功能',exact:true})).toBeDisabled();await expect(panel.locator('dl')).not.toContainText('连接正常');
 });

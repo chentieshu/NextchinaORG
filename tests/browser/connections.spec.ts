@@ -1,4 +1,4 @@
-import {test,expect} from '@playwright/test';
+import {test,expect} from './test';
 import {fixture,story,member,articleId} from './fixtures';
 test('article quotes preserve a title in the quote and publish as a title-free post',async({page})=>{
  const state=await fixture(page),news='20000000-0000-4000-8000-000000000098';state.articles.push(story(news,'可引用的新闻',{content_type:'news'}));

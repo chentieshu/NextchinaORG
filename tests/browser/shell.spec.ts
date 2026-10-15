@@ -1,6 +1,6 @@
-import {test,expect} from '@playwright/test';
+import {test,expect} from './test';
 import {fixture,story,articleId,member} from './fixtures';
-test.skip(!process.env.LIVE_SUPABASE,'Account and search writes are intercepted fixtures.');
+test.skip(!process.env.AUTH_FIXTURES,'Account and search writes are intercepted fixtures.');
 test('first login chooses a unique username before writing, preserving conflict input',async({page})=>{
  const state=await fixture(page);state.profile.profile_completed_at=null;state.profile.handle='u_'+member.replaceAll('-','');await page.goto('/zh-CN/write/');await expect(page.locator('.onboarding-card')).toBeVisible();await expect(page.locator('.tiptap')).toHaveCount(0);
  await page.getByLabel('名称',{exact:true}).fill('New Reader');await page.getByRole('textbox',{name:/用户名/}).fill('new_reader');state.usernameTaken=true;await page.getByRole('button',{name:'继续',exact:true}).click();await expect(page.locator('main [role=alert]')).toContainText('已被使用');await expect(page.getByRole('textbox',{name:/用户名/})).toHaveValue('new_reader');state.usernameTaken=false;state.profile.updated_at='2030-01-01T00:00:00Z';await page.getByRole('button',{name:'继续',exact:true}).click();await expect(page.locator('main [role=alert]')).toContainText('其他页面更新');await page.getByRole('button',{name:'载入最新资料',exact:true}).click();await expect(page.getByRole('textbox',{name:/用户名/})).toHaveValue('new_reader');await page.getByRole('button',{name:'继续',exact:true}).click();await expect(page.locator('.tiptap')).toBeVisible();expect(state.profile.handle).toBe('new_reader');expect(state.profile.profile_completed_at).toBeTruthy();await expect(page.locator('.onboarding-card')).toHaveCount(0);await expect(page.locator('.writer-settings select')).toHaveCount(1);

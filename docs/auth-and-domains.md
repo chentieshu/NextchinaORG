@@ -142,7 +142,7 @@ Supabase 负责注册、一次性链接与会话；Resend 通过 SMTP 发送邮�
 
 完整文件对应表、SMTP 填写值、批量保存脚本和功能限制见 [邮件配置指南](../supabase/templates/README.md)。七项安全通知建议保存后全部开启；通知开关不会开启网站里的密码、电话或 MFA 功能。
 
-保留验证按钮中的 `{{ .ConfirmationURL }}` 原样，它包含 Supabase 生成的一次性验证链接与返回地址。重新认证专用模板使用 `{{ .Token }}`；账户设置已提供密码重置与重新认证输入界面。更换邮件模板本身不需要重新发布网站，但必须在 Supabase 单独保存，提交文件不会自动生效。
+保留验证按钮中的 `{{ .ConfirmationURL }}` 原样，它包含 Supabase 生成的一次性验证链接与返回地址。邮件登录和重新认证模板均使用 `{{ .Token }}`；邮件登录同时保留链接，安全验证页使用 8 位验证码；账户设置已提供密码重置与重新认证输入界面。更换邮件模板本身不需要重新发布网站，但必须在 Supabase 单独保存，提交文件不会自动生效。
 
 依据：[Resend + Supabase SMTP](https://resend.com/docs/send-with-supabase-smtp)、[Resend 密钥权限](https://resend.com/docs/dashboard/api-keys/introduction)、[Supabase 邮件模板](https://supabase.com/docs/guides/auth/auth-email-templates)。
 
