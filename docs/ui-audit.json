@@ -1,10 +1,10 @@
 {
   "totals": {
     "files": 18,
-    "bytes": 178920,
-    "compactBytes": 147492,
-    "rules": 1856,
-    "declarations": 5422,
+    "bytes": 179135,
+    "compactBytes": 147673,
+    "rules": 1858,
+    "declarations": 5429,
     "important": 20,
     "literalColors": 69,
     "widthBreakpoints": [
@@ -90,9 +90,9 @@
     },
     {
       "file": "src/styles/account.css",
-      "bytes": 8435,
-      "compactBytes": 6956,
-      "rules": 99
+      "bytes": 8650,
+      "compactBytes": 7137,
+      "rules": 101
     },
     {
       "file": "src/styles/content.css",

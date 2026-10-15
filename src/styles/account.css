@@ -409,6 +409,17 @@
   width: 17px;
   height: 17px;
 }
+.settings-page .checkbox-label {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+.settings-page .checkbox-label input {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  margin: 0;
+}
 @media (max-width:900px) {
   .settings-page h2 {
     font-size: 18px;
