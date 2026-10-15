@@ -1,11 +1,11 @@
-import {test,expect} from './test';
+import {test,expect,testOrigin} from './test';
 
 test('the root homepage and all policies are readable without login or JavaScript',async({browser})=>{
  const context=await browser.newContext({javaScriptEnabled:false});
  const page=await context.newPage();
  try{
   const root=await page.goto('/');expect(root?.status()).toBe(200);
-  await expect(page).toHaveURL('http://127.0.0.1:3000/');
+  await expect(page).toHaveURL(`${testOrigin}/`);
   await expect(page.locator('main h1')).toHaveText('论坛');
   await expect(page.locator('.spotlight,.purpose-note')).toHaveCount(0);
   await expect(page.getByRole('dialog')).toHaveCount(0);
@@ -28,7 +28,7 @@ test('language selection on the root homepage opens the selected language',async
  await page.locator('.app-nav').getByRole('link',{name:'设置',exact:true}).click();
  await page.getByRole('combobox',{name:'界面语言',exact:true}).selectOption('en');
  await page.locator('#preferences').getByRole('button',{name:'保存',exact:true}).click();
- await expect(page).toHaveURL('http://127.0.0.1:3000/en/settings/#preferences');
- await page.goto('/');await expect(page).toHaveURL('http://127.0.0.1:3000/en/');
+ await expect(page).toHaveURL(`${testOrigin}/en/settings/#preferences`);
+ await page.goto('/');await expect(page).toHaveURL(`${testOrigin}/en/`);
  await expect(page.locator('main h1')).toHaveText('Forum');
 });

@@ -15,3 +15,5 @@ export const test=base.extend<{isolateNetwork:void}>({
 });
 export {expect};
 export type {Page,Locator} from '@playwright/test';
+
+export const testOrigin=`http://127.0.0.1:${process.env.PLAYWRIGHT_PORT??'3000'}`;

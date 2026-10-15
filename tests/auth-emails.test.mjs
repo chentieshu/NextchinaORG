@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const base = new URL('../supabase/templates/', import.meta.url);
-const read = (name) => readFile(new URL(name, base),'utf8');
+// Git may check HTML out with CRLF on Windows; email content is otherwise identical.
+const read = async (name) => (await readFile(new URL(name, base),'utf8')).replace(/\r\n/g,'\n');
 // Per-type variable support follows Supabase's documented template contract.
 const contract = {
   'confirm-signup':['ConfirmationURL'],

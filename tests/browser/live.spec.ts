@@ -1,4 +1,4 @@
-import {test,expect} from './test';
+import {test,expect,testOrigin} from './test';
 test.skip(!process.env.AUTH_FIXTURES,'Run against a build configured with Supabase.');
 
 test('public content requests succeed with fixtures and anonymous administration stays locked',async({page})=>{
@@ -29,7 +29,7 @@ test('login options follow provider settings and email keeps the locale callback
  await page.getByRole('button',{name:'使用邮箱继续',exact:true}).click();
  await expect(page.getByRole('button',{name:'登录链接已发送，请检查邮箱。',exact:true})).toBeDisabled();
  expect(payload?.email).toBe('reader@example.test');
- expect(new URL(requestedUrl).searchParams.get('redirect_to')).toBe('http://127.0.0.1:3000/zh-CN/auth/callback/');
+ expect(new URL(requestedUrl).searchParams.get('redirect_to')).toBe(`${testOrigin}/zh-CN/auth/callback/`);
  expect(payload?.code_challenge_method).toBe('s256');
 });
 
