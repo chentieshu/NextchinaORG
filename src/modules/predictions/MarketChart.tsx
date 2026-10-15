@@ -6,6 +6,7 @@ import {useApp} from '@/components/Provider';
 import {formatPoints} from '../wallet/money';
 import './chart.css';
 import {chartCopy} from './chart-copy';
+import {exchangeCopy} from './exchange-copy';
 import {chartUpdateKind,mergeCandles,validHistory,HISTORY_LIMIT,type Candle,type History,type Period} from './chart-data';
 
 export default function MarketChart({marketId,refreshKey}:{marketId:string;refreshKey:string}) {
@@ -46,9 +47,9 @@ export default function MarketChart({marketId,refreshKey}:{marketId:string;refre
  const point=selected??rows.at(-1);
  return <section className="market-history" aria-label={c.chart} data-history-count={rows.length}>
   <div className="history-toolbar"><div className="history-ranges" role="group" aria-label={c.range}>{(['1h','1d','1w','all'] as const).map((p,i)=><button type="button" key={p} aria-pressed={period===p} onClick={()=>setPeriod(p)}>{[c.hour,c.day,c.week,c.all][i]}</button>)}</div><button type="button" className="icon-button" title={c.reset} aria-label={c.reset} disabled={!ready} onClick={()=>chart.current?.timeScale().fitContent()}><FiRefreshCw/></button></div>
-  <div className="history-point" aria-live="off">{point?<><span>{new Date(point.time*1000).toLocaleString(locale)}</span><strong>{point.close}%</strong><span>{c.volume}: {formatPoints(point.volume,locale)}</span></>:<span>{loading?'…':c.noHistory}</span>}</div>
-  {error&&<p role="alert" className="history-warning">{c.stale} <button className="text-link" onClick={()=>void load()}>{c.freshness}</button></p>}
-  {ready?<div className="history-canvas" ref={container} role="img" aria-label={c.chart}/>:<div className="history-empty" role="status"><FiBarChart2/>{loading?'…':c.noHistory}</div>}
+  <div className="history-point" aria-live="off">{point?<><span>{new Date(point.time*1000).toLocaleString(locale)}</span><strong>{point.close}%</strong><span>{c.volume}: {formatPoints(point.volume,locale)}</span></>:<span>{loading?'…':error?'—':c.noHistory}</span>}</div>
+  {error&&<p role="alert" className="history-warning">{data?c.stale:exchangeCopy[locale].error} <button className="text-link" onClick={()=>void load()}>{c.freshness}</button></p>}
+  {ready?<div className="history-canvas" ref={container} role="img" aria-label={c.chart}/>:<div className="history-empty" role="status"><FiBarChart2/>{loading?'…':error?'—':c.noHistory}</div>}
   {failed&&<p role="alert">{c.chartError} <button className="text-link" onClick={()=>setAttempt(n=>n+1)}>{c.freshness}</button></p>}
   <div className="history-footer">{data?.has_more&&<button className="text-link" disabled={loading||rows.length>=HISTORY_LIMIT} onClick={()=>void load(true)}>{c.older}</button>}{data&&<time>{c.asof} {new Date(data.server_time).toLocaleTimeString(locale)}</time>}</div>
   {rows.length>=HISTORY_LIMIT&&data?.has_more&&<p className="form-note">{c.loadLimit}</p>}

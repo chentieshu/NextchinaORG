@@ -61,7 +61,7 @@ test('history pagination is bounded and retained when refresh fails',async({page
  const old=s.history.rows[0].time;s.history.rows=Array.from({length:24},(_,i)=>({...s.history.rows[0],time:old-(24-i)*60}));s.history.has_more=false;
  await page.getByRole('button',{name:'Load earlier history',exact:true}).click();await expect(page.locator('.market-history')).toHaveAttribute('data-history-count','48');expect(s.historyReads.at(-1).before_time).toBe(new Date(old*1000).toISOString());
  await page.route('**/rest/v1/rpc/omni_exchange_history',r=>r.fulfill({status:503,json:{message:'Unavailable'}}));s.state.server_time=new Date(Date.now()+1000).toISOString();await page.evaluate(()=>window.dispatchEvent(new Event('wallet:changed')));await expect(page.locator('.market-history [role=alert]')).toContainText('last confirmed');await expect(page.locator('.market-history')).toHaveAttribute('data-history-count','48');
- await page.getByRole('button',{name:'1H',exact:true}).click();await expect(page.locator('.market-history')).toHaveAttribute('data-history-count','0');await expect(page.locator('.history-canvas')).toHaveCount(0);
+ await page.getByRole('button',{name:'1H',exact:true}).click();await expect(page.locator('.market-history')).toHaveAttribute('data-history-count','0');await expect(page.locator('.history-canvas')).toHaveCount(0);await expect(page.locator('.market-history [role=alert]')).not.toContainText('last confirmed');await expect(page.locator('.history-empty')).not.toContainText('No executions');
 });
 
 test('book prices fill matching trade directions and mobile shows chart before order entry',async({page})=>{
