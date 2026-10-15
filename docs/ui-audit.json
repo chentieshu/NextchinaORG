@@ -1,10 +1,10 @@
 {
   "totals": {
     "files": 18,
-    "bytes": 179135,
-    "compactBytes": 147673,
-    "rules": 1858,
-    "declarations": 5429,
+    "bytes": 180115,
+    "compactBytes": 148500,
+    "rules": 1866,
+    "declarations": 5459,
     "important": 20,
     "literalColors": 69,
     "widthBreakpoints": [
@@ -96,9 +96,9 @@
     },
     {
       "file": "src/styles/content.css",
-      "bytes": 25385,
-      "compactBytes": 20767,
-      "rules": 286
+      "bytes": 26365,
+      "compactBytes": 21594,
+      "rules": 294
     },
     {
       "file": "src/styles/editor.css",

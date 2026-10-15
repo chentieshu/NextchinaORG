@@ -11,11 +11,11 @@ import {articleText} from '@/lib/content';
 import {contentHref} from '@/lib/content-href';
 import type {Article} from '@/lib/types';
 
-export function QuoteCard({article,unavailable=false,onRemove}:{article?:Article|null;unavailable?:boolean;onRemove?:()=>void}){
+export function QuoteCard({article,unavailable=false,onRemove,avatarOnly=false}:{article?:Article|null;unavailable?:boolean;onRemove?:()=>void;avatarOnly?:boolean}){
  const{locale}=useApp(),c=chinaCopy[locale];
  if(unavailable||!article)return <div className="quote-card quote-unavailable">{c.unavailable}{onRemove&&<button type="button" className="icon-button" aria-label={c.removeQuote} onClick={onRemove}><FiX/></button>}</div>;
  const text=articleText(article,locale);
- return <div className="quote-card"><div className="quote-main"><UserIdentity id={article.author_id} name={article.author_name} handle={article.author_handle} avatarKey={article.author_avatar_key} size={22}/><Link href={contentHref(article,locale)} className="quote-excerpt">{article.content_type==='news'&&<><small className="quoted-kind">{connectedCopy[locale].article}</small><strong>{text.title}</strong></>}<p>{text.summary||text.body||'…'}</p></Link></div>{article.thumbnail_url&&<Link href={contentHref(article,locale)} tabIndex={-1} aria-hidden="true"><img src={article.thumbnail_url} alt="" loading="lazy" referrerPolicy="no-referrer"/></Link>}{onRemove&&<button type="button" className="icon-button" aria-label={c.removeQuote} onClick={onRemove}><FiX/></button>}</div>;
+ return <div className="quote-card"><div className="quote-main"><UserIdentity id={article.author_id} name={article.author_name} handle={article.author_handle} avatarKey={article.author_avatar_key} size={22} avatarOnly={avatarOnly}/><Link href={contentHref(article,locale)} className="quote-excerpt">{article.content_type==='news'&&<><small className="quoted-kind">{connectedCopy[locale].article}</small><strong>{text.title}</strong></>}<p>{text.summary||text.body||'…'}</p></Link></div>{article.thumbnail_url&&<Link href={contentHref(article,locale)} tabIndex={-1} aria-hidden="true"><img src={article.thumbnail_url} alt="" loading="lazy" referrerPolicy="no-referrer"/></Link>}{onRemove&&<button type="button" className="icon-button" aria-label={c.removeQuote} onClick={onRemove}><FiX/></button>}</div>;
 }
 export function RepostAction({article}:{article:Article}){
  const{locale,articles,reposted,toggleRepost,user,setAuthOpen,authStatus,online,profile}=useApp(),c=chinaCopy[locale],menu=useRef<HTMLDetailsElement>(null),pending=useRef(false),[busy,setBusy]=useState(false);

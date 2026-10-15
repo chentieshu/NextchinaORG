@@ -7,7 +7,7 @@ test('quiet feed preserves identity, right-hand media and keyboard-accessible so
  state.articles.push(story(articleId,'把想法写下来，和社区一起慢慢完善。一个更清晰的界面，应该让内容自然成为主角。',{author_name:'Lin Chen',author_handle:'lin',media:[{type:'image',url:photo}],like_count:12,comment_count:3}),story('20000000-0000-4000-8000-000000000011','今天整理了一个开源项目。小步迭代，持续分享，也欢迎不同的想法。',{author_name:'Yuki',author_handle:'yuki'}));
  await page.route(photo,route=>route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="400" height="300" fill="#e2e7e4"/><rect x="55" y="55" width="290" height="190" rx="12" fill="#fafbfa"/><path d="M82 140h170m-170 20h230m-230 20h140" stroke="#95a59c" stroke-width="9"/><circle cx="308" cy="92" r="12" fill="#637e6d"/></svg>'}));
  await page.goto('/zh-CN/');await expect(page.locator('.article-card')).toHaveCount(2);
- await expect(page.locator('main h1')).toHaveClass('sr-only');await expect(page.locator('.article-card h3')).toHaveCount(0);
+ await expect(page.locator('main h1')).toHaveClass('sr-only');await expect(page.locator('.article-card h3')).toHaveCount(0);await expect(page.locator('.social-post>.card-content>.article-meta .identity-names')).toHaveCount(0);await expect(page.locator('.social-post>.card-content>.article-meta .user-identity').first()).toHaveAccessibleName('Test writer');
  const sort=page.getByLabel('排序',{exact:true});await sort.focus();await expect(sort).toBeFocused();await sort.selectOption('popular');await expect.poll(()=>state.feeds.at(-1)?.sort_by).toBe('popular');
  for(const width of [1440,900,768,390,320]){
   await page.setViewportSize({width,height:960});await expect(page.locator('.post-media-preview')).toBeVisible();
