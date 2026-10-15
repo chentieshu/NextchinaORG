@@ -1,5 +1,7 @@
 'use client';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+const LedgerTable=dynamic(()=>import('./LedgerTable').then(m=>m.LedgerTable));
 import {marketCopy} from './market-copy';
 import {useEffect,useRef,useState} from 'react';
 import {FiArrowDownLeft,FiArrowUpRight,FiRefreshCw} from 'react-icons/fi';
@@ -32,7 +34,7 @@ function Wallet(){const{locale}=useApp(),c=walletCopy[locale],wallet=useWallet()
 }
 function History(){const{locale}=useApp(),c=walletCopy[locale],list=useWalletRows<WalletEntry>('omni_wallet_history');
  return <section aria-label={c.history}>{list.error&&<p className="inline-error" role="alert">{c.error}<button onClick={()=>void list.load()}>{c.retry}</button></p>}
- {!list.loading&&!list.error&&!list.rows.length&&<p className="wallet-empty">{c.empty}</p>}<ul className="wallet-list">{list.rows.map(row=>{const marketLabel=marketCopy[locale][row.kind as keyof typeof marketCopy.en];const kind=row.kind==='deposit'?'deposit_kind':row.kind==='tip'?'tip_kind':row.kind,delta=BigInt(row.delta);return <li key={row.id}><div><b>{marketLabel??c[kind as keyof typeof c]}{row.kind==='tip'&&` · ${delta<0?c.sent:c.received}`}</b><time dateTime={row.created_at}>{new Date(row.created_at).toLocaleString(locale)}</time></div><strong>{delta>0?'+':delta<0?'−':''}{formatPoints(row.units,locale)}<small>{c.points}</small></strong></li>;})}</ul>
+ {!list.loading&&!list.error&&!list.rows.length?<p className="wallet-empty">{c.empty}</p>:list.rows.length>0&&<LedgerTable rows={list.rows} loading={list.loading}/>}
  {list.loading&&<p role="status">{c.loading}</p>}{list.hasMore&&<button className="button" disabled={list.loading} onClick={()=>void list.load(true)}>{c.more}</button>}</section>;
 }
 export function WithdrawalList({admin=false}:{admin?:boolean}){const{locale,db,online}=useApp(),c=walletCopy[locale],list=useWalletRows<Withdrawal>('omni_wallet_requests',admin),[busy,setBusy]=useState(''),[error,setError]=useState('');const pending=useRef(false),mounted=useRef(true);
