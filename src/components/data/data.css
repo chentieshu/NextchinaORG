@@ -211,18 +211,6 @@
 .data-monitor-head h3 {
   margin: 0;
 }
- {
-  font-variant-numeric: tabular-nums;
-  overflow-wrap: anywhere;
-  display: flex;
-  align-items: center;
-  width: 15px;
-  height: 15px;
-  margin-top: 18px;
-  max-width: 620px;
-  gap: 20px;
-  font-size: 22px;
-}
 .data-stat {
   font-variant-numeric: tabular-nums;
 }
@@ -475,9 +463,6 @@
   }
   .ledger-amount svg {
     display: none;
-  }
-   {
-    font-size: 19px;
   }
   .record-search {
     flex-basis: 100%;

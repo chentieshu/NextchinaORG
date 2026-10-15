@@ -6,7 +6,7 @@ import {useApp} from '@/components/Provider';
 import {predictionReference,predictionUrl} from './reference';
 import {exchangeCopy} from './exchange-copy';
 import type {ReferenceCard as Card} from './types';
-import './exchange.css';
+import './reference.css';
 const cache=new Map<string,{expires:number;value:Promise<Card|null>}>();
 export function PredictionCard({url,compact=false}:{url:string;compact?:boolean}){
  const{db,locale}=useApp(),c=exchangeCopy[locale],ref=useRef<HTMLDivElement>(null),[data,setData]=useState<{url:string;value:Card|null}|null>(null),[attempt,setAttempt]=useState(0),[error,setError]=useState(false);const reference=predictionReference(url),key=reference?`${reference.kind}:${reference.id}`:'';

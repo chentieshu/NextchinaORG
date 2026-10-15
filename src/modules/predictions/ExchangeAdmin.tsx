@@ -14,9 +14,10 @@ import type {Market} from './types';
 import './exchange.css';
 type AdminAction='publish'|'pause'|'resume'|'result'|'finalize'|'review_disputes'|'cancel_order';
 export function ExchangeAdmin(){
- const{locale,profile}=useApp(),c=exchangeCopy[locale],[tab,setTab]=useState('markets'),[id,setId]=useState<string|null>(null),[cursor,setCursor]=useState<string|null>(null),[status,setStatus]=useState(''),[query,setQuery]=useState(''),[orderCursor,setOrderCursor]=useState<string|null>(null),[create,setCreate]=useState(false),[chosen,setChosen]=useState<{action:AdminAction;market:Market;order?:string}|null>(null),[note,setNote]=useState(''),[result,setResult]=useState('yes'),[evidence,setEvidence]=useState('');
- const state=useExchange({view_kind:'admin',market_id:id,before_id:id?null:cursor,before_order:orderCursor,state_filter:id?'':status,query:id?'':query},profile?.role==='super_admin'&&tab==='markets'),actions=useExchangeAction(()=>void state.load());
+ const{locale,profile}=useApp(),c=exchangeCopy[locale],[tab,setTab]=useState('markets'),[id,setId]=useState<string|null>(null),[cursor,setCursor]=useState<string|null>(null),[status,setStatus]=useState(''),[query,setQuery]=useState(''),[search,setSearch]=useState(''),[orderCursor,setOrderCursor]=useState<string|null>(null),[create,setCreate]=useState(false),[chosen,setChosen]=useState<{action:AdminAction;market:Market;order?:string}|null>(null),[note,setNote]=useState(''),[result,setResult]=useState('yes'),[evidence,setEvidence]=useState('');
+ const state=useExchange({view_kind:'admin',market_id:id,before_id:id?null:cursor,before_order:orderCursor,state_filter:id?'':status,query:id?'':search},profile?.role==='super_admin'&&tab==='markets'),actions=useExchangeAction(()=>void state.load());
  useEffect(()=>setOrderCursor(null),[id]);
+ useEffect(()=>{const timer=setTimeout(()=>{setSearch(query.trim());setCursor(null);},300);return()=>clearTimeout(timer);},[query]);
  if(profile?.role!=='super_admin')return null;
  function choose(action:AdminAction,market:Market,order?:string){setChosen({action,market,order});setNote('');setEvidence(market.evidence_url);setResult(market.result??'yes');}
  const totals=state.data?.totals;

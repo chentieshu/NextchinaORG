@@ -1,10 +1,10 @@
 {
   "totals": {
-    "files": 18,
-    "bytes": 180170,
-    "compactBytes": 148548,
-    "rules": 1867,
-    "declarations": 5460,
+    "files": 20,
+    "bytes": 192231,
+    "compactBytes": 151172,
+    "rules": 1902,
+    "declarations": 5556,
     "important": 20,
     "literalColors": 69,
     "widthBreakpoints": [
@@ -24,109 +24,121 @@
   "sheets": [
     {
       "file": "src/app/globals.css",
-      "bytes": 144,
+      "bytes": 147,
       "compactBytes": 141,
       "rules": 0
     },
     {
       "file": "src/components/data/data.css",
-      "bytes": 8920,
-      "compactBytes": 7333,
-      "rules": 94
+      "bytes": 9147,
+      "compactBytes": 7146,
+      "rules": 92
     },
     {
       "file": "src/components/profile.css",
-      "bytes": 1617,
+      "bytes": 1712,
       "compactBytes": 1315,
       "rules": 21
     },
     {
       "file": "src/modules/admin/admin.css",
-      "bytes": 27714,
+      "bytes": 28978,
       "compactBytes": 23476,
       "rules": 262
     },
     {
       "file": "src/modules/identity/identity.css",
-      "bytes": 1607,
+      "bytes": 1690,
       "compactBytes": 1360,
       "rules": 17
     },
     {
+      "file": "src/modules/predictions/chart.css",
+      "bytes": 1903,
+      "compactBytes": 1700,
+      "rules": 20
+    },
+    {
       "file": "src/modules/predictions/exchange.css",
-      "bytes": 16118,
-      "compactBytes": 13448,
-      "rules": 169
+      "bytes": 15823,
+      "compactBytes": 12754,
+      "rules": 167
     },
     {
       "file": "src/modules/predictions/predictions.css",
-      "bytes": 2550,
+      "bytes": 2680,
       "compactBytes": 2132,
       "rules": 25
     },
     {
+      "file": "src/modules/predictions/reference.css",
+      "bytes": 2241,
+      "compactBytes": 1805,
+      "rules": 19
+    },
+    {
       "file": "src/modules/wallet/c2c.css",
-      "bytes": 1371,
+      "bytes": 1449,
       "compactBytes": 1138,
       "rules": 20
     },
     {
       "file": "src/modules/wallet/issuance.css",
-      "bytes": 2058,
+      "bytes": 2168,
       "compactBytes": 1710,
       "rules": 21
     },
     {
       "file": "src/modules/wallet/market.css",
-      "bytes": 3350,
+      "bytes": 3527,
       "compactBytes": 2782,
       "rules": 39
     },
     {
       "file": "src/modules/wallet/wallet.css",
-      "bytes": 8244,
+      "bytes": 8700,
       "compactBytes": 6826,
       "rules": 97
     },
     {
       "file": "src/styles/account.css",
-      "bytes": 8650,
+      "bytes": 9132,
       "compactBytes": 7137,
       "rules": 101
     },
     {
       "file": "src/styles/content.css",
-      "bytes": 26420,
+      "bytes": 27853,
       "compactBytes": 21642,
       "rules": 295
     },
     {
       "file": "src/styles/editor.css",
-      "bytes": 23562,
+      "bytes": 24802,
       "compactBytes": 19265,
       "rules": 239
     },
     {
       "file": "src/styles/foundation.css",
-      "bytes": 17496,
+      "bytes": 18447,
       "compactBytes": 14324,
       "rules": 178
     },
     {
       "file": "src/styles/public.css",
-      "bytes": 27733,
+      "bytes": 29113,
       "compactBytes": 22265,
       "rules": 285
     },
     {
       "file": "src/styles/shared.css",
-      "bytes": 316,
+      "bytes": 327,
       "compactBytes": 301,
       "rules": 0
     },
     {
       "file": "src/styles/tokens.css",
-      "bytes": 2300,
+      "bytes": 2392,
       "compactBytes": 1953,
       "rules": 4
     }

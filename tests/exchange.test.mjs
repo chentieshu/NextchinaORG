@@ -17,6 +17,8 @@ test('prediction exchange: collateral, matching, refunds, roles, resolution and 
  await assert.rejects(admin('create',definition,randomUUID(),editor),/denied/);await assert.rejects(read(null,null,'portfolio'),/denied/);
  const key=randomUUID(),market=(await admin('create',definition,key)).id;assert.equal((await admin('create',definition,key)).id,market);
  assert.equal((await read(null)).rows.length,0);await assert.rejects(read(null,market),/unavailable/);
+ const history=(period='1d',before=null,since=null)=>as(null,`select omni_exchange_history('${market}','${period}',${before?`'${before}'`:'null'},${since?`'${since}'`:'null'}) s`);
+ await assert.rejects(history(),/unavailable/);
  let m=(await read(owner,market,'admin')).rows[0];await admin('publish',{market,expected:m.updated_at,note:'Publish reviewed rules'});
  const order=(who,side,outcome,price,quantity,tif='gtc',request=randomUUID())=>action(who,'order',{market,side,outcome,price:String(price),quantity:String(quantity),tif},request);
  await assert.rejects(order(a,'buy','yes',0,10),/Invalid order/);await assert.rejects(order(a,'sell','yes',60,1),/Insufficient shares/);
@@ -32,6 +34,10 @@ test('prediction exchange: collateral, matching, refunds, roles, resolution and 
  await action(a,'cancel',{order:sale.id});await action(a,'cancel',{order:sale.id});
  assert.equal((await read(a,market)).positions.find(p=>p.outcome==='yes').reserved,'0');
  const publicData=await read(null,market);assert.ok(!('orders' in publicData));assert.ok(!('positions' in publicData));assert.ok(!('balance' in publicData));assert.equal(publicData.trades.length,2);assert.equal(publicData.rows[0].volume,'74000','volume counts actual points exchanged, not share face value');
+ for(const period of ['1h','1d','1w','all']){const h=await history(period);assert.equal(h.has_more,false);assert.equal(h.rows.reduce((n,r)=>n+BigInt(r.volume),0n),74000n);assert.equal(h.rows.reduce((n,r)=>n+Number(r.trades),0),2);assert.equal(h.rows[0].open,60);assert.equal(h.rows.at(-1).close,70);assert.ok(h.rows.every(r=>!('market_id' in r)&&!('first_id' in r)));}
+ const discovery=await read(a);assert.ok(!('orders' in discovery));assert.ok(!('balance' in discovery));assert.ok((await read(a,null,'portfolio')).orders.length>0);
+ await assert.rejects(history('bogus'),/Invalid history/);await assert.rejects(history('1d','2099-01-01'),/Invalid history/);await assert.rejects(history('1d','2026-01-01','2026-01-01'),/Invalid history/);
+ await assert.rejects(as(a,'select * from omni_private.exchange_candles'),/permission denied/);
  const share=(await action(b,'share',{order:pair.id,show_amount:false})).id;
  const card=await as(null,`select omni_exchange_card('${share}','order') s`);assert.ok(!('filled' in card.order));assert.equal(card.order.outcome,'no');assert.equal(card.trader.id,b);assert.ok(!('user_id' in card.order));
  await assert.rejects(action(a,'share',{order:pair.id,show_amount:true}),/Not found/);
@@ -93,5 +99,13 @@ test('prediction exchange: collateral, matching, refunds, roles, resolution and 
  secondMarket=(await read(owner,second,'admin')).rows[0];await assert.rejects(admin('result',{market:second,expected:secondMarket.updated_at,result:'yes',evidence_url:'https://example.test/result',note:'Cannot change settled result'}),/not closed/);
  assert.equal((await root('select sum(balance)::text net from omni_private.wallet_accounts'))[0].net,'0');
  assert.equal((await root("select sum(balance)::text n from omni_private.wallet_accounts where bucket in('prediction_pool','prediction_hold')"))[0].n,'0');
+ // Large histories use bounded, non-overlapping cursor pages; refresh overlaps the last bucket.
+ await root(`insert into omni_private.exchange_candles(market_id,step,bucket,open,high,low,close,volume,trades,first_at,first_id,last_at,last_id)
+ select '${market}',60,date_trunc('minute',now())-make_interval(mins=>n),40,60,40,60,10000,1,now(),gen_random_uuid(),now(),gen_random_uuid() from generate_series(1,650) n on conflict do nothing;`);
+ const firstPage=await history();assert.equal(firstPage.rows.length,300);assert.equal(firstPage.has_more,true);
+ const nextPage=await history('1d',firstPage.next_before);assert.equal(nextPage.rows.length,300);assert.ok(nextPage.rows.at(-1).time<firstPage.rows[0].time);
+ const finalPage=await history('1d',nextPage.next_before);assert.equal(finalPage.has_more,false);assert.ok(finalPage.rows.length>0);
+ const newest=firstPage.rows.at(-1),incremental=await history('1d',null,new Date(newest.time*1000).toISOString());assert.deepEqual(incremental.rows,[newest]);
+ assert.ok((await history('1h')).rows.length<=61);
  }finally{await db.close();}
 });
