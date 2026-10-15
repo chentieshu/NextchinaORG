@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import {useEffect,useState} from 'react';
-import {FiArrowLeft,FiPlus} from 'react-icons/fi';
+import {FiArrowLeft,FiPlus,FiMessageSquare} from 'react-icons/fi';
 import {useApp} from './Provider';
 import {UserIdentity} from './Avatar';
 import {ContentManagement} from './ContentManagement';
@@ -39,7 +39,7 @@ export function PostThreadReader({article,onChange,failed}:{article:Article;onCh
     <div className="article-heading"><div className="byline"><UserIdentity id={part.author_id} name={part.author_name??t.editor} avatarKey={part.author_avatar_key} handle={part.author_handle} size={44}/><span className="thread-part-number">{thread?part.thread_position:''}</span><ContentManagement article={part} onChange={refresh} onDeleted={()=>{if(selected){const next=rows.find(r=>r.id!==part.id);router.push(next?contentHref(next,locale):`/${locale}/`);}else refresh();}}/></div></div>
     <div className="article-body"><RichText text={text} gallery/>{contentMedia(undefined,text.body).filter(item=>item.type==='embed'&&!JSON.stringify(text.document??{}).includes(item.url)).slice(0,4).map(item=><ExternalContent key={item.url} url={item.url}/>)}{part.has_quote&&<QuoteCard article={part.quoted_article}/>}
      <Link className="post-timestamp" href={contentHref(part,locale)} aria-label={c.read}><time dateTime={part.published_at??part.created_at}>{new Date(part.published_at??part.created_at).toLocaleString(locale,{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</time></Link>
-     {selected&&<div className="post-statistics"><span><b>{live.like_count??0}</b> {t.likes}</span><span><b>{live.repost_count??0}</b> {ct.repost}</span><button onClick={()=>setShowQuotes(v=>!v)} aria-expanded={showQuotes}><b>{part.quote_count??0}</b> {ct.quotes}</button><a href="#comments"><b>{live.comment_count??0}</b> {socialCopy[locale].replies}</a></div>}
+     {selected&&!!part.quote_count&&<div className="post-statistics"><button onClick={()=>setShowQuotes(v=>!v)} aria-expanded={showQuotes}><FiMessageSquare/><b>{part.quote_count}</b> {ct.quotes}</button></div>}
      <div className="article-bottom"><ArticleActions article={part}/>{thread&&<Link className="thread-reply-link" href={`${contentHref(part,locale)}#comments`}>{c.reply}</Link>}</div>
     </div>
    </section>;

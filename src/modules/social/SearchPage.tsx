@@ -2,8 +2,9 @@
 import Link from 'next/link';
 import {Suspense,useEffect,useRef,useState,useTransition} from 'react';
 import {useSearchParams,useRouter} from 'next/navigation';
-import {FiSearch,FiX,FiClock,FiArrowUpLeft} from 'react-icons/fi';
+import {FiSearch,FiX,FiClock,FiArrowUpLeft,FiArrowRight,FiTrash2} from 'react-icons/fi';
 import {useApp} from '@/components/Provider';
+import {IconButton} from '@/components/IconControl';
 import {Avatar,UserIdentity} from '@/components/Avatar';
 import {FollowButton} from '@/components/FollowButton';
 import {ArticleCard} from '@/modules/news/NewsExperience';
@@ -37,9 +38,9 @@ function Search(){
    {user&&<label><span className="sr-only">{copy.scope}</span><select aria-label={copy.scope} disabled={navigating} value={following?'following':'all'} onChange={e=>navigate(q,{following:e.target.value==='following'})}><option value="all">{copy.everyone}</option><option value="following">{copy.following}</option></select></label>}
   </div>}
   {!q?<section className="search-history" aria-label={copy.recent}>
-   <div className="search-history-heading"><h2>{copy.recent}</h2>{recent.length>0&&<button className="text-link" onClick={()=>saveHistory([])}>{copy.clearAll}</button>}</div>
+   <div className="search-history-heading"><h2>{copy.recent}</h2>{recent.length>0&&<IconButton label={copy.clearAll} onClick={()=>saveHistory([])}><FiTrash2/></IconButton>}</div>
    {recent.length?<ul>{recent.map(item=><li key={item}><button className="history-query" onClick={()=>submit(item)}><FiClock/><span>{item}</span><FiArrowUpLeft/></button><button className="icon-button" aria-label={`${copy.remove}: ${item}`} onClick={()=>saveHistory(recent.filter(v=>v!==item))}><FiX/></button></li>)}</ul>:<p className="form-note">{copy.recentEmpty}</p>}
-   <p className="search-help">{copy.hint}<br/>{copy.localHistory}</p>
+   <p className="search-help">{copy.localHistory}</p>
   </section>:<>
    {results.error&&<p className="inline-error" role="alert">{t.connectionError}<button onClick={results.retry}>{t.retry}</button></p>}
    {!db?<p className="empty-state">{t.connectionError}</p>:results.busy&&!results.items.length?<div className="skeleton-list" role="status" aria-label={t.loading}><i/><i/></div>:!results.items.length&&!results.error?<div className="empty-state"><p>{c.searchEmpty}</p><small>{copy.hint}</small></div>:<div className="search-results" aria-busy={results.busy}>
@@ -78,7 +79,7 @@ function SearchInput({query,submit}:{query:string;submit:(query:string)=>void}){
     onCompositionStart={()=>setComposing(true)} onCompositionEnd={()=>setComposing(false)}
     onKeyDown={e=>{if(composing||e.nativeEvent.isComposing)return;if(e.key==='Escape'){setFocused(false);setActive(-1);}else if(e.key==='ArrowDown'&&value){e.preventDefault();setFocused(true);setActive(n=>Math.min(n+1,people.length));}else if(e.key==='ArrowUp'&&show){e.preventDefault();setActive(n=>Math.max(0,n-1));}else if(e.key==='Enter'&&show&&active>=0){e.preventDefault();choose(active);}}}/>
    {input&&<button className="icon-button search-clear" type="button" aria-label={copy.clear} onClick={()=>{setInput('');submit('');inputRef.current?.focus();}}><FiX/></button>}
-   <button className="button small" type="submit">{c.search}</button>
+   <IconButton type="submit" label={c.search} className="search-submit"><FiArrowRight/></IconButton>
   </form>
   {show&&<div className="search-suggestion-panel"><ul id="search-suggestions" role="listbox" aria-label={copy.suggestions}>
    <li role="option" id="search-option-0" aria-selected={active===0}><button type="button" onClick={search}><FiSearch/><span>{copy.searchFor} “{value}”</span></button></li>

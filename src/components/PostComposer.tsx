@@ -64,7 +64,7 @@ export function PostComposer({document,onChange,disabled,onBusyChange}:{document
     {photo.status!=='ready'&&<div className="post-image-status" role={photo.status==='error'?'alert':'status'}>{photo.status==='error'?<><span>{photo.error??c.failed}</span><button className="button" disabled={!online||disabled} aria-label={`${c.retry} ${index+1}`} onClick={()=>{change(rows.current.map(p=>p.id===photo.id?{...p,status:'queued',error:''}:p),false);void drain();}}><FiRefreshCw/>{c.retry}</button></>:<><span>{photo.status==='queued'?c.waiting:`${c.uploading} ${photo.progress}%`}</span><progress max={100} value={photo.progress} aria-label={`${c.uploading} ${index+1}`}/></>}</div>}
    </figure>)}
   </div>}/>
-  <p className="post-media-hint">{unresolved?c.pending:c.hint}</p>{error&&<p className="form-note" role="alert">{error}</p>}
+  {unresolved&&<p className="post-media-hint" role="status">{c.pending}</p>}{error&&<p className="form-note" role="alert">{error}</p>}
   {photoToEdit&&<PostImageEdit image={photoToEdit} onClose={()=>setEditing(null)} onSave={(alt,file)=>{const id=photoToEdit.id;setEditing(null);const next=rows.current.map(photo=>{if(photo.id!==id)return photo;if(!file)return {...photo,alt};release(photo);return {...photo,alt,file,preview:preview(file),status:'queued' as const,error:'',progress:0};});change(next);if(file)void drain();}}/>}
  </div>;
 }

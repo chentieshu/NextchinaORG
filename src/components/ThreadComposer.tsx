@@ -3,6 +3,7 @@ import {useCallback,useRef,type ReactNode} from 'react';
 import {FiPlus,FiArrowUp,FiArrowDown,FiX} from 'react-icons/fi';
 import {useApp} from './Provider';
 import {PostComposer} from './PostComposer';
+import {IconButton} from './IconControl';
 import {RichText} from './RichText';
 import {threadCopy} from '@/lib/thread-copy';
 import {normalizeDocument} from '@/lib/rich-content';
@@ -28,9 +29,9 @@ export function ThreadComposer({parts,disabled,preview,canAdd,quote,onBusyChange
    </div>}</div>}
    {preview?<RichText text={part.text} gallery/>:<PartEditor part={part} disabled={disabled} update={onUpdate} busy={busy}/>}
    {index===0&&quote}
-   {parts.length>1&&<small className="thread-part-count">{part.text.body.length.toLocaleString(locale)} / 100,000</small>}
+   {part.text.body.length>90000&&<small className="thread-part-count">{part.text.body.length.toLocaleString(locale)} / 100,000</small>}
   </section>)}
-  {!preview&&canAdd&&<div className="thread-add-row"><button type="button" className="text-link" disabled={disabled||parts.length>=MAX_THREAD_PARTS||!partHasContent(parts[parts.length-1])} onClick={add}><FiPlus/>{c.add}</button>{parts.length>1&&<small>{parts.length} / {MAX_THREAD_PARTS}</small>}</div>}
+  {!preview&&canAdd&&<div className="thread-add-row"><IconButton label={c.add} disabled={disabled||parts.length>=MAX_THREAD_PARTS||!partHasContent(parts[parts.length-1])} onClick={add}><FiPlus/></IconButton>{parts.length>1&&<small>{parts.length} / {MAX_THREAD_PARTS}</small>}</div>}
   {parts.length>=MAX_THREAD_PARTS&&<p className="form-note">{c.limit}</p>}
  </div>;
 }

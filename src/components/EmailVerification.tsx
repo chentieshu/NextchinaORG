@@ -4,6 +4,7 @@ import {useApp} from './Provider';
 import {emailVerificationCopy} from '@/lib/email-verification-copy';
 import {emailVerificationFailure,normalizeEmailCode,type EmailVerification as Status} from '@/lib/email-verification';
 import {getEmailVerificationClient} from '@/lib/supabase';
+import {FiMail} from 'react-icons/fi';
 
 export function EmailVerification({onVerified}:{onVerified?:()=>void}){
  const {db,user,locale,online,retryAuth}=useApp(),c=emailVerificationCopy[locale];
@@ -33,7 +34,7 @@ export function EmailVerification({onVerified}:{onVerified?:()=>void}){
   const checked=await read();if(!checked?.verified)throw Error('verification_not_confirmed');
   if(mounted.current){setCode('');setSent(false);destination.current=null;onVerified?.();}await retryAuth();
  });}
- return <section id="email-verification" className="email-verification" aria-busy={loading||busy}><span id="authenticator" aria-hidden="true"/><h2>{c.title}</h2><p className="form-note">{c.note}</p>{user?.email&&<p className="email-destination">{user.email}</p>}
+ return <section id="email-verification" className="email-verification" aria-busy={loading||busy}><span id="authenticator" aria-hidden="true"/><h2><FiMail aria-hidden="true"/>{c.title}</h2><p className="form-note">{c.note}</p>{user?.email&&<p className="email-destination">{user.email}</p>}
  {loading?<p role="status">{c.loading}</p>:status?.verified?<p role="status">{c.verified}{status.expires_at&&<> · {c.expires} {new Date(status.expires_at).toLocaleTimeString(locale,{hour:'2-digit',minute:'2-digit'})}</>}</p>:<>
   {status&&!status.available&&<p>{c.noEmail}</p>}
   <button type="button" className="button" disabled={busy||!online||!status?.available||cooldown>0} onClick={()=>void send()}>{sent?c.resend:c.send}{cooldown?` (${cooldown})`:''}</button>
