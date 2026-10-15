@@ -12,3 +12,6 @@ supabase/templates/backups/
 .wrangler/
 workers/media/worker-configuration.d.ts
 media-dist/
+
+workers/wallet/worker-configuration.d.ts
+wallet-dist/

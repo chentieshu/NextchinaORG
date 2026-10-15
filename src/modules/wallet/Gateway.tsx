@@ -1,0 +1,31 @@
+'use client';
+import {useCallback,useEffect,useRef,useState} from 'react';
+import {useApp} from '@/components/Provider';
+import {Modal} from '@/components/Shell';
+import {walletCopy} from './copy';
+import {gatewayCopy} from './gateway-copy';
+import {walletChanged} from './use-wallet';
+import {isTronAddress} from './money';
+type Setup={treasury:string;heartbeat:string|null;available:number;assigned:number;enabled:boolean};
+export function GatewaySetup(){const{db,locale,online}=useApp(),c=walletCopy[locale],g=gatewayCopy[locale],[data,setData]=useState<Setup|null>(null),[addresses,setAddresses]=useState(''),[attest,setAttest]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState(''),[retry,setRetry]=useState(0),pending=useRef(false),mounted=useRef(true);
+ useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;};},[]);
+ const load=useCallback(async()=>{if(!db)return;try{const r=await db.rpc('omni_wallet_admin_setup').abortSignal(AbortSignal.timeout(10000));if(r.error)throw r.error;if(mounted.current)setData(r.data);}catch{if(mounted.current)setError(c.error);}},[db,c.error]);
+ useEffect(()=>{void load();},[load,retry]);
+ async function save(enable?:boolean){if(!db||pending.current||!online)return;pending.current=true;setBusy(true);setError('');try{
+  const list=addresses.split(/\s+/).filter(Boolean);if(enable===undefined&&(!attest||!list.length||list.length>100||!(await Promise.all(list.map(isTronAddress))).every(Boolean)))throw Error('invalid');
+  if(enable&&!confirm(g.confirmEnable))return;
+  const r=await db.rpc('omni_wallet_admin_setup',enable===undefined?{addresses:list}:{enable_payments:enable}).abortSignal(AbortSignal.timeout(15000));if(r.error)throw r.error;if(!mounted.current)return;setData(r.data);setAddresses('');setAttest(false);walletChanged();
+ }catch(e){if(mounted.current)setError((e as {code?:string}).code==='PT401'?c.mfa:g.configError);}finally{pending.current=false;if(mounted.current)setBusy(false);}}
+ return <section className="wallet-setup"><h3>{g.pool}</h3><p>{g.note}</p>{error&&<p role="alert" className="inline-error">{error}<button onClick={()=>{setError('');setRetry(n=>n+1);}}>{c.retry}</button></p>}{data&&<><dl><div><dt>{g.available}</dt><dd>{data.available}</dd></div><div><dt>{g.assigned}</dt><dd>{data.assigned}</dd></div><div><dt>{g.heartbeat}</dt><dd>{data.heartbeat?new Date(data.heartbeat).toLocaleString(locale):g.never}</dd></div></dl><p>{g.treasury}<br/><code className="wallet-address">{data.treasury}</code></p><form className="wallet-form" onSubmit={e=>{e.preventDefault();void save();}}><label>{g.addresses}<textarea rows={4} maxLength={3600} autoComplete="off" spellCheck={false} value={addresses} onChange={e=>setAddresses(e.target.value)} disabled={busy}/></label><label className="wallet-check"><input type="checkbox" checked={attest} onChange={e=>setAttest(e.target.checked)} disabled={busy}/><span>{g.attest}</span></label><button className="button" disabled={busy||!online||!attest||!addresses.trim()}>{g.import}</button></form><p>{g.keyHelp}</p><button className="button" disabled={busy||!online||!data.enabled&&(!data.available||!data.heartbeat||Date.now()-Date.parse(data.heartbeat)>300000)} onClick={()=>void save(!data.enabled)}>{data.enabled?g.disable:g.enable}</button></>}</section>;
+}
+export function DepositDialog({onClose}:{onClose:()=>void}){const{db,locale,notify,online}=useApp(),c=walletCopy[locale],g=gatewayCopy[locale],[address,setAddress]=useState(''),[error,setError]=useState(false),[attempt,setAttempt]=useState(0);
+ useEffect(()=>{if(!db)return;let active=true;const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);setError(false);void db.rpc('omni_wallet_deposit_address').abortSignal(controller.signal).then(r=>{if(!active)return;if(r.error||!r.data?.address)setError(true);else setAddress(r.data.address);});return()=>{active=false;clearTimeout(timer);controller.abort();};},[db,attempt]);
+ useEffect(()=>{if(!address)return;const timer=setInterval(()=>{if(document.visibilityState==='visible'&&navigator.onLine)walletChanged();},15000);return()=>clearInterval(timer);},[address]);
+ return <Modal title={c.deposit} onClose={onClose}><div className="wallet-form"><h2>{g.address}</h2><p>{g.network}</p>{error?<p className="inline-error" role="alert">{g.poolEmpty}<button disabled={!online} onClick={()=>setAttempt(n=>n+1)}>{c.retry}</button></p>:address?<><code className="wallet-address">{address}</code><button className="button" onClick={()=>void navigator.clipboard.writeText(address).then(()=>notify(g.copied)).catch(()=>notify(c.error))}>{g.copy}</button></>:<p role="status">{c.loading}</p>}<p className="form-note">{c.rate}</p></div></Modal>;
+}
+export function VerifyPayout({withdrawal}:{withdrawal:string}){const{db,locale,online,notify}=useApp(),g=gatewayCopy[locale],c=walletCopy[locale],[tx,setTx]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState(''),pending=useRef(false),mounted=useRef(true);useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;};},[]);
+ async function verify(e:React.FormEvent){e.preventDefault();if(pending.current||!db||!online||!/^[0-9a-f]{64}$/.test(tx.trim()))return;pending.current=true;setBusy(true);setError('');try{
+  const{data,error}=await db.auth.getSession();if(error||!data.session)throw Error('auth');const r=await fetch('https://wallet.chinateam.org/v1/payout/verify',{method:'POST',headers:{Authorization:`Bearer ${data.session.access_token}`,'Content-Type':'application/json'},body:JSON.stringify({withdrawal,tx:tx.trim()}),signal:AbortSignal.timeout(20000)});if(!r.ok)throw Error('verify');if(mounted.current){walletChanged();notify(g.verified);}
+ }catch{if(mounted.current)setError(g.verifyPending);}finally{pending.current=false;if(mounted.current)setBusy(false);}}
+ return <form className="wallet-payout-form" onSubmit={verify}><label>{g.tx}<input value={tx} onChange={e=>setTx(e.target.value.toLowerCase())} required pattern="[0-9a-f]{64}" maxLength={64} autoComplete="off" spellCheck={false} disabled={busy}/></label><button className="button small" disabled={busy||!online}>{busy?c.loading:g.verify}</button>{error&&<p role="alert" className="inline-error">{error}</p>}</form>;
+}

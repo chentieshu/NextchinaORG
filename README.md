@@ -147,3 +147,29 @@ Google 选择 Web application；X 使用 OAuth 2.0 的 Web App，只申请登录
 账号引导、侧栏、统一搜索与内容语言边界见 [社区架构](docs/social-architecture.md)。
 
 X / GitHub 账号归属徽章、个人主页 Star 统计及缓存边界见 [账号关联说明](docs/connected-accounts.md)。X 粉丝数暂不启用。
+
+## TRON 积分钱包
+
+`src/modules/wallet` 是独立的钱包模块，`workers/wallet` 是只读链上核验服务。1 USDT = 100 积分；账本以整数 micro-USDT 保存（1 积分 = 10,000 单位），不经过浮点货币计算。充值积分可打赏，打赏收入可提现。最低提现 1 USDT，手续费为申请金额的 1%，仅在不足 0.000001 USDT 时向上取整；申请 1 USDT，净到账 0.99 USDT。平台支付链上 TRX/资源费用。
+
+链上转账不会直接给浏览器回调。流程为：登录用户领取永久专属地址 → TRON 转账 → Cloudflare 定时发现交易 → solidified 节点核验 USDt 合约、成功回执及 Transfer 日志 → Supabase 事务记账 → 钱包页面刷新余额。前端不能提交哈希认领别人的充值，也没有增加余额或标记提现已付款的权限。
+
+### 首次配置
+
+1. 应用两个 `20261015` 钱包迁移。默认关闭充值、打赏与提现，不影响论坛。部署 `chinateam-wallet` Worker；它不持有钱包私钥、不构造或广播付款交易。
+2. 为 Worker 配置独立随机 64 位十六进制 Secret `WALLET_GATEWAY_KEY`。数据库 `omni_private.wallet_gateway.secret_hash` 只存该字符串 UTF-8 字节的 SHA-256 十六进制摘要。切勿使用 Supabase service role 或钱包私钥代替。
+3. 在 [TronGrid](https://www.trongrid.io/) 创建 API Key，直接添加到 Cloudflare → Workers & Pages → **chinateam-wallet** → Settings → Variables and Secrets，类型选 Secret，名称 **TRONGRID_API_KEY**。切勿发到聊天、提交 Git 或放入 `NEXT_PUBLIC_*`。
+4. 在你自己控制的钱包中创建并备份一批**尚未使用的 TRON 公开地址**。先确认能恢复并支配这些地址的资金，只导出公开地址。站点不生成或保管这些地址的私钥。总管理员启用双重验证后，在管理中心 → 钱包管理导入（每行一个，每批最多 100 个）。每位用户永久占用一个地址；已分配地址不会回收再分配。资金需由你在钱包中归集；归集前确认 TRON 账户激活、TRX 和资源情况。
+5. 归集及人工提现地址配置为 `TPxCJN86sfZPPE6M4PMAgDuTruT9fPPB3Z`。它不是可供所有用户共用的充值地址；前台只展示分配给当前用户的地址。平台地址间转移不会增加用户积分。
+6. 等待后台出现最近 5 分钟内的监听连接，确认地址池非空后，由总管理员开放资金功能。先用自控测试账号小额走通充值、打赏、提现和对账，再扩大范围。当前自动化测试均使用隔离数据，不能替代真实主网验收。新加坡运营主体应在开放可提现资金业务前核实适用的支付及数字代币服务要求；这些技术限制不等同于法律资格确认。
+
+### 人工提现及运维
+
+- 申请时冻结打赏收入，用户不能同时花费这部分积分；待审核可取消或由总管理员拒绝并解冻。总管理员双重验证后点击“开始处理”，然后**从配置的归集地址**向页面指定收款地址支付精确净金额。点击开始处理不会转账。勿重复支付不确定结果的交易。
+- 付款后填入原交易哈希，Worker 验证已最终确认的 USDT 事件、付款方、收款方、金额及时间后完成账本结算。广播成功或暂未查到回执时保持冻结；不能手动跳过核验标为已付款。处理中申请不提供普通取消按钮；付款失败等异常需人工对账后通过经审计的补偿流程处理，不能直接改余额。
+- 所有写入在数据库内原子完成。唯一交易哈希+日志序号防重复入账；请求 UUID 防重复扣款；日志不可覆盖、借贷总和必须为零。不同积分桶分别记录，后台显示余额与待处理提现。暂停功能不丢弃已分配地址的新到账。
+- 监听每分钟运行，单次最多 5 个地址、8 次回执核验，每页 20 条，租约防重叠，失败不前移游标。完整扫描后重新遍历历史以补偿延迟索引。大量地址或长历史会增加到账延迟；扩大规模前需改成分片队列及增量扫描+定期回补，并按 TronGrid 配额调整预算。
+- `/health` 只报告密钥是否存在，不保证上游实时健康。后台 heartbeat、Cloudflare `wallet_scan` / `wallet_scan_failed` 日志及账本平衡需持续检查；尚未接入外部告警、自动归集或自动付款。API Key 缺失时任务不访问链服务，资金功能保持关闭。
+- 检查命令：`npm run typecheck`、`npm test`、`npm run build`、`LIVE_SUPABASE=1 npm run test:browser`。浏览器资金接口使用测试夹具，不写生产交易。钱包 Worker 单独部署，不随 Pages 静态构建自动更新。
+
+协议依据：[TRON 最终确认](https://developers.tron.network/docs/confirmation-semantics)、[TRC20 历史查询](https://developers.tron.network/docs/get-trc20-transaction-history)、[Tether 官方合约](https://tether.to/en/supported-protocols/)。
