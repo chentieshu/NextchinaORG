@@ -6,10 +6,11 @@ const order=(id='10000000-0000-4000-8000-000000000009')=>({id,address:treasury,r
 const snapshot={purchased:'1000000',earned:'20000000',held:'0',deposits_enabled:false,tipping_enabled:false,withdrawals_enabled:false,withdrawal_min_units:'1000000',withdrawal_fee_bps:'100',frozen:false};
 async function walletFixture(page:Page,role='member'){
  const account=await fixture(page,role),wallet={...snapshot},requests:Record<string,any>[]=[],writes:Record<string,any>[]=[],deposit={treasury,enabled:true,healthy:true,order:null as ReturnType<typeof order>|null};
+ const setup={treasury,heartbeat:null as string|null,unmatched:0,assigned:0,enabled:false,healthy:false,configured:true,mfa_verified:true};
  account.articles.push(story(articleId,'可打赏的分享',{author_id:'20000000-0000-4000-8000-000000000002',author_name:'Another writer',author_handle:'another_writer'}));
  await page.route('**/rest/v1/rpc/omni_wallet_*',async route=>{const resource=new URL(route.request().url()).pathname.split('/').at(-1);let data:any=[];
   if(resource==='omni_wallet_snapshot')data=wallet;
-  if(resource==='omni_wallet_admin_setup')data={treasury:deposit.treasury,heartbeat:null,unmatched:0,assigned:0,enabled:false};
+  if(resource==='omni_wallet_admin_setup'){const body=route.request().postDataJSON();if(typeof body?.enable_payments==='boolean'){writes.push(body);setup.enabled=body.enable_payments;wallet.deposits_enabled=wallet.tipping_enabled=wallet.withdrawals_enabled=setup.enabled;}data=setup;}
   if(resource==='omni_wallet_deposit_status')data={...deposit,enabled:wallet.deposits_enabled,server_time:new Date().toISOString()};
   if(resource==='omni_wallet_create_deposit'){const body=route.request().postDataJSON();writes.push(body);deposit.order=order(body.request);data=deposit.order;}
   if(resource==='omni_wallet_admin_summary')data={accounts:0,journals:0,purchased:'0',earned:'0',held:'0',balanced:true,settings:wallet};
@@ -17,7 +18,7 @@ async function walletFixture(page:Page,role='member'){
   if(resource==='omni_wallet_tip'||resource==='omni_wallet_withdraw'){writes.push(route.request().postDataJSON());data='20000000-0000-4000-8000-000000000077';}
   if(resource==='omni_wallet_review'){writes.push(route.request().postDataJSON());requests.length=0;data={};}
   await route.fulfill({json:data});
- });return{wallet,account,requests,writes,deposit};
+ });return{wallet,account,requests,writes,deposit,setup};
 }
 test('wallet stays closed, is localized and fits narrow layouts',async({page})=>{
  await walletFixture(page);for(const locale of ['zh-CN','en','ja','es','zh-TW']){await page.goto(`/${locale}/wallet/`);await expect(page.locator('.wallet-balance')).toContainText((2100n).toLocaleString(locale));await expect(page.locator('.wallet-actions button').first()).toBeEnabled();await expect(page.locator('.wallet-actions button').nth(1)).toBeDisabled();
@@ -79,4 +80,63 @@ test('paused, expired and unreadable orders hide actionable payment details',asy
  deposit.order.expires_at=new Date(Date.now()-1000).toISOString();await dialog.getByRole('button',{name:'刷新状态'}).click();await expect(dialog).toContainText('订单已过期');await expect(dialog).not.toContainText(treasury);
  deposit.order=order();await dialog.getByRole('button',{name:'刷新状态'}).click();await expect(dialog.locator('.wallet-qr svg')).toBeVisible();
  await page.route('**/rest/v1/rpc/omni_wallet_deposit_status',route=>route.fulfill({status:503,json:{message:'unavailable'}}));await dialog.getByRole('button',{name:'刷新状态'}).click();await expect(dialog.getByRole('alert')).toContainText('无法确认最新状态');await expect(dialog.locator('.wallet-qr')).toHaveCount(0);await expect(dialog).not.toContainText(treasury);
+});
+
+async function openWalletAdmin(page:Page,locale='zh-CN'){
+ await page.goto(`/${locale}/admin/`);
+ // The wallet tab has a stable position in the owner's admin navigation.
+ await page.getByRole('button',{name:({en:'Wallet',ja:'ウォレット管理',es:'Cartera','zh-TW':'錢包管理','zh-CN':'钱包管理'} as Record<string,string>)[locale],exact:true}).click();
+ await expect(page.locator('.wallet-gateway')).toBeVisible();
+}
+
+test('payment switch uses an in-page confirmation when native dialogs are blocked',async({page})=>{
+ await page.addInitScript(()=>{window.confirm=()=>false;});
+ const{setup,writes}=await walletFixture(page,'super_admin');setup.healthy=true;setup.heartbeat='2000-01-01T00:00:00Z';
+ await openWalletAdmin(page);const panel=page.locator('.wallet-gateway');
+ await expect(panel).toContainText('连接正常');await expect(panel.getByText('Cloudflare 需要两个独立 Secret',{exact:false})).not.toBeVisible();
+ await panel.getByRole('button',{name:'开放资金功能',exact:true}).click();const dialog=page.getByRole('dialog');
+ await expect(dialog).toContainText('最低提现 1 USDT');expect(writes).toHaveLength(0);
+ await dialog.getByRole('button',{name:'确认',exact:true}).click();await expect(dialog).toHaveCount(0);
+ await expect(panel.getByRole('status')).toHaveText('充值、打赏和提现已开放。');expect(writes).toEqual([{enable_payments:true}]);
+ await panel.getByRole('button',{name:'暂停新增资金操作'}).click();await page.getByRole('dialog').getByRole('button',{name:'确认',exact:true}).click();
+ await expect(panel.getByRole('status')).toHaveText('已暂停新增充值、打赏和提现。');expect(writes).toHaveLength(2);
+});
+
+test('missing MFA has a clear explanation and a working settings link',async({page})=>{
+ const{setup,writes}=await walletFixture(page,'super_admin');setup.healthy=true;setup.mfa_verified=false;
+ await openWalletAdmin(page);await page.locator('.wallet-gateway').getByRole('button',{name:'开放资金功能',exact:true}).click();
+ const dialog=page.getByRole('dialog');await expect(dialog).toContainText('需要启用并完成双重验证');await expect(dialog.getByRole('button',{name:'确认',exact:true})).toBeDisabled();expect(writes).toHaveLength(0);
+ await page.setViewportSize({width:390,height:900});await page.screenshot({path:test.info().outputPath('wallet-activation-mfa.png'),fullPage:true});
+ await dialog.getByRole('link',{name:'前往设置双重验证'}).click();await expect(page).toHaveURL(/settings\/#authenticator$/);await expect(page.locator('#authenticator')).toBeVisible();
+});
+
+test('offline listener blocks opening with a reason but still permits pausing',async({page})=>{
+ const{setup,writes}=await walletFixture(page,'super_admin');await openWalletAdmin(page);const panel=page.locator('.wallet-gateway');
+ await panel.getByRole('button',{name:'开放资金功能',exact:true}).click();const dialog=page.getByRole('dialog');await expect(dialog).toContainText('近期没有成功扫描');await expect(dialog.getByRole('button',{name:'确认',exact:true})).toBeDisabled();expect(writes).toHaveLength(0);
+ await dialog.getByRole('button',{name:'关闭',exact:true}).last().click();setup.enabled=true;
+ await panel.getByRole('button',{name:'刷新状态'}).click();await panel.getByRole('button',{name:'暂停新增资金操作'}).click();await page.getByRole('dialog').getByRole('button',{name:'确认',exact:true}).click();await expect(panel.getByRole('status')).toHaveText('已暂停新增充值、打赏和提现。');
+});
+
+test('lost activation response reconciles the committed state without resubmitting',async({page})=>{
+ const{setup,account}=await walletFixture(page,'super_admin');setup.healthy=true;const writes:unknown[]=[];
+ await page.route('**/rest/v1/rpc/omni_wallet_admin_setup',async route=>{const body=route.request().postDataJSON();if(typeof body?.enable_payments==='boolean'){writes.push(body);setup.enabled=body.enable_payments;return route.abort('failed');}return route.fulfill({json:setup});});
+ await openWalletAdmin(page);await page.locator('.wallet-gateway').getByRole('button',{name:'开放资金功能',exact:true}).click();await page.getByRole('dialog').getByRole('button',{name:'确认',exact:true}).click();
+ await expect(page.getByRole('dialog')).toHaveCount(0);await expect(page.locator('.wallet-gateway').getByRole('status')).toContainText('已开放');expect(writes).toHaveLength(1);expect(account.profile.role).toBe('super_admin');
+});
+
+test('activation shows progress, prevents repeat writes and retains rejected results after refresh',async({page})=>{
+ const{setup}=await walletFixture(page,'super_admin');setup.healthy=true;let attempts=0,release!:()=>void;const held=new Promise<void>(resolve=>{release=resolve;});
+ await page.route('**/rest/v1/rpc/omni_wallet_admin_setup',async route=>{const body=route.request().postDataJSON();if(typeof body?.enable_payments==='boolean'){attempts++;await held;return route.fulfill({status:403,json:{code:'PT403',message:'Wallet access denied'}});}return route.fulfill({json:setup});});
+ await openWalletAdmin(page);const panel=page.locator('.wallet-gateway');await panel.getByRole('button',{name:'开放资金功能',exact:true}).click();const dialog=page.getByRole('dialog');await dialog.getByRole('button',{name:'确认',exact:true}).click();
+ const saving=dialog.getByRole('button',{name:'正在保存…'});await expect(saving).toBeDisabled();await saving.evaluate((button:HTMLButtonElement)=>button.click());expect(attempts).toBe(1);release();
+ await expect(dialog.getByRole('alert')).toHaveText('只有总管理员可以修改资金开关。');await dialog.getByRole('button',{name:'关闭',exact:true}).last().click();
+ await panel.getByRole('button',{name:'刷新状态'}).click();await expect(panel.getByRole('alert')).toHaveText('只有总管理员可以修改资金开关。');await expect(panel.getByRole('status')).toHaveCount(0);
+});
+
+test('server MFA rejection is actionable and unavailable reads do not show stale readiness',async({page})=>{
+ const{setup}=await walletFixture(page,'super_admin');setup.healthy=true;let failRead=false;
+ await page.route('**/rest/v1/rpc/omni_wallet_admin_setup',async route=>{const body=route.request().postDataJSON();if(typeof body?.enable_payments==='boolean')return route.fulfill({status:401,json:{code:'PT401',message:'Wallet MFA required'}});if(failRead)return route.fulfill({status:503,json:{message:'unavailable'}});return route.fulfill({json:setup});});
+ await openWalletAdmin(page);const panel=page.locator('.wallet-gateway');await panel.getByRole('button',{name:'开放资金功能',exact:true}).click();const dialog=page.getByRole('dialog');await dialog.getByRole('button',{name:'确认',exact:true}).click();
+ await expect(dialog.getByRole('alert')).toContainText('需要启用并完成双重验证');await expect(dialog.getByRole('link',{name:'前往设置双重验证'})).toBeVisible();await dialog.getByRole('button',{name:'关闭',exact:true}).last().click();
+ failRead=true;await panel.getByRole('button',{name:'刷新状态'}).click();await expect(panel.getByRole('alert').first()).toContainText('无法确认最新设置');await expect(panel.getByRole('button',{name:'开放资金功能',exact:true})).toBeDisabled();await expect(panel.locator('dl')).not.toContainText('连接正常');
 });

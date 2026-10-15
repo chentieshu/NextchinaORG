@@ -21,7 +21,8 @@ test('wallet ledger is private, balanced, idempotent and holds prevent double sp
  await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb default '{}');create table auth.mfa_factors(id uuid,user_id uuid,status text);create table auth.identities(id uuid default gen_random_uuid(),user_id uuid references auth.users(id),provider text,provider_id text,identity_data jsonb default '{}');create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth,public to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;`);
  const migrations=(await readdir('supabase/migrations')).filter(f=>f.endsWith('.sql')).sort();
  // Exercise historical binding behavior before its explicit retirement migration.
- for(const f of migrations.filter(f=>!f.endsWith('_chinateam_wallet_deposit_orders.sql')))await db.exec(await readFile('supabase/migrations/'+f,'utf8'));
+ const depositMigration=migrations.findIndex(f=>f.endsWith('_chinateam_wallet_deposit_orders.sql'));
+ for(const f of migrations.slice(0,depositMigration))await db.exec(await readFile('supabase/migrations/'+f,'utf8'));
  const a=randomUUID(),b=randomUUID(),owner=randomUUID(),editor=randomUUID(),allocation=randomUUID(),tx='a'.repeat(64);
  const root=async sql=>{await db.exec("reset role;select set_config('request.jwt.claim.sub','',false);select set_config('request.jwt.claims','{}',false)");return (await db.exec(sql)).at(-1);};
  const as=async(id,sql)=>{await db.exec(`reset role;set role ${id?'authenticated':'anon'};select set_config('request.jwt.claim.sub','${id??''}',false)`);return db.query(sql);};
@@ -137,7 +138,24 @@ test('wallet ledger is private, balanced, idempotent and holds prevent double sp
  await assert.rejects(as(b,`select omni_wallet_consume_challenge('${expired.id}')`),/expired/);
  await assert.rejects(gateway(`select omni_wallet_confirm_payer('${expired.id}','${address}')`),/Invalid challenge/);
  // Migrate the funded ledger in place. New deposits need no injected wallet.
- await root(await readFile('supabase/migrations/'+migrations.find(f=>f.endsWith('_chinateam_wallet_deposit_orders.sql')),'utf8'));
+ for(const f of migrations.slice(depositMigration))await root(await readFile('supabase/migrations/'+f,'utf8'));
+ const setup=async()=> (await as(owner,'select omni_wallet_admin_setup() s')).rows[0].s;
+ assert.equal((await setup()).mfa_verified,false);
+ await assert.rejects(as(owner,'select omni_wallet_admin_setup(null,true)'),/MFA required/);
+ await root("update omni_private.wallet_gateway set last_heartbeat=now()-interval '6 minutes'");
+ assert.equal((await setup()).healthy,false);
+ await db.exec("select set_config('request.jwt.claims','{\"aal\":\"aal2\"}',false)");
+ assert.equal((await setup()).mfa_verified,true);
+ await assert.rejects(as(owner,'select omni_wallet_admin_setup(null,true)'),/listener unavailable/);
+ await root('update omni_private.wallet_gateway set last_heartbeat=now()');
+ assert.equal((await setup()).healthy,true);
+ assert.equal((await setup()).configured,true);
+ await assert.rejects(as(editor,'select omni_wallet_admin_setup()'),/access denied/);
+ await db.exec("select set_config('request.jwt.claims','{\"aal\":\"aal2\"}',false)");
+ const opened=(await as(owner,'select omni_wallet_admin_setup(null,true) s')).rows[0].s;
+ assert.equal(opened.enabled,true);assert.equal(opened.mfa_verified,true);
+ const closed=(await as(owner,'select omni_wallet_admin_setup(null,false) s')).rows[0].s;
+ assert.equal(closed.enabled,false);
  await assert.rejects(as(newUser,`select omni_wallet_deposit_challenge('${address}')`),/permission denied/);
  await assert.rejects(as(null,`select omni_wallet_create_deposit('${randomUUID()}',10000000)`),/permission denied/);
  await assert.rejects(as(newUser,'select * from omni_private.wallet_deposit_quotes'),/permission denied/);
