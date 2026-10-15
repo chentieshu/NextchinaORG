@@ -1,0 +1,92 @@
+/* All interface colors, surfaces and geometry are defined here. */
+:root {
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-body-size: 15px;
+  --text-title: 28px;
+  --text-heading: 22px;
+  --text-subheading: 18px;
+  --canvas: #f7f8fa;
+  --bg: #ffffff;
+  --card: #ffffff;
+  --fg: #20242d;
+  --muted: #687080;
+  --line: #e5e8ee;
+  --line-strong: #bec5d0;
+  --soft: #f5f6f8;
+  --soft2: #eaedf2;
+  --accent: #4f63ad;
+  --accent-soft: #edf0fa;
+  --on-accent: #ffffff;
+  --primary-hover: #373d49;
+  --selection: #dfe6fb;
+  --success: #287252;
+  --success-soft: #edf6f0;
+  --success-line: #c9e2d2;
+  --warning: #886018;
+  --warning-soft: #fbf4e7;
+  --warning-line: #e8d8b3;
+  --danger: #b24646;
+  --danger-soft: #fbefef;
+  --danger-line: #eacbcb;
+  --data-1: #7183c0;
+  --data-2: #acb9de;
+  --data-3: #dfe5f3;
+  --data-positive: var(--success);
+  --data-warning: var(--warning);
+  --radius-small: 6px;
+  --radius-control: 10px;
+  --radius-panel: 14px;
+  --radius-dialog: 20px;
+  --radius-pill: 24px;
+  --radius-round: 9999px;
+  --control-radius: var(--radius-control);
+  --panel-radius: var(--radius-panel);
+  --page-gutter: 28px;
+  --overlay: #12172166;
+  --shadow-popover: 0 8px 28px #17234012;
+  --shadow-dialog: 0 24px 80px #17234024;
+  color-scheme: light;
+}
+html[data-theme="dark"] {
+  --canvas: #13161b;
+  --bg: #1a1e25;
+  --card: #1a1e25;
+  --fg: #e8ebf1;
+  --muted: #a1aabb;
+  --line: #303743;
+  --line-strong: #586376;
+  --soft: #222833;
+  --soft2: #303948;
+  --accent: #a9baf1;
+  --accent-soft: #29334c;
+  --on-accent: #1a2234;
+  --primary-hover: #cdd4e0;
+  --selection: #39496c;
+  --success: #8dccaa;
+  --success-soft: #20372c;
+  --success-line: #3c5d49;
+  --warning: #dfbf7c;
+  --warning-soft: #3b3220;
+  --warning-line: #6a5733;
+  --danger: #efa3a3;
+  --danger-soft: #3d292e;
+  --danger-line: #70434b;
+  --data-1: #a6b6e4;
+  --data-2: #6c83bc;
+  --data-3: #3d5077;
+  --overlay: #00000099;
+  --shadow-popover: 0 8px 30px #00000033;
+  --shadow-dialog: 0 24px 80px #00000055;
+  color-scheme: dark;
+}
+@media (max-width:900px) {
+  :root {
+    --page-gutter: 20px;
+  }
+}
+@media (max-width:380px) {
+  :root {
+    --page-gutter: 16px;
+  }
+}

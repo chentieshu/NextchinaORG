@@ -1,0 +1,1240 @@
+/* Rich editor, composer, multi-image upload, cropping and galleries. */
+.writing-prose p {
+  margin: 20px 0;
+}
+.writing-prose h2 {
+  font-size: 28px;
+  line-height: 1.45;
+  margin: 34px 0 16px;
+}
+.writing-prose h3 {
+  font-size: 23px;
+  margin: 28px 0 14px;
+}
+.writing-prose blockquote {
+  border-left: 2px solid var(--fg);
+  padding-left: 22px;
+  margin: 26px 0;
+  color: var(--muted);
+}
+.writing-prose ul {
+  list-style: disc;
+  padding-left: 26px;
+}
+.writing-prose ol {
+  list-style: decimal;
+  padding-left: 26px;
+}
+.writing-prose li {
+  margin: 7px 0;
+}
+.writing-prose strong {
+  font-weight: 700;
+}
+.writing-prose a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.writing-prose code {
+  background: var(--soft);
+  padding: 2px 5px;
+  border-radius: var(--radius-small);
+  font: 13px/1.8 var(--font-mono);
+}
+.writing-prose pre {
+  padding: 18px;
+  background: var(--soft);
+  white-space: pre-wrap;
+  overflow-x: auto;
+  border-radius: var(--radius-small);
+}
+.writing-prose pre code {
+  padding: 0;
+}
+.writing-prose img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 24px auto;
+}
+.writing-prose hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 32px 0;
+}
+.writing-prose li p {
+  margin: 5px 0;
+}
+.writing-room {
+  min-height: 80vh;
+}
+.writer-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 16px 32px;
+}
+.writer-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.draft-status {
+  font-size: 12px;
+  color: var(--muted);
+}
+.writer-paper {
+  padding: 44px 32px 70px;
+  margin: auto;
+  max-width: 800px;
+}
+.writer-languages {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 30px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.writer-languages label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.writer-languages select {
+  font-size: 12px;
+  border: 0;
+  padding: 5px;
+}
+.writing-title::placeholder {
+  color: var(--muted);
+  opacity: .65;
+}
+.writing-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-wrap: wrap;
+  padding: 7px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 25px;
+}
+.writing-toolbar button, .selection-menu button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-small);
+  font-size: 15px;
+}
+.writing-toolbar button:hover, .writing-toolbar button[aria-pressed=true] {
+  background: var(--soft2);
+}
+.writing-toolbar>span {
+  height: 20px;
+  width: 1px;
+  background: var(--line);
+  margin: 0 7px;
+}
+.writing-prose {
+  font-size: 18px;
+  line-height: 1.95;
+  overflow-wrap: anywhere;
+  outline: none;
+  min-height: 350px;
+  caret-color: var(--fg);
+}
+.writing-prose p.is-editor-empty:first-child:before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--muted);
+  pointer-events: none;
+  height: 0;
+}
+.selection-menu {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-small);
+  background: var(--fg);
+  color: var(--bg);
+  box-shadow: 0 4px 14px #0002;
+}
+.selection-menu button[aria-pressed=true], .selection-menu button:hover {
+  background: #80808055;
+}
+.insert-panel {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: var(--soft);
+  padding: 16px;
+  border-radius: var(--radius-small);
+  margin-bottom: 20px;
+}
+.insert-panel label {
+  font-size: 12px;
+  flex: 1;
+  min-width: 180px;
+}
+.insert-panel input {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+}
+.insert-panel>p {
+  flex-basis: 100%;
+  font-size: 12px;
+}
+.editor-loading {
+  padding: 25px 0;
+  min-height: 160px;
+  color: var(--muted);
+}
+.writer-settings label {
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 18px;
+}
+.editor-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+.writing-preview h1 {
+  font: 42px/1.45 Georgia,"Songti SC",serif;
+  font-family: var(--font-ui);
+  font-size: 38px;
+  font-weight: 650;
+}
+.draft-recovery {
+  background: var(--soft);
+  border: 1px solid var(--line);
+  padding: 16px;
+  margin-bottom: 25px;
+  font-size: 13px;
+}
+.draft-recovery p {
+  margin-bottom: 10px;
+}
+.draft-recovery .text-link {
+  margin-left: 14px;
+}
+.compact-editor .writing-toolbar {
+  border-top: 0;
+  margin-bottom: 8px;
+  padding-top: 0;
+}
+.compact-editor .writing-prose {
+  min-height: 100px;
+  font-size: 15px;
+  line-height: 1.8;
+}
+.compact-editor .writing-prose p {
+  margin: 9px 0;
+}
+.compact-editor .writing-toolbar button {
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+}
+.compact-editor .insert-panel label {
+  min-width: 120px;
+}
+.post-writing .writer-languages {
+  margin-bottom: 20px;
+}
+.post-writing .writing-toolbar {
+  border-top: 0;
+}
+.editor-embed {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  padding: 16px;
+  background: var(--soft);
+  margin: 15px 0;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: default;
+}
+.editor-embed>a {
+  color: var(--muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.editor-attachments {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  margin-top: 15px;
+  display: grid;
+  gap: 8px;
+}
+.editor-attachments>div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  min-width: 0;
+}
+.editor-attachments img {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-small);
+  object-fit: cover;
+}
+.editor-attachments span {
+  flex: 1;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.editor-attachments .icon-button {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+.composer-author {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+.composer-author .user-identity {
+  font-size: 15px;
+}
+.live-draft-note {
+  margin-bottom: 24px;
+}
+.live-draft-note .text-link {
+  display: inline;
+  margin-left: 12px;
+}
+.writer-languages>span {
+  white-space: normal;
+  max-width: 340px;
+}
+.writer-paper .upload-preview {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: var(--radius-small);
+  flex-basis: 100%;
+}
+.insert-panel progress {
+  width: 100%;
+}
+.post-writing .writer-actions .button {
+  border-radius: var(--radius-pill);
+}
+.post-writing .composer-author {
+  margin-bottom: 18px;
+}
+.post-writing .writer-count {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 18px;
+}
+.post-writing .writer-settings {
+  font-size: 12px;
+  margin-top: 20px;
+  padding-top: 12px;
+}
+.post-writing .writing-prose {
+  padding: 2px 0 24px;
+  min-height: 160px;
+  font-size: 19px;
+  line-height: 1.75;
+}
+.post-editor {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.post-editor>.editor-body {
+  order: 1;
+}
+.post-editor>.editor-controls {
+  order: 3;
+  min-width: 0;
+}
+.post-editor>.editor-attachments {
+  order: 2;
+}
+.post-format-options {
+  position: relative;
+}
+.post-format-options>summary::-webkit-details-marker {
+  display: none;
+}
+.post-format-options[open]>summary {
+  background: var(--soft);
+}
+.post-format-options>div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: -120px;
+  width: 246px;
+  z-index: 25;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  padding: 10px;
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-popover);
+}
+.post-image-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 8px;
+  order: 2;
+  margin-top: 18px;
+}
+.post-image-grid[data-count="1"] {
+  grid-template-columns: 1fr;
+}
+.post-image-grid[data-count="1"] .post-image-tile {
+  aspect-ratio: 1.5;
+  max-height: 430px;
+}
+.post-image-tile>img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.post-image-number {
+  position: absolute;
+  top: 9px;
+  left: 10px;
+  color: white;
+  background: #141517b3;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  min-width: 24px;
+  text-align: center;
+  padding: 4px;
+}
+.post-image-tile button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 34px;
+  min-height: 34px;
+  background: #141517cf;
+  color: white;
+  border-radius: var(--radius-round);
+  font-size: 16px;
+  backdrop-filter: blur(5px);
+}
+.post-image-tile button:disabled {
+  opacity: .35;
+}
+.post-image-tile .photo-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+}
+.post-image-tools {
+  position: absolute;
+  left: 7px;
+  right: 7px;
+  bottom: 7px;
+  display: flex;
+  gap: 5px;
+  z-index: 2;
+}
+.post-image-tools .photo-edit {
+  margin-left: auto;
+  border-radius: var(--radius-pill);
+  padding: 5px 10px;
+  font-size: 11px;
+}
+.photo-edit svg {
+  width: 15px;
+  height: 15px;
+}
+.post-image-status {
+  position: absolute;
+  inset: 0;
+  padding: 44px 12px;
+  background: #111b;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.post-image-status progress {
+  width: 80%;
+  height: 5px;
+  accent-color: white;
+}
+.post-image-status .button {
+  border: 1px solid #fff8;
+  border-radius: var(--radius-pill);
+  padding: 5px 12px;
+  font-size: 11px;
+}
+.post-image-dialog {
+  width: 560px;
+}
+.post-image-dialog h2 {
+  margin: 0 45px 24px 0;
+  font-size: 20px;
+}
+.post-image-edit-preview>img {
+  width: 100%;
+  max-height: 330px;
+  object-fit: contain;
+  border-radius: var(--radius-panel);
+  background: var(--soft);
+}
+.post-image-edit-preview>.button {
+  margin: 12px 0;
+}
+.post-image-description {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  font-size: 13px;
+  margin-top: 20px;
+}
+.post-image-description textarea {
+  width: 100%;
+  resize: vertical;
+  font-size: 16px;
+}
+.post-image-description small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.post-image-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+.post-crop-area {
+  height: 300px;
+  position: relative;
+  background: #171819;
+  border-radius: var(--radius-panel);
+  overflow: hidden;
+}
+.post-crop-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+  font-size: 12px;
+}
+.post-crop-tools label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+.post-crop-tools select {
+  max-width: 150px;
+}
+.post-crop-tools input {
+  width: 125px;
+  accent-color: var(--fg);
+  padding: 0;
+}
+.post-crop-tools .button {
+  min-height: 36px;
+  font-size: 12px;
+}
+.post-gallery[data-count="1"] {
+  grid-template-columns: 1fr;
+}
+.post-gallery>button {
+  position: relative;
+  aspect-ratio: 1.15;
+  overflow: hidden;
+  min-width: 0;
+  background: var(--soft);
+  cursor: zoom-in;
+}
+.post-gallery>button>img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  margin: 0;
+  border-radius: 0;
+}
+.post-gallery[data-count="1"]>button {
+  aspect-ratio: auto;
+  max-height: 600px;
+}
+.post-gallery[data-count="1"]>button>img {
+  height: auto;
+  max-height: 600px;
+  object-fit: contain;
+}
+.post-gallery[data-count="3"]>button:first-child {
+  grid-row: span 2;
+  aspect-ratio: auto;
+}
+.post-gallery>button>span {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  border-radius: var(--radius-small);
+  background: #111b;
+  color: white;
+  font-size: 11px;
+  padding: 1px 6px;
+}
+.modal.post-gallery-dialog {
+  width: 1000px;
+  background: var(--bg);
+}
+.post-gallery-dialog .modal-inner {
+  padding: 56px 20px 20px;
+}
+.post-gallery-view {
+  touch-action: pan-y;
+}
+.post-gallery-view>img {
+  display: block;
+  max-height: 68dvh;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  margin: auto;
+}
+.post-gallery-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.post-gallery-pagination .icon-button {
+  min-width: 44px;
+  min-height: 44px;
+}
+.post-gallery-caption {
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 12px auto 0;
+  max-width: 600px;
+}
+.thread-compose-part {
+  position: relative;
+  min-width: 0;
+}
+.has-thread .thread-compose-part {
+  padding: 0 0 22px 28px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+}
+.has-thread .thread-compose-part::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 38px;
+  bottom: 0;
+  width: 2px;
+  background: var(--line);
+}
+.thread-part-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 10px -28px;
+}
+.thread-part-toolbar>span {
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--bg);
+  z-index: 1;
+  padding: 8px 0;
+  min-width: 48px;
+}
+.thread-part-toolbar i {
+  font-style: normal;
+  color: var(--muted);
+  font-weight: 400;
+}
+.thread-part-toolbar>div {
+  display: flex;
+  gap: 4px;
+}
+.thread-part-toolbar .icon-button {
+  min-height: 40px;
+  min-width: 40px;
+  font-size: 15px;
+}
+.thread-part-count {
+  display: block;
+  text-align: right;
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 12px;
+}
+.thread-add-row .text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-size: 14px;
+}
+.thread-add-row .text-link svg {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-round);
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+}
+.thread-add-row small {
+  font-size: 12px;
+  color: var(--muted);
+}
+.thread-continuing {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.thread-continuing>a {
+  color: var(--fg);
+}
+.writer-draft-short {
+  display: none;
+}
+.post-writing .writer-topbar {
+  padding: 18px 28px;
+  gap: 14px;
+  min-height: 70px;
+}
+.writer-back.icon-control {
+  color: var(--fg);
+  margin-left: -8px;
+  min-width: 40px;
+  min-height: 40px;
+}
+.writer-actions {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  gap: 12px;
+}
+.writer-actions .writer-draft-action {
+  background: transparent;
+  border: 0;
+  min-width: 38px;
+  min-height: 38px;
+  padding: 8px;
+  color: var(--muted);
+  border-radius: var(--radius-round);
+}
+.writer-actions .writer-draft-action:hover {
+  background: var(--soft);
+  color: var(--fg);
+}
+.writer-actions .writer-draft-action>svg {
+  width: 18px;
+  height: 18px;
+}
+.writer-actions .writer-draft-full, .writer-actions .writer-draft-short, .writer-preview-toggle>span {
+  display: none;
+}
+.writer-preview-toggle>svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+.writer-preview-toggle {
+  min-width: 38px;
+  min-height: 38px;
+  border-radius: var(--radius-round);
+  justify-content: center;
+}
+.writer-preview-toggle:hover {
+  background: var(--soft);
+}
+.post-writing .writer-paper {
+  max-width: 760px;
+  padding-top: 32px;
+}
+.composer-author small {
+  color: var(--muted);
+  font-size: 11px;
+  margin-left: 49px;
+  display: none;
+}
+.post-editor .writing-toolbar {
+  position: relative;
+  margin: 20px 0 0;
+  border-bottom: 0;
+  flex-wrap: nowrap;
+  border-top: 0;
+  margin-top: 16px;
+  padding: 5px 0;
+  gap: 6px;
+}
+.post-editor .writing-toolbar>button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-round);
+  font-size: 18px;
+  min-width: 38px;
+  min-height: 38px;
+  color: var(--muted);
+}
+.post-format-options>summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-round);
+  font-size: 18px;
+  cursor: pointer;
+  list-style: none;
+  min-width: 38px;
+  min-height: 38px;
+  color: var(--muted);
+}
+.post-editor .writing-toolbar>button:hover {
+  color: var(--fg);
+}
+.post-format-options>summary:hover {
+  background: var(--soft);
+  color: var(--fg);
+}
+.post-media-count {
+  margin-left: auto;
+  color: var(--muted);
+  white-space: nowrap;
+  font-size: 11px;
+}
+.post-media-hint {
+  line-height: 1.8;
+  color: var(--muted);
+  margin: 8px 0 0;
+  font-size: 12px;
+}
+.writer-count {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 10px;
+  min-height: 0;
+}
+.writer-count:empty {
+  display: none;
+}
+.writer-settings {
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 0;
+}
+.writer-settings summary {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  color: var(--muted);
+  cursor: pointer;
+  justify-content: flex-start;
+  gap: 9px;
+  font-size: 12px;
+  min-height: 40px;
+}
+.writer-settings summary>svg:first-child {
+  width: 15px;
+  height: 15px;
+}
+.writer-settings summary>svg:last-child {
+  width: 13px;
+  height: 13px;
+  margin-left: auto;
+}
+.thread-add-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+}
+.thread-add-row>.icon-control {
+  border: 1px solid var(--line);
+  width: 38px;
+  height: 38px;
+}
+.thread-add-row>.icon-control>svg {
+  width: 18px;
+  height: 18px;
+  border: 0;
+  padding: 0;
+}
+.post-image-tile {
+  position: relative;
+  min-width: 0;
+  aspect-ratio: 1.2;
+  overflow: hidden;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+}
+.post-gallery {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 4px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  margin: 22px 0;
+  border-radius: var(--radius-panel);
+}
+.writing-title {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  resize: none;
+  font: 42px/1.45 Georgia,"Songti SC","Microsoft YaHei",serif;
+  min-height: 61px;
+  overflow: hidden;
+  font-family: var(--font-ui);
+  font-size: 38px;
+  font-weight: 650;
+  letter-spacing: -.04em;
+}
+.writing-summary {
+  display: block;
+  width: 100%;
+  padding: 12px 0;
+  border: 0;
+  resize: none;
+  border-radius: 0;
+  color: var(--muted);
+  margin: 12px 0 25px;
+  min-height: 85px;
+  font-size: 17px;
+  line-height: 1.75;
+}
+@media (max-width:900px) {
+  .writer-topbar {
+    padding: 14px 24px;
+    gap: 14px;
+  }
+  .writer-actions {
+    gap: 10px;
+  }
+  .draft-status {
+    max-width: 190px;
+    line-height: 1.5;
+  }
+  .post-writing .writer-topbar .draft-status {
+    display: none;
+  }
+  .post-writing .writer-preview-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    min-height: 40px;
+    font-size: 18px;
+  }
+  .post-writing .writer-preview-toggle>svg {
+    display: block;
+  }
+  .post-writing .writer-preview-toggle>span, .post-writing .composer-author small, .post-writing .post-shortcut {
+    display: none;
+  }
+  .post-writing .writer-count {
+    justify-content: flex-end;
+  }
+  .post-image-tools {
+    gap: 3px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+  }
+  .post-image-tile button {
+    min-width: 32px;
+    min-height: 34px;
+  }
+  .post-image-tools .photo-edit {
+    padding: 5px 8px;
+  }
+  .post-image-tools .photo-edit>span {
+    display: none;
+  }
+  .post-image-grid {
+    gap: 6px;
+  }
+  .post-image-tile {
+    aspect-ratio: 1;
+    border-radius: var(--radius-panel);
+  }
+  .post-image-tile[data-state=error] {
+    aspect-ratio: auto;
+    min-height: 195px;
+  }
+  .post-image-tile[data-state=error]>img {
+    position: absolute;
+    inset: 0;
+  }
+  .post-image-status {
+    font-size: 11px;
+    padding: 42px 8px;
+  }
+  .post-crop-area {
+    height: 260px;
+  }
+  .post-editor .writing-toolbar {
+    gap: 5px;
+  }
+  .post-editor .writing-toolbar>button, .post-format-options>summary {
+    min-width: 40px;
+    min-height: 40px;
+  }
+  .thread-add-row>.icon-control {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .writer-actions .writer-preview-toggle {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+@media (max-width:600px) {
+  .writing-prose h2 {
+    font-size: 24px;
+  }
+  .writing-prose h3 {
+    font-size: 21px;
+  }
+  .writing-prose pre {
+    padding: 14px;
+  }
+  .writer-back {
+    font-size: 12px;
+  }
+  .draft-status {
+    margin-left: auto;
+    max-width: 65%;
+    font-size: 11px;
+    overflow-wrap: anywhere;
+  }
+  .writer-actions>.text-link {
+    margin-right: auto;
+    font-size: 12px;
+  }
+  .writer-paper {
+    padding: 30px 22px 50px;
+  }
+  .writer-languages label {
+    gap: 7px;
+  }
+  .writer-languages select {
+    max-width: 105px;
+    font-size: 12px;
+  }
+  .writing-title {
+    font-size: 32px;
+    min-height: 48px;
+  }
+  .writing-summary {
+    font-size: 16px;
+    line-height: 1.75;
+    margin: 10px 0 20px;
+  }
+  .writing-toolbar>span {
+    margin: 0 4px;
+  }
+  .writing-prose {
+    font-size: 16px;
+    line-height: 1.95;
+    min-height: 320px;
+  }
+  .selection-menu button {
+    width: 30px;
+  }
+  .writing-preview h1 {
+    font-size: 32px;
+  }
+  .editor-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .writer-settings label {
+    font-size: 12px;
+  }
+  .insert-panel {
+    padding: 13px;
+    gap: 10px;
+  }
+  .insert-panel label {
+    flex-basis: 100%;
+    min-width: 0;
+  }
+  .insert-panel input {
+    font-size: 16px;
+  }
+  .compact-editor .writing-toolbar button {
+    width: 32px;
+    height: 34px;
+  }
+  .compact-editor .writing-prose {
+    min-height: 100px;
+    font-size: 15px;
+  }
+  .post-writing .writer-paper {
+    padding-top: 26px;
+  }
+  .writer-topbar {
+    position: relative;
+    flex-wrap: wrap;
+    gap: 9px;
+    padding: 12px 16px;
+  }
+  .writer-topbar .draft-status {
+    max-width: calc(100% - 100px);
+    font-size: 10px;
+  }
+  .writer-actions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  .writer-actions .button {
+    font-size: 12px;
+    padding: 8px 13px;
+    min-height: 38px;
+  }
+  .writer-languages {
+    margin-bottom: 25px;
+    font-size: 11px;
+    gap: 10px;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .writer-languages>span {
+    max-width: 100%;
+    line-height: 1.6;
+  }
+  .writing-toolbar {
+    padding: 6px 0;
+    margin-bottom: 19px;
+    gap: 1px;
+  }
+  .writing-toolbar button {
+    width: 30px;
+    height: 36px;
+  }
+  .post-writing .writing-prose {
+    font-size: 16px;
+    min-height: 150px;
+  }
+  .composer-author {
+    margin-bottom: 24px;
+  }
+  .composer-author small {
+    margin-left: 0;
+  }
+  .has-thread .thread-compose-part {
+    padding-left: 20px;
+  }
+  .thread-part-toolbar {
+    margin-left: -20px;
+  }
+  .has-thread .thread-compose-part::before {
+    left: 3px;
+  }
+  .thread-compose-part .writing-toolbar {
+    gap: 4px;
+  }
+  .thread-part-toolbar .icon-button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  .post-writing .writer-back>svg {
+    font-size: 18px;
+  }
+  .post-writing .writer-draft-full {
+    display: none;
+  }
+  .post-writing .writer-draft-short {
+    display: inline;
+  }
+  .post-writing .writer-preview-toggle {
+    min-width: 32px;
+  }
+  .post-writing .writer-back {
+    gap: 0;
+    min-width: 30px;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .modal.post-gallery-dialog .modal-inner {
+    padding-top: 54px;
+  }
+}
+@media (max-width:380px) {
+  .writer-paper, .writer-topbar {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .writer-actions {
+    gap: 8px;
+  }
+  .writing-toolbar button {
+    width: 30px;
+  }
+  .writing-toolbar>span {
+    margin: 0 3px;
+  }
+  .post-image-tools .photo-edit {
+    padding: 4px 7px;
+  }
+  .writer-actions .button.primary {
+    padding: 8px 11px;
+  }
+}

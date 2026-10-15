@@ -1,1 +1,130 @@
-.prediction-feature{border:1px solid var(--border,#e5e5e5);border-radius:16px;padding:24px;margin:24px 0}.prediction-heading{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.prediction-heading h2{font-size:20px;font-weight:600;margin:0 0 4px}.prediction-heading span,.prediction-prices span{font-size:12px;color:var(--muted,#737373)}.prediction-heading .btc-symbol{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#f7931a;color:white;font-size:28px}.prediction-status{font-size:11px;padding:4px 8px;border:1px solid var(--border,#e5e5e5);border-radius:6px;display:inline-block}.prediction-heading>.prediction-status{margin-left:auto}.prediction-prices{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:32px 0}.prediction-prices strong{display:block;font-size:32px;font-weight:500;margin-top:8px}.prediction-outcomes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}.prediction-outcomes button{display:flex;gap:8px;justify-content:center;align-items:center;padding:14px;border-radius:8px;background:#e9f5ef;color:#247a53;font-weight:600}.prediction-outcomes button+button{background:#faeded;color:#b64c4c}.prediction-outcomes button:disabled{cursor:not-allowed;opacity:.7}.prediction-feature summary,.prediction-list summary{cursor:pointer;font-size:13px;margin:16px 0}.prediction-feature details p{font-size:13px;line-height:1.8;color:var(--muted,#737373)}.prediction-list article{padding:24px 0;border-bottom:1px solid var(--border,#e5e5e5)}.prediction-list h2{font-size:18px;margin:14px 0}.prediction-list time{display:block;font-size:12px;color:var(--muted,#737373);margin-top:10px}.prediction-rule{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.8}.prediction-list a{overflow-wrap:anywhere}.prediction-admin{margin:24px 0}@media(max-width:540px){.prediction-feature{padding:16px}.prediction-heading>.prediction-status{margin-left:52px}.prediction-heading h2{font-size:17px}.prediction-page .wallet-heading{align-items:flex-start;gap:12px;flex-wrap:wrap}}
+.prediction-feature {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  padding: 24px;
+  margin: 24px 0;
+}
+.prediction-heading {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.prediction-heading h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+.prediction-heading span, .prediction-prices span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.prediction-heading .btc-symbol {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-round);
+  background: #f7931a;
+  color: white;
+  font-size: 28px;
+}
+.prediction-status {
+  font-size: 11px;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-small);
+  display: inline-block;
+}
+.prediction-heading>.prediction-status {
+  margin-left: auto;
+}
+.prediction-prices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 32px 0;
+}
+.prediction-prices strong {
+  display: block;
+  font-size: 32px;
+  font-weight: 500;
+  margin-top: 8px;
+}
+.prediction-outcomes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.prediction-outcomes button {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  padding: 14px;
+  border-radius: var(--radius-control);
+  background: var(--success-soft);
+  color: var(--success);
+  font-weight: 600;
+}
+.prediction-outcomes button+button {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.prediction-outcomes button:disabled {
+  cursor: not-allowed;
+  opacity: .7;
+}
+.prediction-feature summary, .prediction-list summary {
+  cursor: pointer;
+  font-size: 13px;
+  margin: 16px 0;
+}
+.prediction-feature details p {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.prediction-list article {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--line);
+}
+.prediction-list h2 {
+  font-size: 18px;
+  margin: 14px 0;
+}
+.prediction-list time {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 10px;
+}
+.prediction-rule {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.prediction-list a {
+  overflow-wrap: anywhere;
+}
+.prediction-admin {
+  margin: 24px 0;
+}
+@media (max-width:600px) {
+  .prediction-feature {
+    padding: 16px;
+  }
+  .prediction-heading>.prediction-status {
+    margin-left: 52px;
+  }
+  .prediction-heading h2 {
+    font-size: 17px;
+  }
+  .prediction-page .wallet-heading {
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+}

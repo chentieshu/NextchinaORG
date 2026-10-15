@@ -1,0 +1,529 @@
+{
+  "totals": {
+    "files": 20,
+    "bytes": 155894,
+    "rules": 2186,
+    "declarations": 5764,
+    "important": 24,
+    "literalColors": 77,
+    "repeatedSelectorContexts": 227,
+    "excessSelectorOccurrences": 265,
+    "repeatedProperties": 301,
+    "changedProperties": 235,
+    "undefinedVariables": [
+      "--border",
+      "--surface",
+      "--text"
+    ],
+    "compactBytes": 156670
+  },
+  "sheets": [
+    {
+      "file": "src/app/chinateam.css",
+      "bytes": 7085,
+      "rules": 105,
+      "compactBytes": 7164
+    },
+    {
+      "file": "src/app/composer.css",
+      "bytes": 7404,
+      "rules": 87,
+      "compactBytes": 7290
+    },
+    {
+      "file": "src/app/globals.css",
+      "bytes": 32340,
+      "rules": 477,
+      "compactBytes": 32748
+    },
+    {
+      "file": "src/app/mobile.css",
+      "bytes": 7075,
+      "rules": 85,
+      "compactBytes": 6896
+    },
+    {
+      "file": "src/app/search.css",
+      "bytes": 3742,
+      "rules": 50,
+      "compactBytes": 3788
+    },
+    {
+      "file": "src/app/shell.css",
+      "bytes": 10116,
+      "rules": 155,
+      "compactBytes": 10257
+    },
+    {
+      "file": "src/app/social.css",
+      "bytes": 8422,
+      "rules": 117,
+      "compactBytes": 8529
+    },
+    {
+      "file": "src/app/threads.css",
+      "bytes": 4057,
+      "rules": 53,
+      "compactBytes": 3975
+    },
+    {
+      "file": "src/app/ux.css",
+      "bytes": 16461,
+      "rules": 260,
+      "compactBytes": 16108
+    },
+    {
+      "file": "src/components/data/data.css",
+      "bytes": 7306,
+      "rules": 99,
+      "compactBytes": 7399
+    },
+    {
+      "file": "src/components/profile.css",
+      "bytes": 1277,
+      "rules": 21,
+      "compactBytes": 1294
+    },
+    {
+      "file": "src/modules/admin/admin.css",
+      "bytes": 4089,
+      "rules": 60,
+      "compactBytes": 4143
+    },
+    {
+      "file": "src/modules/admin/workspace.css",
+      "bytes": 18041,
+      "rules": 221,
+      "compactBytes": 18246
+    },
+    {
+      "file": "src/modules/identity/identity.css",
+      "bytes": 1268,
+      "rules": 17,
+      "compactBytes": 1283
+    },
+    {
+      "file": "src/modules/predictions/exchange.css",
+      "bytes": 12980,
+      "rules": 174,
+      "compactBytes": 13142
+    },
+    {
+      "file": "src/modules/predictions/predictions.css",
+      "bytes": 2059,
+      "rules": 25,
+      "compactBytes": 2082
+    },
+    {
+      "file": "src/modules/wallet/c2c.css",
+      "bytes": 1138,
+      "rules": 22,
+      "compactBytes": 1158
+    },
+    {
+      "file": "src/modules/wallet/issuance.css",
+      "bytes": 1603,
+      "rules": 22,
+      "compactBytes": 1623
+    },
+    {
+      "file": "src/modules/wallet/market.css",
+      "bytes": 2712,
+      "rules": 39,
+      "compactBytes": 2747
+    },
+    {
+      "file": "src/modules/wallet/wallet.css",
+      "bytes": 6719,
+      "rules": 97,
+      "compactBytes": 6798
+    }
+  ],
+  "overlaps": [
+    {
+      "selector": "|.post-writing .writer-paper|max-width",
+      "values": [
+        {
+          "value": "830px",
+          "important": false,
+          "file": "src/app/chinateam.css"
+        },
+        {
+          "value": "740px",
+          "important": false,
+          "file": "src/app/composer.css"
+        },
+        {
+          "value": "830px",
+          "important": false,
+          "file": "src/app/social.css"
+        },
+        {
+          "value": "760px",
+          "important": false,
+          "file": "src/app/ux.css"
+        }
+      ]
+    },
+    {
+      "selector": "|.post-writing .writing-prose|min-height",
+      "values": [
+        {
+          "value": "180px",
+          "important": false,
+          "file": "src/app/chinateam.css"
+        },
+        {
+          "value": "160px",
+          "important": false,
+          "file": "src/app/composer.css"
+        },
+        {
+          "value": "220px",
+          "important": false,
+          "file": "src/app/social.css"
+        }
+      ]
+    },
+    {
+      "selector": "|.post-editor .writing-toolbar|border-top",
+      "values": [
+        {
+          "value": "1px solid var(--line)",
+          "important": false,
+          "file": "src/app/chinateam.css"
+        },
+        {
+          "value": "1px solid var(--line)",
+          "important": false,
+          "file": "src/app/composer.css"
+        },
+        {
+          "value": "0",
+          "important": false,
+          "file": "src/app/ux.css"
+        }
+      ]
+    },
+    {
+      "selector": "@media (max-width:900px)|.stream-tabs|min-height",
+      "values": [
+        {
+          "value": "60px",
+          "important": false,
+          "file": "src/app/mobile.css"
+        },
+        {
+          "value": "59px",
+          "important": false,
+          "file": "src/app/shell.css"
+        },
+        {
+          "value": "60px",
+          "important": false,
+          "file": "src/app/ux.css"
+        }
+      ]
+    },
+    {
+      "selector": "@media (max-width:900px)|.stream-tabs>button|min-height",
+      "values": [
+        {
+          "value": "60px",
+          "important": false,
+          "file": "src/app/mobile.css"
+        },
+        {
+          "value": "59px",
+          "important": false,
+          "file": "src/app/shell.css"
+        },
+        {
+          "value": "60px",
+          "important": false,
+          "file": "src/app/ux.css"
+        }
+      ]
+    },
+    {
+      "selector": "@media (max-width:900px)|.app-body .article-card|padding",
+      "values": [
+        {
+          "value": "24px 0",
+          "important": false,
+          "file": "src/app/mobile.css"
+        },
+        {
+          "value": "22px 0",
+          "important": false,
+          "file": "src/app/shell.css"
+        },
+        {
+          "value": "22px 0",
+          "important": false,
+          "file": "src/app/ux.css"
+        }
+      ]
+    },
+    {
+      "selector": "@media (max-width:900px)|.app-body .post-media-preview|flex-basis",
+      "values": [
+        {
+          "value": "104px",
+          "important": false,
+          "file": "src/app/mobile.css"
+        },
+        {
+          "value": "76px",
+          "important": false,
+          "file": "src/app/shell.css"
+        },
+        {
+          "value": "96px",
+          "important": false,
+          "file": "src/app/ux.css"
+        }
+      ]
+    },
+    {
+      "selector": "@media (max-width:900px)|.app-body .post-media-preview|width",
+      "values": [
+        {
+          "value": "104px",
+          "important": false,
+          "file": "src/app/mobile.css"
+        },
+        {
+          "value": "76px",
+          "important": false,
+          "file": "src/app/shell.css"
+        },
+        {
+          "value": "96px",
+          "important": false,
+          "file": "src/app/ux.css"
+        }
+      ]
+    },
+    {
+      "selector": "@media (max-width:900px)|.app-body .post-media-preview|min-width",
+      "values": [
+        {
+          "value": "104px",
+          "important": false,
+          "file": "src/app/mobile.css"
+        },
+        {
+          "value": "76px",
+          "important": false,
+          "file": "src/app/shell.css"
+        },
+        {
+          "value": "96px",
+          "important": false,
+          "file": "src/app/ux.css"
+        }
+      ]
+    },
+    {
+      "selector": "@media (max-width:900px)|.app-body .post-media-preview>img|width",
+      "values": [
+        {
+          "value": "104px",
+          "important": false,
+          "file": "src/app/mobile.css"
+        },
+        {
+          "value": "76px",
+          "important": false,
+          "file": "src/app/shell.css"
+        },
+        {
+          "value": "96px",
+          "important": false,
+          "file": "src/app/ux.css"
+        }
+      ]
+    },
+    {
+      "selector": "@media (max-width:900px)|.app-body .post-media-preview>img|height",
+      "values": [
+        {
+          "value": "104px",
+          "important": false,
+          "file": "src/app/mobile.css"
+        },
+        {
+          "value": "76px",
+          "important": false,
+          "file": "src/app/shell.css"
+        },
+        {
+          "value": "96px",
+          "important": false,
+          "file": "src/app/ux.css"
+        }
+      ]
+    },
+    {
+      "selector": "@media (max-width:900px)|.app-body .post-excerpt p|font-size",
+      "values": [
+        {
+          "value": "15px",
+          "important": false,
+          "file": "src/app/mobile.css"
+        },
+        {
+          "value": "13px",
+          "important": false,
+          "file": "src/app/shell.css"
+        },
+        {
+          "value": "15px",
+          "important": false,
+          "file": "src/app/ux.css"
+        }
+      ]
+    },
+    {
+      "selector": "@media (max-width:900px)|.app-body .post-excerpt p|line-height",
+      "values": [
+        {
+          "value": "1.75",
+          "important": false,
+          "file": "src/app/mobile.css"
+        },
+        {
+          "value": "1.8",
+          "important": false,
+          "file": "src/app/shell.css"
+        },
+        {
+          "value": "1.75",
+          "important": false,
+          "file": "src/app/ux.css"
+        }
+      ]
+    },
+    {
+      "selector": "@media (max-width:900px)|.app-body .article-actions|gap",
+      "values": [
+        {
+          "value": "10px",
+          "important": false,
+          "file": "src/app/mobile.css"
+        },
+        {
+          "value": "13px",
+          "important": false,
+          "file": "src/app/shell.css"
+        },
+        {
+          "value": "9px",
+          "important": false,
+          "file": "src/app/ux.css"
+        }
+      ]
+    },
+    {
+      "selector": "@media (max-width:900px)|.app-body .footer|padding",
+      "values": [
+        {
+          "value": "24px 20px",
+          "important": false,
+          "file": "src/app/mobile.css"
+        },
+        {
+          "value": "24px 15px",
+          "important": false,
+          "file": "src/app/shell.css"
+        },
+        {
+          "value": "20px",
+          "important": false,
+          "file": "src/app/ux.css"
+        }
+      ]
+    },
+    {
+      "selector": "@media (max-width:900px)|.app-body .settings-nav|gap",
+      "values": [
+        {
+          "value": "6px 20px",
+          "important": false,
+          "file": "src/app/mobile.css"
+        },
+        {
+          "value": "15px",
+          "important": false,
+          "file": "src/app/shell.css"
+        },
+        {
+          "value": "10px 18px",
+          "important": false,
+          "file": "src/app/ux.css"
+        }
+      ]
+    },
+    {
+      "selector": "|.repost-menu summary|min-width",
+      "values": [
+        {
+          "value": "30px",
+          "important": false,
+          "file": "src/app/chinateam.css"
+        },
+        {
+          "value": "32px",
+          "important": false,
+          "file": "src/app/ux.css"
+        }
+      ]
+    },
+    {
+      "selector": "|.repost-menu summary|min-height",
+      "values": [
+        {
+          "value": "36px",
+          "important": false,
+          "file": "src/app/chinateam.css"
+        },
+        {
+          "value": "34px",
+          "important": false,
+          "file": "src/app/ux.css"
+        }
+      ]
+    },
+    {
+      "selector": "|.repost-options|border-radius",
+      "values": [
+        {
+          "value": "9px",
+          "important": false,
+          "file": "src/app/chinateam.css"
+        },
+        {
+          "value": "12px",
+          "important": false,
+          "file": "src/app/ux.css"
+        }
+      ]
+    },
+    {
+      "selector": "|.repost-options|padding",
+      "values": [
+        {
+          "value": "5px",
+          "important": false,
+          "file": "src/app/chinateam.css"
+        },
+        {
+          "value": "6px",
+          "important": false,
+          "file": "src/app/ux.css"
+        }
+      ]
+    }
+  ]
+}

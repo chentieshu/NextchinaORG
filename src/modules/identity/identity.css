@@ -1,1 +1,83 @@
-.identity-badges{display:inline-flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:10px;font-weight:500;line-height:1.5}.identity-level,.identity-title{border:1px solid var(--border,#e5e5e5);border-radius:4px;padding:1px 5px;color:var(--muted,#737373);white-space:nowrap}.identity-title{background:var(--surface,#fafafa)}.identity-summary{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;margin:16px 0}.identity-admin{display:grid;gap:24px}.identity-admin form,.identity-admin details{padding:20px;border:1px solid var(--border,#e5e5e5);border-radius:12px}.identity-admin label{display:grid;gap:6px;margin:12px 0}.identity-admin .checkbox-label{display:flex}.identity-admin input,.identity-admin select{min-width:0;max-width:100%}.identity-rules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}.identity-rules-grid label{margin:0}.wallet-sections a{display:block;padding:12px 4px;color:var(--muted,#737373);white-space:nowrap}.wallet-sections a[aria-current=page]{color:var(--text,#171717);border-bottom:2px solid currentColor}.wallet-sections{overflow-x:auto}.identity-admin .wallet-actions{flex-wrap:wrap}.identity-admin summary{cursor:pointer;font-weight:600}.identity-admin .inline-error{overflow-wrap:anywhere}
+.identity-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.identity-level {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-small);
+  padding: 1px 5px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.identity-title {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-small);
+  padding: 1px 5px;
+  color: var(--muted);
+  white-space: nowrap;
+  background: var(--card);
+}
+.identity-summary {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.identity-admin {
+  display: grid;
+  gap: 24px;
+}
+.identity-admin form, .identity-admin details {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+}
+.identity-admin label {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0;
+}
+.identity-admin .checkbox-label {
+  display: flex;
+}
+.identity-admin input, .identity-admin select {
+  min-width: 0;
+  max-width: 100%;
+}
+.identity-rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
+  gap: 12px;
+}
+.identity-rules-grid label {
+  margin: 0;
+}
+.wallet-sections a {
+  display: block;
+  padding: 12px 4px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.wallet-sections a[aria-current=page] {
+  color: var(--fg);
+  border-bottom: 2px solid currentColor;
+}
+.wallet-sections {
+  overflow-x: auto;
+}
+.identity-admin .wallet-actions {
+  flex-wrap: wrap;
+}
+.identity-admin summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.identity-admin .inline-error {
+  overflow-wrap: anywhere;
+}

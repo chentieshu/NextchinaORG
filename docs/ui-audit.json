@@ -1,0 +1,135 @@
+{
+  "totals": {
+    "files": 18,
+    "bytes": 178920,
+    "compactBytes": 147492,
+    "rules": 1856,
+    "declarations": 5422,
+    "important": 20,
+    "literalColors": 69,
+    "widthBreakpoints": [
+      380,
+      600,
+      900,
+      901,
+      1200,
+      1600
+    ],
+    "repeatedSelectorContexts": 0,
+    "excessSelectorOccurrences": 0,
+    "repeatedProperties": 0,
+    "changedProperties": 0,
+    "undefinedVariables": []
+  },
+  "sheets": [
+    {
+      "file": "src/app/globals.css",
+      "bytes": 144,
+      "compactBytes": 141,
+      "rules": 0
+    },
+    {
+      "file": "src/components/data/data.css",
+      "bytes": 8920,
+      "compactBytes": 7333,
+      "rules": 94
+    },
+    {
+      "file": "src/components/profile.css",
+      "bytes": 1617,
+      "compactBytes": 1315,
+      "rules": 21
+    },
+    {
+      "file": "src/modules/admin/admin.css",
+      "bytes": 27714,
+      "compactBytes": 23476,
+      "rules": 262
+    },
+    {
+      "file": "src/modules/identity/identity.css",
+      "bytes": 1607,
+      "compactBytes": 1360,
+      "rules": 17
+    },
+    {
+      "file": "src/modules/predictions/exchange.css",
+      "bytes": 16118,
+      "compactBytes": 13448,
+      "rules": 169
+    },
+    {
+      "file": "src/modules/predictions/predictions.css",
+      "bytes": 2550,
+      "compactBytes": 2132,
+      "rules": 25
+    },
+    {
+      "file": "src/modules/wallet/c2c.css",
+      "bytes": 1371,
+      "compactBytes": 1138,
+      "rules": 20
+    },
+    {
+      "file": "src/modules/wallet/issuance.css",
+      "bytes": 2058,
+      "compactBytes": 1710,
+      "rules": 21
+    },
+    {
+      "file": "src/modules/wallet/market.css",
+      "bytes": 3350,
+      "compactBytes": 2782,
+      "rules": 39
+    },
+    {
+      "file": "src/modules/wallet/wallet.css",
+      "bytes": 8244,
+      "compactBytes": 6826,
+      "rules": 97
+    },
+    {
+      "file": "src/styles/account.css",
+      "bytes": 8435,
+      "compactBytes": 6956,
+      "rules": 99
+    },
+    {
+      "file": "src/styles/content.css",
+      "bytes": 25385,
+      "compactBytes": 20767,
+      "rules": 286
+    },
+    {
+      "file": "src/styles/editor.css",
+      "bytes": 23562,
+      "compactBytes": 19265,
+      "rules": 239
+    },
+    {
+      "file": "src/styles/foundation.css",
+      "bytes": 17496,
+      "compactBytes": 14324,
+      "rules": 178
+    },
+    {
+      "file": "src/styles/public.css",
+      "bytes": 27733,
+      "compactBytes": 22265,
+      "rules": 285
+    },
+    {
+      "file": "src/styles/shared.css",
+      "bytes": 316,
+      "compactBytes": 301,
+      "rules": 0
+    },
+    {
+      "file": "src/styles/tokens.css",
+      "bytes": 2300,
+      "compactBytes": 1953,
+      "rules": 4
+    }
+  ],
+  "overlaps": []
+}

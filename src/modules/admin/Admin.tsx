@@ -28,7 +28,7 @@ import {experienceCopy} from '@/lib/experience-copy';
 import {normalizeDocument,plainDocument} from '@/lib/rich-content';
 import {useDebounce} from '@/lib/use-content-feed';
 import type {Article,Profile,Comment} from '@/lib/types';
-import './admin.css';
+
 const ExchangeAdmin=dynamic(()=>import('@/modules/predictions/ExchangeAdmin').then(m=>m.ExchangeAdmin));
 type Tab='predictions'|'dashboard'|'posts'|'articles'|'moderation'|'members'|'categories'|'settings'|'audit'|'monitor'|'wallet'|'market';
 type Audit={id:number;actor_id:string;action:string;target:string;created_at:string};

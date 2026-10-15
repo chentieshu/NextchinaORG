@@ -17,7 +17,7 @@ import {walletCopy} from '@/modules/wallet/copy';
 import {marketCopy} from '@/modules/wallet/market-copy';
 import {workspaceCopy} from './copy';
 import {canOpenTab,parseAdminView,type AdminTab} from './navigation';
-import './workspace.css';
+
 const AuthDialog=dynamic(()=>import('@/components/AuthDialog'),{ssr:false});
 type View={tab:AdminTab;status:string};
 type Navigation=View&{selectTab:(tab:AdminTab,status?:string)=>void;setStatus:(value:string)=>void;setNavigationLocked:(value:boolean)=>void};

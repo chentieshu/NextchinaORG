@@ -1,0 +1,11 @@
+/* Single shared entry. Order is intentional; do not add page-wide override files. */
+@import "tailwindcss";
+@import "./tokens.css";
+@import "./foundation.css";
+@import "./content.css";
+@import "./editor.css";
+@import "./account.css";
+@import "../components/data/data.css";
+@theme {
+  --font-sans: var(--font-ui);
+}
