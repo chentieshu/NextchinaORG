@@ -10,7 +10,7 @@ test('quiet feed preserves identity, right-hand media and keyboard-accessible so
  await expect(page.locator('main h1')).toHaveClass('sr-only');await expect(page.locator('.article-card h3')).toHaveCount(0);await expect(page.locator('.social-post>.card-content>.article-meta .identity-names')).toHaveCount(0);await expect(page.locator('.social-post>.card-content>.article-meta .user-identity').first()).toHaveAccessibleName('Test writer');
  const sort=page.getByLabel('排序',{exact:true});await sort.focus();await expect(sort).toBeFocused();await sort.selectOption('popular');await expect.poll(()=>state.feeds.at(-1)?.sort_by).toBe('popular');
  for(const width of [1440,900,768,390,320]){
-  await page.setViewportSize({width,height:960});await expect(page.locator('.post-media-preview')).toBeVisible();
+  await page.setViewportSize({width,height:960});await expect(page.locator('.post-media-preview')).toBeVisible();const repost=page.locator('.social-post .repost-menu').first();await repost.locator('summary').click();await repost.getByRole('link',{name:'引用',exact:true}).click({trial:true});await repost.locator('summary').click();
   const body=await page.locator('.card-content').filter({hasText:'把想法'}).boundingBox(),media=await page.locator('.post-media-preview').boundingBox();expect(media!.x).toBeGreaterThan(body!.x);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  }
  await page.locator('.post-excerpt').first().focus();await page.setViewportSize({width:1440,height:1000});await page.screenshot({path:test.info().outputPath('feed-desktop.png'),fullPage:true});

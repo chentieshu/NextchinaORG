@@ -1148,6 +1148,9 @@
   pointer-events: none;
   transition: opacity .15s ease;
 }
+.social-post:has(.repost-menu[open]) {
+  z-index: 2;
+}
 @media (max-width:900px) {
   .article-heading h1 {
     font-size: 36px;
