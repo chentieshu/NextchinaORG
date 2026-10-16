@@ -568,11 +568,6 @@ html[data-theme=dark] .outcome-text-yes, html[data-theme=dark] .market-tile-outc
 html[data-theme=dark] .outcome-text-no, html[data-theme=dark] .market-tile-outcomes>span+span {
   color: var(--danger);
 }
-@media (min-width:901px) {
-  .app-shell:has(.exchange-page) {
-    max-width: 1490px;
-  }
-}
 @media (max-width:1200px) {
   .exchange-market-grid {
     grid-template-columns: repeat(2,minmax(0,1fr));

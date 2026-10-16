@@ -1,10 +1,10 @@
 {
   "totals": {
-    "files": 21,
-    "bytes": 194755,
-    "compactBytes": 153439,
-    "rules": 1933,
-    "declarations": 5638,
+    "files": 23,
+    "bytes": 195886,
+    "compactBytes": 161559,
+    "rules": 2036,
+    "declarations": 5946,
     "important": 20,
     "literalColors": 69,
     "widthBreakpoints": [
@@ -13,6 +13,7 @@
       900,
       901,
       1200,
+      1440,
       1600
     ],
     "repeatedSelectorContexts": 0,
@@ -24,7 +25,7 @@
   "sheets": [
     {
       "file": "src/app/globals.css",
-      "bytes": 147,
+      "bytes": 144,
       "compactBytes": 141,
       "rules": 0
     },
@@ -36,115 +37,127 @@
     },
     {
       "file": "src/components/profile.css",
-      "bytes": 1712,
+      "bytes": 1617,
       "compactBytes": 1315,
       "rules": 21
     },
     {
       "file": "src/modules/admin/admin.css",
-      "bytes": 28978,
+      "bytes": 27714,
       "compactBytes": 23476,
       "rules": 262
     },
     {
       "file": "src/modules/identity/identity.css",
-      "bytes": 1690,
+      "bytes": 1607,
       "compactBytes": 1360,
       "rules": 17
     },
     {
+      "file": "src/modules/predictions/btc.css",
+      "bytes": 4885,
+      "compactBytes": 4314,
+      "rules": 58
+    },
+    {
       "file": "src/modules/predictions/chart.css",
-      "bytes": 1903,
+      "bytes": 1925,
       "compactBytes": 1700,
       "rules": 20
     },
     {
       "file": "src/modules/predictions/exchange.css",
-      "bytes": 15823,
-      "compactBytes": 12754,
-      "rules": 167
+      "bytes": 15736,
+      "compactBytes": 12679,
+      "rules": 166
+    },
+    {
+      "file": "src/modules/predictions/official.css",
+      "bytes": 1983,
+      "compactBytes": 1977,
+      "rules": 26
     },
     {
       "file": "src/modules/predictions/predictions.css",
-      "bytes": 2680,
+      "bytes": 2550,
       "compactBytes": 2132,
       "rules": 25
     },
     {
       "file": "src/modules/predictions/product.css",
-      "bytes": 2524,
+      "bytes": 2555,
       "compactBytes": 2267,
       "rules": 31
     },
     {
       "file": "src/modules/predictions/reference.css",
-      "bytes": 2241,
+      "bytes": 2242,
       "compactBytes": 1805,
       "rules": 19
     },
     {
       "file": "src/modules/wallet/c2c.css",
-      "bytes": 1449,
+      "bytes": 1371,
       "compactBytes": 1138,
       "rules": 20
     },
     {
       "file": "src/modules/wallet/issuance.css",
-      "bytes": 2168,
+      "bytes": 2058,
       "compactBytes": 1710,
       "rules": 21
     },
     {
       "file": "src/modules/wallet/market.css",
-      "bytes": 3527,
+      "bytes": 3350,
       "compactBytes": 2782,
       "rules": 39
     },
     {
       "file": "src/modules/wallet/wallet.css",
-      "bytes": 8700,
+      "bytes": 8244,
       "compactBytes": 6826,
       "rules": 97
     },
     {
       "file": "src/styles/account.css",
-      "bytes": 9132,
+      "bytes": 8650,
       "compactBytes": 7137,
       "rules": 101
     },
     {
       "file": "src/styles/content.css",
-      "bytes": 27853,
+      "bytes": 26420,
       "compactBytes": 21642,
       "rules": 295
     },
     {
       "file": "src/styles/editor.css",
-      "bytes": 24802,
+      "bytes": 23562,
       "compactBytes": 19265,
       "rules": 239
     },
     {
       "file": "src/styles/foundation.css",
-      "bytes": 18447,
+      "bytes": 17496,
       "compactBytes": 14324,
       "rules": 178
     },
     {
       "file": "src/styles/public.css",
-      "bytes": 29113,
-      "compactBytes": 22265,
-      "rules": 285
+      "bytes": 30014,
+      "compactBytes": 24169,
+      "rules": 305
     },
     {
       "file": "src/styles/shared.css",
-      "bytes": 327,
+      "bytes": 316,
       "compactBytes": 301,
       "rules": 0
     },
     {
       "file": "src/styles/tokens.css",
-      "bytes": 2392,
+      "bytes": 2300,
       "compactBytes": 1953,
       "rules": 4
     }
