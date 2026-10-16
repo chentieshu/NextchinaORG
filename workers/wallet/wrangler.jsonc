@@ -8,17 +8,13 @@
     "nodejs_compat"
   ],
   "workers_dev": true,
-  "services": [{ "binding": "PRICE_SOURCE", "service": "teamcn-prices" }],
-  "routes": [
+  "services": [
     {
-      "pattern": "wallet.chinateam.org",
-      "custom_domain": true
-    },
-    {
-      "pattern": "wallet.teamcn.org",
-      "custom_domain": true
+      "binding": "PRICE_SOURCE",
+      "service": "teamcn-prices"
     }
   ],
+  "routes": [],
   "triggers": {
     "crons": [
       "* * * * *"
@@ -29,7 +25,14 @@
     "head_sampling_rate": 0.1
   },
   "ratelimits": [
-    { "name": "PRICE_LIMITER", "namespace_id": "1005", "simple": { "limit": 120, "period": 60 } },
+    {
+      "name": "PRICE_LIMITER",
+      "namespace_id": "1005",
+      "simple": {
+        "limit": 120,
+        "period": 60
+      }
+    },
     {
       "name": "PAYOUT_LIMITER",
       "namespace_id": "1004",
@@ -42,12 +45,13 @@
   "vars": {
     "SUPABASE_URL": "https://cznhnupwojmydttdattb.supabase.co",
     "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_S64GsjK-R_CGycTdquKVxw_17Y13ZlL",
-    "ALLOWED_ORIGINS": "https://chinateam.org,https://www.chinateam.org,https://omniremix.chentieshu520.chatgpt.site,https://omniremix.pages.dev,https://teamcn.org,https://www.teamcn.org,https://tree.teamcn.org"
+    "ALLOWED_ORIGINS": "https://omniremix.pages.dev,https://teamcn-admin.pages.dev,https://omniremix.chentieshu520.chatgpt.site"
   },
   "secrets": {
     "required": [
       "WALLET_GATEWAY_KEY",
       "TRONGRID_API_KEY"
     ]
-  }
+  },
+  "preview_urls": false
 }

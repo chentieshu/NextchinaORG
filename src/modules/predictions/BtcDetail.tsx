@@ -1,4 +1,5 @@
 'use client';
+import {WALLET_ORIGIN} from '@/lib/site';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import {useEffect,useRef,useState} from 'react';
@@ -20,7 +21,7 @@ function useBtcPrices(start:number,server:string){
   const now=()=>anchor.current.server+performance.now()-anchor.current.local;
   const schedule=(delay:number)=>{clearTimeout(timer);if(!disposed&&!done)timer=setTimeout(()=>void load(),delay);};
   const load=async()=>{if(disposed||done||busy||document.visibilityState!=='visible')return;if(now()<start){schedule(Math.min(5000,start-now()+100));return;}busy=true;flight=new AbortController();let delay=5000;
-   try{const r=await fetch(`https://wallet.teamcn.org/v1/markets/btc?start=${start}`,{credentials:'omit',cache:'no-store',signal:AbortSignal.any([flight.signal,AbortSignal.timeout(10000)])});if(!r.ok)throw Error();const value:unknown=await r.json();if(!validBtcSnapshot(value,start)||value.observed_at>now()+10000||value.last_at<Math.min(now(),start+179999)-20000)throw Error();if(!disposed&&!flight.signal.aborted){setData(value);setError(false);done=value.complete;}}
+   try{const r=await fetch(`${WALLET_ORIGIN}/v1/markets/btc?start=${start}`,{credentials:'omit',cache:'no-store',signal:AbortSignal.any([flight.signal,AbortSignal.timeout(10000)])});if(!r.ok)throw Error();const value:unknown=await r.json();if(!validBtcSnapshot(value,start)||value.observed_at>now()+10000||value.last_at<Math.min(now(),start+179999)-20000)throw Error();if(!disposed&&!flight.signal.aborted){setData(value);setError(false);done=value.complete;}}
    catch{if(!disposed&&!flight?.signal.aborted){setError(true);delay=10000;}}finally{busy=false;flight=null;if(document.visibilityState==='visible')schedule(delay);}
   };
   const visibility=()=>{clearTimeout(timer);if(document.visibilityState==='visible')void load();else flight?.abort();};

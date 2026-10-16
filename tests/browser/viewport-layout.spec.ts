@@ -9,7 +9,7 @@ test('the public frame fills every viewport and keeps one navigation without dup
   await page.setViewportSize({width,height:900});
   const frame=await page.locator('.app-shell').boundingBox();expect(frame!.x).toBe(0);expect(frame!.width).toBe(width);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(width);
-  const workspace=await page.locator('.app-workspace').boundingBox();expect(workspace!.height).toBeGreaterThanOrEqual(width>900?900:828);
+  const workspace=await page.locator('.app-workspace').boundingBox();expect(workspace!.height).toBeGreaterThanOrEqual(width>900?836:828);
   await expect(page.locator('.app-context,.sidebar-categories')).toHaveCount(0);
   if(width===1920)await page.screenshot({path:test.info().outputPath('viewport-desktop.png')});
  }
@@ -19,13 +19,13 @@ test('the public frame fills every viewport and keeps one navigation without dup
  await page.goto('/zh-CN/square/');await page.keyboard.press('Control+k');await expect(page).toHaveURL(/search\/$/);
 });
 
-test('short desktop navigation scrolls independently while the account menu remains reachable',async({page})=>{
+test('top navigation remains reachable on a short desktop with a bounded account menu',async({page})=>{
  const state=await fixture(page,'super_admin');for(let i=0;i<12;i++)state.articles.push(story(`20000000-0000-4000-8000-${String(i+10).padStart(12,'0')}`));
  await page.setViewportSize({width:1280,height:480});await page.goto('/zh-CN/square/');await expect(page.locator('.article-card')).toHaveCount(12);
- const scroller=page.locator('.sidebar-scroller');expect(await scroller.evaluate(node=>node.scrollHeight>node.clientHeight)).toBe(true);
+ const body=await page.locator('.app-body').boundingBox();expect(body!.x).toBe(0);expect(body!.width).toBe(1280);
  await page.evaluate(()=>window.scrollTo(0,600));
- const sidebar=await page.locator('.app-sidebar').boundingBox();expect(sidebar!.y).toBe(0);expect(sidebar!.height).toBe(480);
- await page.locator('.sidebar-account summary').click();const menu=page.locator('.sidebar-account .dropdown');await expect(menu).toBeVisible();
+ const sidebar=await page.locator('.site-header').boundingBox();expect(sidebar!.y).toBe(0);expect(sidebar!.height).toBe(64);
+ await page.locator('.nav-account summary').click();const menu=page.locator('.nav-account .dropdown');await expect(menu).toBeVisible();
  const box=await menu.boundingBox();expect(box!.y).toBeGreaterThanOrEqual(0);expect(box!.y+box!.height).toBeLessThanOrEqual(480);
  await menu.getByRole('link',{name:'设置',exact:true}).click();await expect(page).toHaveURL(/settings\/$/);
 });

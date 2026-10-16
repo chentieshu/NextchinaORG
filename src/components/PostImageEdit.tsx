@@ -7,6 +7,7 @@ import {useApp} from './Provider';
 import {composerCopy} from '@/lib/composer-copy';
 import {profileCopy,mediaErrorMessage} from '@/lib/profile-copy';
 import {cropContentImage,loadImage,type CropArea} from '@/lib/image-editor';
+import {resolveMediaUrl} from '@/lib/media-origin';
 import {isStoredImage} from '@/lib/media';
 import 'react-easy-crop/react-easy-crop.css';
 
@@ -16,7 +17,7 @@ export default function PostImageEdit({image,onSave,onClose}:{image:{src?:string
  const mounted=useRef(true),pending=useRef(false);
  useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;};},[]);
  useEffect(()=>{const abort=new AbortController();let url='';void(async()=>{try{
-  if(image.preview){url=image.preview;}else{if(!image.src||!isStoredImage(image.src))throw Error('invalid_image');const response=await fetch(image.src,{signal:AbortSignal.any([abort.signal,AbortSignal.timeout(12000)])});if(!response.ok)throw Error('upload_failed');url=URL.createObjectURL(await response.blob());}
+  if(image.preview){url=image.preview;}else{if(!image.src||!isStoredImage(image.src))throw Error('invalid_image');const response=await fetch(resolveMediaUrl(image.src),{signal:AbortSignal.any([abort.signal,AbortSignal.timeout(12000)])});if(!response.ok)throw Error('upload_failed');url=URL.createObjectURL(await response.blob());}
   const photo=await loadImage(url);if(abort.signal.aborted)return;setOriginal(photo.naturalWidth/photo.naturalHeight);setAspect(photo.naturalWidth/photo.naturalHeight);setSource(url);
  }catch(e){if(!abort.signal.aborted)setError(mediaErrorMessage(e,p));}})();return()=>{abort.abort();if(url&&!image.preview)URL.revokeObjectURL(url);};},[image.src,image.preview,p]);
  async function apply(){if(pending.current)return;if(!cropOpen){onSave(alt.trim());return;}if(!area||!source)return;pending.current=true;setBusy(true);setError('');try{const blob=await cropContentImage(source,area,rotation);if(mounted.current)onSave(alt.trim(),new File([blob],'photo.webp',{type:'image/webp'}));}catch(e){if(mounted.current)setError(mediaErrorMessage(e,p));}finally{pending.current=false;if(mounted.current)setBusy(false);}}

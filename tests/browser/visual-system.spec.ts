@@ -6,8 +6,8 @@ test('public navigation changes once at the shared breakpoint and content stays 
  const state=await fixture(page);state.articles.push(story());await page.goto('/zh-CN/square/');
  for(const width of [320,380,600,601,900,901,1200,1440]){
   await page.setViewportSize({width,height:900});
-  if(width<=900){await expect(page.locator('.app-sidebar')).toBeHidden();await expect(page.locator('.mobile-nav')).toBeVisible();}
-  else{await expect(page.locator('.app-sidebar')).toBeVisible();await expect(page.locator('.mobile-nav')).toBeHidden();}
+  if(width<=900){await expect(page.locator('.site-header')).toBeHidden();await expect(page.locator('.mobile-nav')).toBeVisible();}
+  else{await expect(page.locator('.site-header')).toBeVisible();await expect(page.locator('.mobile-nav')).toBeHidden();}
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  }
 });
@@ -21,7 +21,7 @@ test('account and administrative financial surfaces share the light and dark sys
   const control=page.locator('#profile input').first();await expect(control).toBeVisible();await expect(control).toHaveCSS('border-radius','10px');
   const inputColor=await control.evaluate(node=>getComputedStyle(node).backgroundColor);
   const checkbox=page.locator('#identity .checkbox-label').first();await expect(checkbox).toHaveCSS('flex-direction','row');await expect(checkbox.locator('input')).toHaveCSS('width','18px');
-  await page.goto('https://tree.teamcn.org/zh-CN/#wallet');await expect(page.locator('.points-issuance')).toBeVisible();await expect(page.locator('html')).toHaveAttribute('data-theme',theme);
+  await page.goto('https://teamcn-admin.pages.dev/zh-CN/#wallet');await expect(page.locator('.points-issuance')).toBeVisible();await expect(page.locator('html')).toHaveAttribute('data-theme',theme);
   const panelColor=await page.locator('.points-issuance').evaluate(node=>getComputedStyle(node).backgroundColor);
   const toolbarColor=await page.locator('.admin-topbar').evaluate(node=>getComputedStyle(node).backgroundColor);
   expect(panelColor).toBe(toolbarColor);expect(panelColor).toBe(inputColor);

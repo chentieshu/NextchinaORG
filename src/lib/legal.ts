@@ -18,7 +18,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "管理 Google 第三方连接",
     "privacy": {
       "title": "隐私政策",
-      "intro": "本政策说明 Teamcn 网站运营团队如何处理访问者和注册用户的信息，适用于 teamcn.org 及其 www 入口。阅读公开文章与本政策无需登录。",
+      "intro": "本政策说明 Teamcn 网站运营团队如何处理访问者和注册用户的信息，适用于 omniremix.pages.dev 与独立管理后台。阅读公开文章与本政策无需登录。",
       "sections": [
         {
           "title": "1. 我们收集哪些信息",
@@ -142,7 +142,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "Manage Google third-party connections",
     "privacy": {
       "title": "Privacy Policy",
-      "intro": "This policy explains how the Teamcn website operators handle visitor and member information on teamcn.org and its www entry point. Public articles and this policy are available without signing in.",
+      "intro": "This policy explains how the Teamcn website operators handle visitor and member information on omniremix.pages.dev and its separate administration site. Public articles and this policy are available without signing in.",
       "sections": [
         {
           "title": "1. Information we collect",
@@ -266,7 +266,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "管理 Google 第三方連結",
     "privacy": {
       "title": "隱私政策",
-      "intro": "本政策說明 Teamcn 網站營運團隊如何處理 teamcn.org 及 www 入口的訪客與會員資料。公開文章和本政策無需登入即可閱讀。",
+      "intro": "本政策說明 Teamcn 網站營運團隊如何處理 omniremix.pages.dev 與獨立管理後台的訪客與會員資料。公開文章和本政策無需登入即可閱讀。",
       "sections": [
         {
           "title": "1. 收集的資料",
@@ -377,7 +377,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "Google のサードパーティ接続を管理",
     "privacy": {
       "title": "プライバシーポリシー",
-      "intro": "Teamcn 運営チームによる teamcn.org および www 入口の利用者情報の取り扱いを説明します。公開記事と本ポリシーはログイン不要です。",
+      "intro": "Teamcn 運営チームによる omniremix.pages.dev および管理サイトの利用者情報の取り扱いを説明します。公開記事と本ポリシーはログイン不要です。",
       "sections": [
         {
           "title": "1. 収集する情報",
@@ -488,7 +488,7 @@ export const legalCopy:Record<Locale,LegalCopy>={
     "revokeLink": "Gestionar conexiones de terceros de Google",
     "privacy": {
       "title": "Política de privacidad",
-      "intro": "Esta política explica cómo el equipo de Teamcn trata la información de visitantes y miembros en teamcn.org y su entrada www. Los artículos públicas y esta política no requieren iniciar sesión.",
+      "intro": "Esta política explica cómo el equipo de Teamcn trata la información de visitantes y miembros en omniremix.pages.dev y su sitio de administración. Los artículos públicas y esta política no requieren iniciar sesión.",
       "sections": [
         {
           "title": "1. Información recopilada",

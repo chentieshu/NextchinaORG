@@ -1,4 +1,5 @@
 'use client';
+import {resolveMediaUrl} from '@/lib/media-origin';
 import Link from 'next/link';
 import {useEffect,useRef,useState} from 'react';
 import {FiExternalLink,FiPlay,FiLink,FiStar,FiGitBranch} from 'react-icons/fi';
@@ -26,6 +27,6 @@ function RemoteContent({url}:{url:string}){
 }
 export function MediaPreview({items,href}:{items:MediaItem[];href:string}){const ref=items.find(i=>i.type==='embed'&&predictionReference(i.url));return ref?<PredictionCard url={ref.url} compact/>:<RemoteMediaPreview items={items} href={href}/>;}
 function RemoteMediaPreview({items,href}:{items:MediaItem[];href:string}){
- const{locale}=useApp(),c=socialCopy[locale],first=items[0],metadata=useLinkPreview(first?.url??'',first?.type==='embed'),[failed,setFailed]=useState(false);if(!first)return null;const data=externalContent(first.url);if(!data)return null;const Icon=icons[data.provider],thumbnail=first.type==='image'?first.url:metadata.preview?.thumbnail_url;
+ const{locale}=useApp(),c=socialCopy[locale],first=items[0],metadata=useLinkPreview(first?.url??'',first?.type==='embed'),[failed,setFailed]=useState(false);if(!first)return null;const data=externalContent(first.url);if(!data)return null;const Icon=icons[data.provider],thumbnail=first.type==='image'?resolveMediaUrl(first.url):metadata.preview?.thumbnail_url;
  return <Link ref={metadata.ref} className={`post-media-preview ${thumbnail&&!failed?'has-photo':''}`} href={href} aria-label={c.openPost}>{thumbnail&&!failed?<><img src={thumbnail} alt={first.type==='image'?first.alt??'':metadata.preview?.title??data.label} loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={()=>setFailed(true)}/>{first.type==='embed'&&<span className="media-platform"><Icon/></span>}</>:<><Icon/><span>{metadata.preview?.title??data.label}</span><FiExternalLink/></>}{items.length>1&&<small>+{items.length-1}</small>}</Link>;
 }

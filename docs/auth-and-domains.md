@@ -1,5 +1,7 @@
 # Teamcn：域名、社交登录与邮件配置
 
+> 2026-10-16 更新：当前域名与导航以 [默认部署说明](default-cloudflare-deployment.md) 为准；下文中的自定义域名步骤保留作历史参考。
+
 更新日期：2026-10-15。品牌为 **Teamcn**，主站为 `https://teamcn.org`。域名大小写不影响访问；配置统一使用小写。
 
 独立后台入口为 `https://tree.teamcn.org`，各语言认证回跳已加入 Supabase。完整部署与 C2C 操作见 [架构说明](teamcn-architecture.md)。

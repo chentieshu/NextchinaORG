@@ -15,5 +15,5 @@ If secure email change is enabled, complete the confirmations sent to both your 
 If you did not request this, ignore this email and do not forward the link.
 
 支持 / Support: chentieshu520@gmail.com
-https://teamcn.org/
-隐私政策 / Privacy: https://teamcn.org/zh-CN/privacy/
+https://omniremix.pages.dev/
+隐私政策 / Privacy: https://omniremix.pages.dev/zh-CN/privacy/

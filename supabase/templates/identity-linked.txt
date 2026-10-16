@@ -13,5 +13,5 @@ A sign-in method was linked to your Teamcn account.
 If you made this change, no reply is needed. Otherwise, contact support immediately and secure your email and linked sign-in accounts. Never send passwords, verification codes, or sign-in links.
 
 支持 / Support: chentieshu520@gmail.com
-https://teamcn.org/
-隐私政策 / Privacy: https://teamcn.org/zh-CN/privacy/
+https://omniremix.pages.dev/
+隐私政策 / Privacy: https://omniremix.pages.dev/zh-CN/privacy/

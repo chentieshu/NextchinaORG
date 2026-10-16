@@ -1,9 +1,11 @@
 # Teamcn
 
-当前部署与 C2C 规则见 [架构与运营说明](docs/teamcn-architecture.md)。前台 `teamcn.org / www.teamcn.org`；后台独立部署于 `tree.teamcn.org`。商家是用户，最低押金 1,000 USDT，出售自有积分；订单和兑换码共享押金限额。旧新增发行入口已停用。
+当前入口以 [Cloudflare 默认部署说明](docs/default-cloudflare-deployment.md) 为准。主站为 https://omniremix.pages.dev，独立后台为 https://teamcn-admin.pages.dev。
+
+当前部署与 C2C 规则见 [架构与运营说明](docs/teamcn-architecture.md)。前台与后台已切换为 Cloudflare 默认域名。商家是用户，最低押金 1,000 USDT，出售自有积分；订单和兑换码共享押金限额。旧新增发行入口已停用。
 
 
-当前品牌统一为 **Teamcn**，正式域名使用 `teamcn.org`，GitHub、Supabase 项目和 Cloudflare 资源标识保留，已有账号与内容不迁移。
+当前品牌统一为 **Teamcn**，当前使用 Cloudflare 默认域名，GitHub、Supabase 项目和 Cloudflare 资源标识保留，已有账号与内容不迁移。
 
 支持转发/取消转发、带原帖或新闻文章卡片的引用、帖子详情与引用列表。列表继续使用正文在左、素材在右的样式。帖子发布器共用富文本编辑器，支持粘贴图片、四图排序、代码和外链。阅读偏好可独立选择新闻语言、外部播放器加载方式和转发显示；账户设置使用邮箱安全验证码，已移除验证器扫码方式。
 
@@ -15,7 +17,7 @@
 
 开放论坛与新闻社区。Next.js 16 App Router、React 19、Tailwind CSS v4、React Icons、Supabase。
 
-正式网站：[Teamcn](https://teamcn.org)。`www.teamcn.org` 同时可访问，canonical 指向主域。
+网站：[Teamcn](https://omniremix.pages.dev)。canonical 使用该默认主站地址。
 
 域名迁移、Google / X / GitHub、Supabase 与 Resend 的逐项填写指南见 [登录与域名配置](docs/auth-and-domains.md)。全部 13 类品牌邮件的 [配置说明](supabase/templates/README.md) 与 [可视化复制页面](supabase/templates/preview.html) 已备齐；需单独保存到 Supabase Auth，不会随网站部署自动生效。
 

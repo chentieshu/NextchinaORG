@@ -28,11 +28,11 @@ test('categories and sort survive reload and back; the account keeps secondary d
  await page.goBack();await expect(page.locator('.feed-tools select')).toHaveValue('latest');
  await page.goto('/zh-CN/');await expect(page.locator('.app-nav a')).toHaveCount(5);
  await expect(page.locator('.app-context,.sidebar-categories')).toHaveCount(0);
- await page.locator('.sidebar-account summary').click();await page.locator('.sidebar-account .dropdown').getByRole('link',{name:'我的收藏',exact:true}).click();await expect(page).toHaveURL(/bookmarks\/$/);
+ await page.locator('.nav-account summary').click();await page.locator('.nav-account .dropdown').getByRole('link',{name:'我的收藏',exact:true}).click();await expect(page).toHaveURL(/bookmarks\/$/);
 });
 
 test('admin category editing uses a focused dialog and cancel restores its trigger',async({page})=>{
- await fixture(page,'super_admin');await page.goto('https://tree.teamcn.org/zh-CN/#categories');
+ await fixture(page,'super_admin');await page.goto('https://teamcn-admin.pages.dev/zh-CN/#categories');
  const trigger=page.locator('.admin-table article').first().getByRole('button',{name:'编辑',exact:true});await trigger.click();
  const dialog=page.getByRole('dialog');await expect(dialog).toBeVisible();await expect(dialog.locator('.category-form')).toBeVisible();
  await expect(page.locator('.admin-workspace .page-heading p')).toHaveCount(0);

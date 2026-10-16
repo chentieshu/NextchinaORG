@@ -40,9 +40,9 @@ test('private BTC display fails closed on upstream failures and caches rate back
 test('wallet public price endpoint rate limits, strips credentials and never calls the ledger',async(t)=>{
  const calls=[],start=Math.floor(Date.now()/step)*step-step;let limited=false;
  t.mock.method(globalThis,'fetch',async()=>{throw Error('No database/network calls allowed');});
- const env={ALLOWED_ORIGINS:'https://teamcn.org',PRICE_LIMITER:{limit:async()=>({success:!limited})},PRICE_SOURCE:{fetch:async u=>{calls.push(u);return Response.json({test:'price'});}},WALLET_GATEWAY_KEY:'fixture-secret'};
- const req=(suffix='',origin='https://teamcn.org')=>new Request(`https://wallet.teamcn.org/v1/markets/btc?start=${start}${suffix}`,{headers:{Origin:origin,Authorization:'Bearer fixture-secret'}});
- const r=await wallet.fetch(req(),env);assert.equal(r.status,200);assert.equal(r.headers.get('Access-Control-Allow-Origin'),'https://teamcn.org');assert.equal(calls[0],`https://prices.internal/v1/btc?start=${start}`);assert.equal((await wallet.fetch(req('&evil=1'),env)).status,400);assert.equal((await wallet.fetch(req('','https://evil.test'),env)).status,403);
+ const env={ALLOWED_ORIGINS:'https://omniremix.pages.dev',PRICE_LIMITER:{limit:async()=>({success:!limited})},PRICE_SOURCE:{fetch:async u=>{calls.push(u);return Response.json({test:'price'});}},WALLET_GATEWAY_KEY:'fixture-secret'};
+ const req=(suffix='',origin='https://omniremix.pages.dev')=>new Request(`https://chinateam-wallet.chentieshu520.workers.dev/v1/markets/btc?start=${start}${suffix}`,{headers:{Origin:origin,Authorization:'Bearer fixture-secret'}});
+ const r=await wallet.fetch(req(),env);assert.equal(r.status,200);assert.equal(r.headers.get('Access-Control-Allow-Origin'),'https://omniremix.pages.dev');assert.equal(calls[0],`https://prices.internal/v1/btc?start=${start}`);assert.equal((await wallet.fetch(req('&evil=1'),env)).status,400);assert.equal((await wallet.fetch(req('','https://evil.test'),env)).status,403);
  limited=true;assert.equal((await wallet.fetch(req(),env)).status,429);assert.equal(calls.length,1);
 });
 

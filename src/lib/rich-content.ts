@@ -1,6 +1,7 @@
+import {resolveMediaUrl} from './media-origin.ts';
 import type {RichNode} from './types';
 import {externalContent} from './external-content.ts';
-export function safeContentUrl(value:unknown){if(typeof value!=='string')return null;try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password?u.href:null;}catch{return null;}}
+export function safeContentUrl(value:unknown){if(typeof value!=='string')return null;try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password?resolveMediaUrl(u.href):null;}catch{return null;}}
 export function plainDocument(text:string):RichNode{return {type:'doc',content:text.split(/\n\s*\n/).map(p=>({type:'paragraph',content:p?[{type:'text',text:p}]:[]}))};}
 // Apply one allowlist before both editing and reading untrusted JSON.
 export function normalizeDocument(value:unknown,fallback='',compact=false):RichNode{

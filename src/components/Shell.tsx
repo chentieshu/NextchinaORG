@@ -68,26 +68,26 @@ export function Shell({children}:{children:ReactNode}){
  function login(next?:string){try{sessionStorage.setItem('nextchina-auth-return',next??location.pathname+location.search+location.hash);}catch{}setAuthOpen(true);}
  function compose(){if(!user){login(`${base}write/`);return;}router.push(`${base}write/`);}
  const canCompose=authStatus!=='loading'&&!profile?.disabled&&(settings.ugc_enabled||admin)&&!demo;
- const links=[{path:'',label:n.markets,Icon:FiBarChart2,active:home},{path:'square/',label:n.square,Icon:FiMessageSquare,active:/\/(square|community|news)\//.test(pathname)},{path:'search/',label:c.search,Icon:FiSearch},...(user?[{path:'wallet/',label:walletCopy[locale].title,Icon:FiCreditCard}]:[]),{path:'settings/',label:s.settings,Icon:FiSettings},...(admin?[{path:'admin/',label:t.admin,Icon:FiSettings}]:[])];
+ const links=[{path:'',label:n.markets,Icon:FiBarChart2,active:home},{path:'square/',label:n.square,Icon:FiMessageSquare,active:/\/(square|community|news)\//.test(pathname)},{path:'search/',label:c.search,Icon:FiSearch},...(user?[{path:'wallet/',label:walletCopy[locale].title,Icon:FiCreditCard}]:[]),{path:'settings/',label:s.settings,Icon:FiSettings}];
  const exempt=/\/(auth\/callback|settings|about|privacy|terms)\//.test(pathname),onboarding=authStatus==='ready'&&needsProfile&&!profile?.disabled&&!exempt;
  return <>
   <a className="skip-link" href="#main">{t.explore}</a>
   <div className="app-shell">
-   <aside className="app-sidebar">
-    <Link href={base} aria-label="Teamcn" className="sidebar-brand"><Logo/></Link>
-    <div className="sidebar-scroller">
+   <header className="site-header">
+    <Link href={base} aria-label="Teamcn" className="nav-brand"><Logo/></Link>
+    <div className="nav-links">
      <nav className="app-nav" aria-label={c.navigation}>
       {links.map(({path,label,Icon,active})=>{const selected=active??pathname===base+path.split('?')[0];return <Link key={path} href={path==='admin/'?ADMIN_ORIGIN+base:base+path} title={label} aria-label={label} aria-current={selected?'page':undefined}><Icon/><span>{label}</span></Link>;})}
-      <button className="sidebar-compose" title={forumCopy[locale].write} aria-label={forumCopy[locale].write} disabled={!canCompose} onClick={compose}><FiEdit3/><span>{forumCopy[locale].write}</span></button>
+      <button className="nav-compose" title={forumCopy[locale].write} aria-label={forumCopy[locale].write} disabled={!canCompose} onClick={compose}><FiEdit3/><span>{forumCopy[locale].write}</span></button>
      </nav>
     </div>
-    <div className="sidebar-account">
-     {authStatus==='loading'?<span className="account-placeholder" aria-label={t.loading}/>:authStatus==='error'?<button className="sidebar-login" onClick={()=>void retryAuth()}>{t.retry}</button>:user?<details className="user-menu">
-      <summary title={profile?.display_name??s.profile}><Avatar name={profile?.display_name??'U'} avatarKey={profile?.avatar_key} size={36}/><span className="sidebar-account-name"><b>{profile?.display_name}</b><small>{needsProfile?c.profileSetup:`@${profile?.handle??''}`}</small></span><FiMoreHorizontal/></summary>
-      <div className="dropdown"><Link href={`${base}profile/?id=${user.id}`}>{s.profile}</Link><Link href={base+'bookmarks/'}>{t.bookmarks}</Link><Link href={`${base}square/?scope=mine`}>{forumCopy[locale].mine}</Link><Link href={`${base}settings/`}>{s.settings}</Link><button onClick={()=>{setProfileOpen(true);document.querySelector<HTMLDetailsElement>('.user-menu')?.removeAttribute('open');}}>{profileCopy[locale].title}</button><button onClick={()=>void logout()}><FiLogOut/>{t.logout}</button></div>
-     </details>:<button className="sidebar-login" aria-label={t.login} title={t.login} onClick={()=>login()}><FiUser/><span>{s.login}</span></button>}
+    <div className="nav-account">
+     {authStatus==='loading'?<span className="account-placeholder" aria-label={t.loading}/>:authStatus==='error'?<button className="nav-login" onClick={()=>void retryAuth()}>{t.retry}</button>:user?<details className="user-menu">
+      <summary title={profile?.display_name??s.profile}><Avatar name={profile?.display_name??'U'} avatarKey={profile?.avatar_key} size={36}/><span className="nav-account-name"><b>{profile?.display_name}</b><small>{needsProfile?c.profileSetup:`@${profile?.handle??''}`}</small></span><FiMoreHorizontal/></summary>
+      <div className="dropdown" onClick={e=>{if((e.target as Element).closest('a[href]'))document.querySelector<HTMLDetailsElement>('.user-menu')?.removeAttribute('open');}}><Link href={`${base}profile/?id=${user.id}`}>{s.profile}</Link><Link href={base+'bookmarks/'}>{t.bookmarks}</Link><Link href={`${base}square/?scope=mine`}>{forumCopy[locale].mine}</Link><Link href={`${base}settings/`}>{s.settings}</Link>{admin&&<Link href={ADMIN_ORIGIN+base}>{t.admin}</Link>}<button onClick={()=>{setProfileOpen(true);document.querySelector<HTMLDetailsElement>('.user-menu')?.removeAttribute('open');}}>{profileCopy[locale].title}</button><button onClick={()=>void logout()}><FiLogOut/>{t.logout}</button></div>
+     </details>:<button className="nav-login" aria-label={t.login} title={t.login} onClick={()=>login()}><FiUser/><span>{s.login}</span></button>}
     </div>
-   </aside>
+   </header>
    <div className="app-body">
     <div className="app-workspace">
      <div className="app-page">{settings.notice&&<div className="announcement">{settings.notice}</div>}{onboarding?<Onboarding key={user?.id}/>:children}</div>

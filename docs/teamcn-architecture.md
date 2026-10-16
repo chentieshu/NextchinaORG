@@ -1,5 +1,7 @@
 # Teamcn：独立后台与 C2C 架构
 
+> 2026-10-16 更新：当前域名与导航以 [默认部署说明](default-cloudflare-deployment.md) 为准；下文中的自定义域名步骤保留作历史参考。
+
 更新日期：2026-10-15。品牌仍是 Teamcn，主域名改为 teamcn.org。
 
 ## 部署边界

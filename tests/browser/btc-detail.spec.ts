@@ -16,7 +16,7 @@ async function setup(page:Page){
  await page.route('**/rest/v1/rpc/omni_exchange_quote',r=>{const p=r.request().postDataJSON();return r.fulfill({json:{filled:p.shares,unfilled:'0',units:String(Number(p.shares)*p.limit_price*100),worst:p.limit_price,limited:false,server_time:state.server_time}});});
  await page.route('**/rest/v1/rpc/omni_exchange_budget_quote',r=>{const p=r.request().postDataJSON(),price=p.outcome_value==='yes'?65:37,filled=p.limit_price<price?0:Math.floor(Number(p.budget)/(price*100)),units=filled*price*100;return r.fulfill({json:{filled:String(filled),units:String(units),unspent:String(Number(p.budget)-units),worst:filled?price:null,limited:false,server_time:state.server_time}});});
  await page.route('**/rest/v1/rpc/omni_exchange_action',r=>{writes.push(r.request().postDataJSON());return r.fulfill({json:{ok:true,filled:'10',remaining:'0',state:'filled'}});});
- await page.route('https://wallet.teamcn.org/v1/markets/btc?*',r=>{reads.push({url:r.request().url(),headers:r.request().headers()});return fail?r.fulfill({status:503,json:{error:'price_unavailable'}}):r.fulfill({json:prices});});
+ await page.route('https://chinateam-wallet.chentieshu520.workers.dev/v1/markets/btc?*',r=>{reads.push({url:r.request().url(),headers:r.request().headers()});return fail?r.fulfill({status:503,json:{error:'price_unavailable'}}):r.fulfill({json:prices});});
  return{start,market,state,prices,reads,writes,histories,details,series,rounds,next:()=>{
  const nextId='30000000-0000-4000-8000-000000000022',nextStart=start+180000;
  const next={...market,id:nextId,title:'BTC next round',opens_at:new Date(nextStart).toISOString(),closes_at:new Date(nextStart+180000).toISOString(),opening_price:'66000.00000000'};

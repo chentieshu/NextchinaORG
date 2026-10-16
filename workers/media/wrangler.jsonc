@@ -5,7 +5,7 @@
   "compatibility_flags": [
     "nodejs_compat"
   ],
-  "workers_dev": false,
+  "workers_dev": true,
   "observability": {
     "enabled": true
   },
@@ -44,21 +44,9 @@
   "vars": {
     "SUPABASE_URL": "https://cznhnupwojmydttdattb.supabase.co",
     "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_S64GsjK-R_CGycTdquKVxw_17Y13ZlL",
-    "MEDIA_ORIGIN": "https://media.teamcn.org",
-    "ALLOWED_ORIGINS": "https://chinateam.org,https://www.chinateam.org,https://omniremix.pages.dev,https://omniremix.chentieshu520.chatgpt.site,https://nextchina.org,https://www.nextchina.org,https://teamcn.org,https://www.teamcn.org,https://tree.teamcn.org"
+    "MEDIA_ORIGIN": "https://nextchina-media.chentieshu520.workers.dev",
+    "ALLOWED_ORIGINS": "https://omniremix.pages.dev,https://teamcn-admin.pages.dev,https://omniremix.chentieshu520.chatgpt.site"
   },
-  "routes": [
-    {
-      "pattern": "media.chinateam.org",
-      "custom_domain": true
-    },
-    {
-      "pattern": "media.nextchina.org",
-      "custom_domain": true
-    },
-    {
-      "pattern": "media.teamcn.org",
-      "custom_domain": true
-    }
-  ]
+  "routes": [],
+  "preview_urls": false
 }

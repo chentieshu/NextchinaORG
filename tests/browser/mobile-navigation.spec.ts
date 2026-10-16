@@ -8,7 +8,7 @@ test('small screens have full-width content, reachable footer and one navigation
   await page.setViewportSize({width,height:844});
   for(const locale of ['zh-CN','en','ja','es','zh-TW']){
    await page.goto(`/${locale}/square/`);await expect(page.locator('.article-card')).toHaveCount(1);
-   await expect(page.locator('.app-sidebar')).toBeHidden();await expect(page.locator('.mobile-nav')).toBeVisible();
+   await expect(page.locator('.site-header')).toBeHidden();await expect(page.locator('.mobile-nav')).toBeVisible();
    const body=await page.locator('.app-body').boundingBox();expect(body!.x).toBe(0);expect(body!.width).toBe(width);
    expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(width);
    const targets=await page.locator('.mobile-nav>a,.mobile-nav>button').all();expect(targets).toHaveLength(5);
@@ -17,7 +17,7 @@ test('small screens have full-width content, reachable footer and one navigation
    const footer=await page.locator('.footer').boundingBox(),nav=await page.locator('.mobile-nav').boundingBox();expect(footer!.y+footer!.height).toBeLessThanOrEqual(nav!.y+1);
   }
  }
- await page.setViewportSize({width:1024,height:844});await expect(page.locator('.mobile-nav')).toBeHidden();await expect(page.locator('.app-sidebar')).toBeVisible();
+ await page.setViewportSize({width:1024,height:844});await expect(page.locator('.mobile-nav')).toBeHidden();await expect(page.locator('.site-header')).toBeVisible();
 });
 
 test('account sheet keeps categories and account links usable, restores focus and closes on resize',async({page})=>{

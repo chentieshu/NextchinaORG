@@ -1,3 +1,4 @@
+import {resolveMediaUrl} from './media-origin.ts';
 import type {RichNode} from './types';
 export type ExternalContent={provider:'youtube'|'bilibili'|'x'|'spotify'|'github'|'link';url:string;label:string;id?:string;embed?:string};
 export function externalContent(value:unknown):ExternalContent|null{
@@ -14,7 +15,7 @@ export function externalContent(value:unknown):ExternalContent|null{
 export type MediaItem={type:'image'|'embed';url:string;alt?:string};
 export function contentMedia(document?:RichNode,body=''):MediaItem[]{
  const items:MediaItem[]=[];const seen=new Set<string>();let budget=4000;
- function add(type:MediaItem['type'],value:unknown,alt?:string){const parsed=externalContent(value);if(parsed&&!seen.has(parsed.url)&&items.length<8){seen.add(parsed.url);items.push({type,url:type==='image'?String(value):parsed.url,alt});}}
+ function add(type:MediaItem['type'],value:unknown,alt?:string){const parsed=externalContent(value);if(parsed&&!seen.has(parsed.url)&&items.length<8){seen.add(parsed.url);items.push({type,url:type==='image'?resolveMediaUrl(String(value)):parsed.url,alt});}}
  function walk(n:RichNode,depth=0){if(!n||depth>16||--budget<0)return;if(n.type==='image')add('image',n.attrs?.src,typeof n.attrs?.alt==='string'?n.attrs.alt:'');if(n.type==='embed')add('embed',n.attrs?.url);for(const m of n.marks??[])if(m.type==='link')add('embed',m.attrs?.href);for(const child of n.content??[])walk(child,depth+1);}
  if(document)walk(document);for(const url of body.match(/https:\/\/[^\s<>]+/g)??[])add('embed',url.replace(/[。；，,;)]+$/,''));return items;
 }
