@@ -84,10 +84,12 @@ test('home keeps prices and the order panel close on phones in five languages an
 });
 
 test('resizing the home chart preserves the complete round without requiring Reset chart',async({page})=>{
- await setup(page);await page.setViewportSize({width:1440,height:1000});await page.goto('/en/');const chart=page.locator('.btc-chart-canvas');await expect(chart.locator('canvas').first()).toBeVisible();
+ const s=await setup(page);await page.setViewportSize({width:1440,height:1000});await page.goto('/en/');const chart=page.locator('.btc-chart-canvas');await expect(chart.locator('canvas').first()).toBeVisible();
  for(const width of [390,768,1920,320]){
-  await page.setViewportSize({width,height:900});if(width<=900)await page.locator('.terminal-mobile-tabs').getByRole('button',{name:'Chart',exact:true}).click();await page.mouse.move(1,1);await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));const resized=await chart.screenshot();
-  await page.getByRole('button',{name:'Reset chart',exact:true}).click();await page.mouse.move(1,1);const reset=await chart.screenshot();expect(resized.equals(reset)).toBe(true);
+  await page.setViewportSize({width,height:900});if(width<=900)await page.locator('.terminal-mobile-tabs').getByRole('button',{name:'Chart',exact:true}).click();
+  // Inspect the chart library's actual visible range, not timing-sensitive canvas bytes.
+  await expect(chart).toHaveAttribute('data-visible-from',String(s.start/1000));await expect(chart).toHaveAttribute('data-visible-to',String((s.start+180000)/1000));
+  await page.getByRole('button',{name:'Reset chart',exact:true}).click();await expect(chart).toHaveAttribute('data-visible-from',String(s.start/1000));await expect(chart).toHaveAttribute('data-visible-to',String((s.start+180000)/1000));
  }
 });
 
