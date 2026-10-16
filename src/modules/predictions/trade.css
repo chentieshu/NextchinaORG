@@ -1,0 +1,78 @@
+.amount-ticket button, .chart-view-controls button { transition: none; }
+/* Shared trading controls: opaque states and the same spacing on every market. */
+.amount-ticket { padding: 16px; }
+.ticket-controls { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 14px; }
+.ticket-controls .exchange-tabs { margin: 0; border: 0; }
+.ticket-controls select { width: auto; max-width: 58%; min-height: 40px; padding: 6px 8px; font-size: 12px; }
+.amount-ticket .exchange-outcomes { gap: 8px; margin-bottom: 16px; }
+.amount-ticket .exchange-outcomes button { display: flex; flex-direction: column; align-items: center; gap: 5px; min-height: 60px; background: var(--soft); border: 1px solid var(--line); color: var(--fg); }
+.amount-ticket .exchange-outcomes small { font-size: 11px; font-weight: 400; }
+.amount-ticket .exchange-outcomes .outcome-yes[aria-pressed=true], .amount-ticket[data-outcome=yes] form>.trade-submit { background: #146b4b; border-color: #146b4b; color: #fff; }
+.amount-ticket .exchange-outcomes .outcome-no[aria-pressed=true], .amount-ticket[data-outcome=no] form>.trade-submit { background: #ad373d; border-color: #ad373d; color: #fff; }
+.amount-ticket form { gap: 10px; }
+.amount-ticket .amount-input input { min-height: 58px; font-size: 28px; font-weight: 600; font-variant-numeric: tabular-nums; background: var(--card); }
+.amount-quick { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 6px; }
+.amount-quick button { min-height: 38px; border-radius: var(--radius-small); border: 1px solid var(--line); background: var(--soft); font-size: 12px; }
+.ticket-available { margin: 0; display: flex; justify-content: space-between; gap: 8px; font-size: 11px; color: var(--muted); }
+.ticket-available b { color: var(--fg); font-weight: 500; }
+.budget-estimate { padding: 10px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.budget-estimate .ticket-summary { margin: 0; }
+.budget-estimate>small { display: block; color: var(--muted); font-size: 11px; margin-top: 6px; }
+.amount-ticket .trade-submit { min-height: 46px; width: 100%; }
+.amount-ticket .trade-options { margin: 0; padding-top: 4px; font-size: 11px; color: var(--muted); }
+.trade-options summary { cursor: pointer; min-height: 28px; line-height: 1.5; }
+.amount-ticket button:disabled, .chart-view-controls button:disabled { opacity: 1; background: var(--soft2); border-color: var(--line); color: var(--muted); }
+.amount-ticket[data-outcome] form>.trade-submit:disabled, .amount-ticket .exchange-outcomes button:disabled { background: var(--soft2); border-color: var(--line); color: var(--muted); }
+.chart-view-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.chart-view-controls select, .chart-view-controls button { min-height: 36px; border: 1px solid var(--line); border-radius: var(--radius-small); background: var(--card); color: var(--fg); padding: 5px 9px; font-size: 11px; }
+.chart-view-controls>div { display: flex; gap: 4px; }
+.chart-view-controls button[aria-pressed=true] { background: var(--fg); color: var(--card); border-color: var(--fg); }
+.chart-view-controls .chart-reset { margin-left: auto; }
+.terminal-account { width: 100%; min-width: 0; }
+.account-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.account-heading .exchange-tabs { margin: 0; min-width: 0; }
+.account-heading select { background: var(--card); border: 1px solid var(--line); color: var(--fg); border-radius: var(--radius-small); padding: 8px; font-size: 12px; }
+.account-stats { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 14px; margin: 0 0 16px; }
+.account-stats dt { color: var(--muted); font-size: 11px; margin-bottom: 6px; }
+.account-stats dd { margin: 0; font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.account-stats dd[data-profit=true] { color: var(--success); }
+.account-stats dd[data-profit=false] { color: var(--danger); }
+.account-position, .account-order { display: grid; grid-template-columns: minmax(120px,1fr) minmax(230px,2fr) auto; align-items: center; gap: 16px; padding: 14px 0; border-top: 1px solid var(--line); font-size: 12px; }
+.account-position>div:first-child, .account-order>div:first-child { display: flex; flex-direction: column; gap: 4px; }
+.account-rows small, .account-rows time { font-size: 10px; color: var(--muted); }
+.account-rows dl { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; margin: 0; }
+.account-rows dt { font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+.account-rows dd { margin: 0; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.terminal-view-controls { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+.terminal-mobile-tabs { display: none; }
+.terminal-layout-select { background: var(--card); border: 1px solid var(--line); color: var(--fg); font-size: 11px; border-radius: var(--radius-small); padding: 6px 8px; min-height: 32px; }
+.btc-terminal .exchange-detail-grid[data-layout=focus] { grid-template-columns: minmax(0,1fr) 340px; }
+.btc-terminal [data-layout=focus] .market-information { display: none; }
+.btc-terminal [data-layout=focus] .exchange-ticket-column { grid-column: 2; grid-row: 1; }
+@media(max-width:900px) {
+ .btc-terminal .terminal-view-controls { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 6px 0; justify-content: stretch; }
+ .terminal-mobile-tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); width: 100%; border: 1px solid var(--line); border-radius: var(--radius-small); padding: 3px; gap: 3px; background: var(--card); }
+ .terminal-mobile-tabs button { min-height: 40px; font-size: 12px; color: var(--muted); border-radius: var(--radius-small); }
+ .terminal-mobile-tabs button[aria-pressed=true] { background: var(--fg); color: var(--card); }
+ .terminal-layout-select { display: none; }
+ .btc-terminal .exchange-detail-grid[data-layout] { grid-template-columns: minmax(0,1fr); }
+ .btc-terminal [data-layout] .exchange-ticket-column { grid-column: 1; grid-row: 2; }
+ .btc-terminal [data-mobile-view=trade] .btc-chart, .btc-terminal [data-mobile-view=trade] .btc-chart-placeholder, .btc-terminal [data-mobile-view=trade] .terminal-price-details, .btc-terminal [data-mobile-view=trade] .market-account, .btc-terminal [data-mobile-view=trade] .market-information { display: none; }
+ .btc-terminal [data-mobile-view=chart] .exchange-ticket-column, .btc-terminal [data-mobile-view=chart] .market-account { display: none; }
+ .btc-terminal [data-mobile-view=chart] .market-information { display: block; }
+ .btc-terminal [data-mobile-view=activity] .btc-detail, .btc-terminal [data-mobile-view=activity] .exchange-ticket-column, .btc-terminal [data-mobile-view=activity] .market-information { display: none; }
+ .btc-terminal [data-mobile-view=activity] .market-account { grid-row: 1; padding-top: 0; border: 0; }
+ .amount-quick button, .chart-view-controls select, .chart-view-controls button { min-height: 40px; }
+ .amount-ticket input, .amount-ticket select { font-size: 16px; }
+ .account-stats { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+ .account-position, .account-order { grid-template-columns: minmax(0,1fr) auto; gap: 10px; }
+ .account-rows dl { grid-column: 1 / -1; grid-row: 2; }
+}
+@media(max-width:600px) {
+ .btc-terminal [data-mobile-view=trade] .btc-price-grid { margin-bottom: 0; }
+ .btc-terminal [data-mobile-view=trade] .btc-round-head { margin-bottom: 8px; }
+ .amount-ticket { padding: 14px; }
+ .amount-ticket .exchange-outcomes { margin-bottom: 12px; }
+ .account-stats dd { font-size: 18px; }
+ .chart-view-controls select, .chart-view-controls button { padding-inline: 7px; }
+}

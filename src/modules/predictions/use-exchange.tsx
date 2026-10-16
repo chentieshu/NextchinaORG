@@ -4,7 +4,8 @@ import Link from 'next/link';
 import {useApp} from '@/components/Provider';
 import {Modal} from '@/components/Shell';
 import {EmailVerification} from '@/components/EmailVerification';
-import {walletRequest,clearWalletRequest} from '../wallet/money';
+import {tradeCopy} from './trade-copy';
+import {walletRequest,clearWalletRequest,formatPoints} from '../wallet/money';
 import {walletChanged} from '../wallet/use-wallet';
 import {exchangeCopy} from './exchange-copy';
 import {productCopy} from './product-copy';
@@ -28,7 +29,7 @@ export function useExchangeAction(onDone?:()=>void,onShare?:(url:string)=>void){
  useEffect(()=>{setIntent(null);setError('');setUncertain(false);setShared(null);setBusy(false);if(!user)return;try{const value=JSON.parse(sessionStorage.getItem(`chinateam-wallet-request:${user.id}:exchange`)??'null'),old=JSON.parse(value?.payload??'null');if(validIntent(old)){setIntent(old);setUncertain(true);}}catch{}},[user?.id]);
  function stage(action:string,payload:Record<string,unknown>,summary:string,admin=false){if(pending.current||intent||!online)return;setError('');setUncertain(false);setIntent({action,payload,summary,admin});}
  async function commit(){if(!db||!user||!intent||pending.current||!online)return;const id=user.id,current=intent;pending.current=true;setBusy(true);setError('');
- try{const request=walletRequest(id,'exchange',JSON.stringify(current)),r=await db.rpc(current.admin?'omni_exchange_admin':'omni_exchange_action',{request,action:current.action,payload:current.payload}).abortSignal(AbortSignal.timeout(20000));if(actor.current!==id)return;if(r.error)throw r.error;if(r.data?.ok!==true)throw Error();clearWalletRequest(id,'exchange');setIntent(null);setUncertain(false);if(current.action==='share'){const url=predictionUrl(locale,{kind:'order',id:r.data.id});if(onShare)onShare(url);else setShared(url);}walletChanged();done.current?.();notify(current.action==='order'&&r.data.filled!=null?`${c.filled}: ${r.data.filled} · ${r.data.state==='cancelled'?c.cancelled:c.remaining}: ${r.data.remaining}`:c.saved);
+ try{const request=walletRequest(id,'exchange',JSON.stringify(current)),r=await db.rpc(current.admin?'omni_exchange_admin':'omni_exchange_action',{request,action:current.action,payload:current.payload}).abortSignal(AbortSignal.timeout(20000));if(actor.current!==id)return;if(r.error)throw r.error;if(r.data?.ok!==true)throw Error();clearWalletRequest(id,'exchange');setIntent(null);setUncertain(false);if(current.action==='share'){const url=predictionUrl(locale,{kind:'order',id:r.data.id});if(onShare)onShare(url);else setShared(url);}walletChanged();done.current?.();notify(current.action==='order'&&current.payload.budget_units!=null&&r.data.executed_units!=null?`${c.filled}: ${r.data.filled} · ${tradeCopy[locale].cost}: ${formatPoints(r.data.executed_units,locale)} · ${tradeCopy[locale].unused}: ${formatPoints(BigInt(String(current.payload.budget_units))-BigInt(r.data.executed_units),locale)}`:current.action==='order'&&r.data.filled!=null?`${c.filled}: ${r.data.filled} · ${r.data.state==='cancelled'?c.cancelled:c.remaining}: ${r.data.remaining}`:c.saved);
  }catch(e){if(actor.current!==id)return;const code=(e as {code?:string}).code??'',known=/^(PT[0-9]{3}|[0-9A-Z]{5}|PGRST[0-9]+)$/.test(code);setUncertain(!known);if(known)clearWalletRequest(id,'exchange');setError(code==='PT401'?c.email:code==='PT402'?c.stock:code==='PT409'?c.conflict:code==='PT412'?productCopy[locale].executionError:code==='PT429'?chartCopy[locale].rate:c.error);
  }finally{pending.current=false;if(actor.current===id)setBusy(false);}}
  const close=()=>{if(!pending.current&&!uncertain){setIntent(null);setError('');}};

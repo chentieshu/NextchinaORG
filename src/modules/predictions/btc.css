@@ -28,22 +28,6 @@
 .btc-round-nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 11px; padding-top: 16px; border-top: 1px solid var(--line); }
 .btc-round-nav a { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; }
 .btc-round-nav button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; }
-.btc-advanced summary { font-size: 12px; color: var(--muted); min-height: 36px; cursor: pointer; }
-.btc-advanced select { width: 100%; margin-bottom: 12px; }
-.btc-ticket form { gap: 12px; }
-.btc-ticket .ticket-max { margin-top: 0; }
-.btc-ticket .exchange-outcomes { gap: 10px; }
-.btc-ticket .exchange-outcomes button { min-height: 76px; padding: 12px 8px; display: flex; flex-direction: column; gap: 5px; align-items: center; border: 1px solid var(--line); }
-.btc-ticket .exchange-outcomes button small { font-size: 10px; font-weight: 400; }
-.btc-ticket .exchange-outcomes .outcome-yes[aria-pressed=true] { background: color-mix(in srgb,var(--success) 12%,var(--card)); color: var(--success); border-color: var(--success); }
-.btc-ticket .exchange-outcomes .outcome-no[aria-pressed=true] { background: color-mix(in srgb,var(--danger) 12%,var(--card)); color: var(--danger); border-color: var(--danger); }
-.btc-ticket .btc-ties { font-size: 10px; color: var(--muted); margin: -4px 0 14px; }
-.btc-ticket .btc-use-quote { justify-self: start; margin-top: -8px; font-size: 11px; min-height: 32px; }
-.btc-quick { display: flex; gap: 8px; }
-.btc-quick button { border: 1px solid var(--line); border-radius: var(--radius-small); flex: 1; min-height: 38px; font-size: 12px; }
-.btc-ticket .ticket-summary dt { max-width: 68%; }
-.btc-probability { margin-top: 16px; }
-.btc-probability>summary { font-size: 12px; min-height: 36px; cursor: pointer; }
 @media(max-width:600px) {
  .btc-detail { padding: 16px; }
  .btc-round-head { margin-bottom: 20px; gap: 8px; }
@@ -54,8 +38,6 @@
  .btc-price-grid { grid-template-columns: minmax(0,1fr); gap: 14px; }
  .btc-opening b { font-size: 16px; }
  .btc-chart-canvas { height: 240px; }
- .btc-ticket .exchange-outcomes button { min-height: 72px; }
- .btc-quick button,.btc-ticket .btc-use-quote { min-height: 44px; }
  .btc-round-nav a { min-height: 44px; }
 }
 

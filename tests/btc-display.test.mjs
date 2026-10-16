@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {btcSnapshot,validBtcSnapshot,validBtcStart} from '../src/modules/predictions/btc-data.ts';
+import {btcSnapshot,validBtcSnapshot,validBtcStart,btcBars} from '../src/modules/predictions/btc-data.ts';
 import prices from '../prices-dist/index.js';
 import wallet from '../wallet-dist/index.js';
 import {readFile} from 'node:fs/promises';
@@ -51,3 +51,5 @@ test('real Workers runtime serves BTC snapshots through Cache API without refetc
  const runtime=new Miniflare(convertV4MiniflareOptions({compatibilityDate:'2026-10-13',modules:true,script:await readFile('prices-dist/index.js','utf8'),outboundService:async request=>{requests.push(request.url);return Response.json(Array.from({length:180},(_,i)=>bar(start+i*1000)));}}));
  try{const url=`https://prices.internal/v1/btc?start=${start}`,a=await runtime.dispatchFetch(url);assert.equal(a.status,200);assert.equal((await a.json()).points.length,180);const b=await runtime.dispatchFetch(url);assert.equal(b.status,200);assert.equal((await b.json()).complete,true);assert.equal(requests.length,1);}finally{await runtime.dispose();}
 });
+
+test('BTC OHLC views retain true highs/lows and aggregate only observed candles',()=>{const start=Math.floor(Date.now()/180000)*180000,rows=Array.from({length:7},(_,i)=>[start+i*1000,'65000.00000000',String(65020+i)+'.00000000',String(64990-i)+'.00000000','65010.00000000','1',start+i*1000+999]),d=btcSnapshot(rows,start,start+6999);assert.equal(d.points[0].high,'65020.00000000');const bars=btcBars(d.points,5);assert.equal(bars.length,2);assert.deepEqual(bars[0],{time:start/1000,open:65000,high:65024,low:64986,close:65010});assert.equal(bars[1].high,65026);assert.deepEqual(btcBars([{time:start,price:'65010'}],1),[]);assert.equal(validBtcSnapshot({...d,points:d.points.map((p,i)=>i? p:{...p,high:'64000'})},start),false);});

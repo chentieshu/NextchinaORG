@@ -572,7 +572,7 @@ html[data-theme=dark] .outcome-text-no, html[data-theme=dark] .market-tile-outco
 .market-chart-panel { grid-column: 1; grid-row: 1; margin-bottom: 0; }
 .exchange-ticket-column { grid-column: 2; grid-row: 1 / span 2; min-width: 0; position: relative; align-self: stretch; }
 .market-information { grid-column: 1; min-width: 0; }
-.market-account { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0,1fr) minmax(0,2fr); gap: 24px; min-width: 0; align-items: start; }
+.market-account { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0,1fr); gap: 24px; min-width: 0; align-items: start; }
 .market-account>div { min-width: 0; }
 .market-information-panel>.exchange-tabs { margin: -8px 0 20px; }
 .market-orderbook { min-width: 0; }

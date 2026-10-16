@@ -36,15 +36,6 @@
  .btc-terminal .exchange-ticket-column { grid-column: 1; grid-row: 2; }
  .btc-terminal .market-information { grid-row: 3; }
  .btc-terminal .btc-chart-canvas { height: 240px; }
- .btc-terminal .btc-ticket .exchange-outcomes button { min-height: 64px; }
- .btc-terminal .btc-ticket form { grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 12px; }
- .btc-terminal .btc-ticket form>label { grid-row: 1; }
- .btc-terminal .btc-ticket .btc-use-quote { grid-column: 1; grid-row: 2; margin: 0; min-height: 44px; }
- .btc-terminal .btc-quick { grid-column: 2; grid-row: 2; gap: 5px; }
- .btc-terminal .btc-ticket form>:not(label,.btc-use-quote,.btc-quick) { grid-column: 1 / -1; }
- .btc-terminal .btc-ticket .ticket-max { grid-column: 2; min-height: 32px; }
- .btc-terminal .btc-ticket .ticket-summary { border-top: 1px solid var(--line); padding-top: 12px; }
- .btc-terminal .btc-ticket .btc-advanced { margin-top: 0; }
 }
 @media(max-width:600px) {
  .btc-terminal { padding: 12px 12px 28px; }
@@ -65,6 +56,4 @@
  .btc-terminal .btc-feed-state { margin-top: 4px; }
  .btc-terminal .terminal-price-details { margin-top: 0; }
  .btc-terminal .btc-price-table { font-size: 10px; }
- .btc-terminal .btc-ticket { padding: 14px; }
- .btc-terminal .btc-ticket .exchange-outcomes { margin-bottom: 12px; }
 }

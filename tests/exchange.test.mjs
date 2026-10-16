@@ -123,6 +123,39 @@ test('prediction exchange: collateral, matching, refunds, roles, resolution and 
  secondMarket=(await read(owner,second,'admin')).rows[0];await assert.rejects(admin('result',{market:second,expected:secondMarket.updated_at,result:'yes',evidence_url:'https://example.test/result',note:'Cannot change settled result'}),/not closed/);
  assert.equal((await root('select sum(balance)::text net from omni_private.wallet_accounts'))[0].net,'0');
  assert.equal((await root("select sum(balance)::text n from omni_private.wallet_accounts where bucket in('prediction_pool','prediction_hold')"))[0].n,'100000');
+ // Budget IOC consumes actual spend across levels and preserves fund provenance.
+ const u=randomUUID(),v=randomUUID(),w=randomUUID();
+ await root(`insert into auth.users(id,email,email_confirmed_at) select id,id::text||'@example.test',now() from unnest(array['${u}','${v}','${w}']::uuid[]) id;update public.omni_profiles set profile_completed_at=now();insert into auth.sessions select id,id,null from auth.users where id in('${u}','${v}','${w}');insert into auth.mfa_amr_claims select id,'otp',now() from auth.users where id in('${u}','${v}','${w}');`);
+ await as(owner,`select omni_points_admin_action('${randomUUID()}','issue','{"amount":"30000000000","note":"Budget matching regression"}') s`);
+ for(const id of [u,v,w])await as(owner,`select omni_points_admin_action('${randomUUID()}','grant','{"amount":"10000000000","user_id":"${id}","note":"Budget matching funding"}') s`);
+ const fresh=async()=>{const id=(await admin('create',definition)).id;await admin('publish',{market:id,expected:(await read(owner,id,'admin')).rows[0].updated_at,note:'Publish test budget market'});return id;};
+ const budgetMarket=await fresh();
+ const limit=(id,side,outcome,price,quantity,market=budgetMarket)=>action(id,'order',{market,side,outcome,price:String(price),quantity:String(quantity),tif:'gtc'});
+ const spend=(id,budget,price=99,key=randomUUID(),market=budgetMarket)=>action(id,'order',{market,side:'buy',outcome:'yes',price:String(price),budget_units:String(budget),tif:'ioc'},key);
+ const budgetQuote=(id,budget,price=99,market=budgetMarket)=>as(id,`select omni_exchange_budget_quote('${market}','yes',${price},${budget}) s`);
+ await limit(v,'buy','no',60,2);await limit(v,'buy','no',30,5);
+ const estimate=await budgetQuote(u,25000);assert.equal(estimate.filled,'4');assert.equal(estimate.units,'22000');assert.equal(estimate.unspent,'3000');
+ const requestBudget=randomUUID(),purchase=await spend(u,25000,99,requestBudget);assert.equal(purchase.filled,'4');assert.equal(purchase.executed_units,'22000');assert.equal(purchase.state,'filled');assert.deepEqual(await spend(u,25000,99,requestBudget),purchase);await assert.rejects(spend(u,26000,99,requestBudget),/Request changed/);
+ let budgetState=await read(u,budgetMarket);assert.equal(budgetState.balance.purchased,'9999978000');assert.equal(budgetState.balance.held,'0');assert.equal(budgetState.orders[0].budget_units,'25000');assert.equal(budgetState.orders[0].executed_units,'22000');
+ await limit(u,'sell','yes',50,2);const mixed=await spend(w,17000);assert.equal(mixed.filled,'3');assert.equal(mixed.executed_units,'17000');assert.equal((await read(w,budgetMarket)).balance.held,'0');
+ await limit(u,'buy','no',95,10);assert.equal((await budgetQuote(u,10000)).filled,'1','own favorable quotes excluded');
+ await root(`update omni_private.wallet_users set frozen=true where user_id='${v}'`);assert.equal((await budgetQuote(u,10000)).filled,'0','frozen counterparties excluded');await root(`update omni_private.wallet_users set frozen=false where user_id='${v}'`);
+ assert.equal((await spend(u,10000,60)).filled,'0','price ceiling excludes expensive liquidity');assert.equal((await spend(u,100)).filled,'0','cannot buy a fractional share');
+ await assert.rejects(spend(u,99),/Invalid budget/);await assert.rejects(spend(u,9900000001),/Invalid budget/);
+ for(const invalid of [{side:'sell'},{tif:'gtc'},{post_only:true},{quantity:'1'}])await assert.rejects(action(u,'order',{market:budgetMarket,side:'buy',outcome:'yes',price:'50',budget_units:'1000',tif:'ioc',...invalid}),/Invalid/);
+ await root(`update omni_private.wallet_users set frozen=true where user_id='${u}'`);await assert.rejects(spend(u,1000),/frozen/);await root(`update omni_private.wallet_users set frozen=false where user_id='${u}';update auth.mfa_amr_claims set updated_at=now()-interval '2 days' where session_id='${u}'`);await assert.rejects(spend(u,1000),/verification|verify|email/i);await root(`update auth.mfa_amr_claims set updated_at=now() where session_id='${u}'`);
+ const capMarket=await fresh();await limit(v,'buy','no',99,1000000,capMarket);const cap=await spend(u,200000000,99,randomUUID(),capMarket);assert.equal(cap.filled,'1000000');assert.equal(cap.executed_units,'100000000');assert.equal((await read(u,capMarket)).orders[0].held,'0','quantity cap returns unused budget even when fully filled');
+ const earnedMarket=await fresh();await limit(v,'buy','no',60,10,earnedMarket);
+ // Transfer a user's own funds into earned in a balanced test journal.
+ await root(`do $$declare j uuid;bal bigint;begin bal=omni_private.c2c_balance('${w}','purchased');j=omni_private.exchange_journal('${w}','prediction_refund',bal,'{}');perform omni_private.wallet_entry(j,'${w}','purchased',-bal);perform omni_private.wallet_entry(j,'${w}','earned',bal);end;$$;`);
+ const earnedBefore=await read(w,earnedMarket);await spend(w,10100,99,randomUUID(),earnedMarket);const earnedAfter=await read(w,earnedMarket);assert.equal(earnedAfter.balance.purchased,'0');assert.equal(BigInt(earnedBefore.balance.earned)-BigInt(earnedAfter.balance.earned),8000n);assert.equal(earnedAfter.balance.held,'0');
+ await root(`do $$declare j uuid;begin j=omni_private.exchange_journal('${w}','prediction_refund',5000,'{}');perform omni_private.wallet_entry(j,'${w}','earned',-5000);perform omni_private.wallet_entry(j,'${w}','purchased',5000);end;$$;`);
+ const mixedBefore=await read(w,earnedMarket);await spend(w,10100,99,randomUUID(),earnedMarket);const mixedAfter=await read(w,earnedMarket);assert.equal(mixedAfter.balance.purchased,'0');assert.equal(BigInt(mixedBefore.balance.earned)-BigInt(mixedAfter.balance.earned),3000n);assert.equal(mixedAfter.balance.held,'0');
+ const noLiquidity=await fresh(),noLiquidityBefore=await read(u,noLiquidity);await spend(u,100000,99,randomUUID(),noLiquidity);assert.equal((await read(u,noLiquidity)).balance.purchased,noLiquidityBefore.balance.purchased);
+ await root(`update omni_private.exchange_markets set closes_at=now()-interval '1 second' where id='${noLiquidity}'`);await assert.rejects(spend(u,10000,99,randomUUID(),noLiquidity),/closed/);
+ assert.equal((await root('select sum(balance)::text net from omni_private.wallet_accounts'))[0].net,'0');
+ assert.equal((await root("select count(*)::text n from omni_private.exchange_orders where budget_units is not null and (state='open' or purchased_hold+earned_hold<>0 or executed_units>budget_units)"))[0].n,'0');
+ assert.equal((await root("select balance::text n from omni_private.wallet_accounts where bucket='prediction_pool'"))[0].n,(await root('select sum(collateral)::text n from omni_private.exchange_markets'))[0].n);
  // Large histories use bounded, non-overlapping cursor pages; refresh overlaps the last bucket.
  await root(`insert into omni_private.exchange_candles(market_id,step,bucket,open,high,low,close,volume,trades,first_at,first_id,last_at,last_id)
  select '${market}',60,date_trunc('minute',now())-make_interval(mins=>n),40,60,40,60,10000,1,now(),gen_random_uuid(),now(),gen_random_uuid() from generate_series(1,650) n on conflict do nothing;`);

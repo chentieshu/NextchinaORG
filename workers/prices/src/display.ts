@@ -4,7 +4,7 @@ export async function displayPrices(request:Request,ctx:ExecutionContext):Promis
  const url=new URL(request.url),start=validBtcStart(url.searchParams.get('start'));
  if(request.method!=='GET'||start===null||[...url.searchParams.keys()].length!==1)return Response.json({error:'invalid_round'},{status:400});
  // Shared, bounded public snapshot; never cached with user headers or credentials.
- const key=new Request(`https://teamcn.org/__btc-price-cache/v1?start=${start}`),cache=caches.default,cached=await cache.match(key);
+ const key=new Request(`https://teamcn.org/__btc-price-cache/v2?start=${start}`),cache=caches.default,cached=await cache.match(key);
  if(cached)return cached;
  try{
   const source=`https://api-gcp.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1s&timeZone=0&limit=180&startTime=${start}&endTime=${start+179999}`;
