@@ -1,4 +1,4 @@
-.amount-ticket button, .chart-view-controls button { transition: none; }
+.amount-ticket button { transition: none; }
 /* Shared trading controls: opaque states and the same spacing on every market. */
 .amount-ticket { padding: 16px; }
 .ticket-controls { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 14px; }
@@ -24,7 +24,7 @@
 .amount-ticket button:disabled, .chart-view-controls button:disabled { opacity: 1; background: var(--soft2); border-color: var(--line); color: var(--muted); }
 .amount-ticket[data-outcome] form>.trade-submit:disabled, .amount-ticket .exchange-outcomes button:disabled { background: var(--soft2); border-color: var(--line); color: var(--muted); }
 .chart-view-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
-.chart-view-controls select, .chart-view-controls button { min-height: 36px; border: 1px solid var(--line); border-radius: var(--radius-small); background: var(--card); color: var(--fg); padding: 5px 9px; font-size: 11px; }
+.chart-view-controls select, .chart-view-controls button { transition: none; min-height: 36px; border: 1px solid var(--line); border-radius: var(--radius-small); background: var(--card); color: var(--fg); padding: 5px 9px; font-size: 11px; }
 .chart-view-controls>div { display: flex; gap: 4px; }
 .chart-view-controls button[aria-pressed=true] { background: var(--fg); color: var(--card); border-color: var(--fg); }
 .chart-view-controls .chart-reset { margin-left: auto; }
