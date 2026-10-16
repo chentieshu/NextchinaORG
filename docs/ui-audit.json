@@ -1,10 +1,10 @@
 {
   "totals": {
     "files": 23,
-    "bytes": 195886,
-    "compactBytes": 161559,
-    "rules": 2036,
-    "declarations": 5946,
+    "bytes": 193743,
+    "compactBytes": 159835,
+    "rules": 2019,
+    "declarations": 5886,
     "important": 20,
     "literalColors": 69,
     "widthBreakpoints": [
@@ -13,7 +13,6 @@
       900,
       901,
       1200,
-      1440,
       1600
     ],
     "repeatedSelectorContexts": 0,
@@ -43,8 +42,8 @@
     },
     {
       "file": "src/modules/admin/admin.css",
-      "bytes": 27714,
-      "compactBytes": 23476,
+      "bytes": 27758,
+      "compactBytes": 23510,
       "rules": 262
     },
     {
@@ -121,9 +120,9 @@
     },
     {
       "file": "src/styles/account.css",
-      "bytes": 8650,
-      "compactBytes": 7137,
-      "rules": 101
+      "bytes": 9803,
+      "compactBytes": 8075,
+      "rules": 114
     },
     {
       "file": "src/styles/content.css",
@@ -139,15 +138,15 @@
     },
     {
       "file": "src/styles/foundation.css",
-      "bytes": 17496,
-      "compactBytes": 14324,
-      "rules": 178
+      "bytes": 17980,
+      "compactBytes": 14725,
+      "rules": 183
     },
     {
       "file": "src/styles/public.css",
-      "bytes": 30014,
-      "compactBytes": 24169,
-      "rules": 305
+      "bytes": 26190,
+      "compactBytes": 21072,
+      "rules": 270
     },
     {
       "file": "src/styles/shared.css",

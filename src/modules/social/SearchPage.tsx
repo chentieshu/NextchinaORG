@@ -38,12 +38,12 @@ function Search(){
    {user&&<label><span className="sr-only">{copy.scope}</span><select aria-label={copy.scope} disabled={navigating} value={following?'following':'all'} onChange={e=>navigate(q,{following:e.target.value==='following'})}><option value="all">{copy.everyone}</option><option value="following">{copy.following}</option></select></label>}
   </div>}
   {!q?<section className="search-history" aria-label={copy.recent}>
-   <div className="search-history-heading"><h2>{copy.recent}</h2>{recent.length>0&&<IconButton label={copy.clearAll} onClick={()=>saveHistory([])}><FiTrash2/></IconButton>}</div>
-   {recent.length?<ul>{recent.map(item=><li key={item}><button className="history-query" onClick={()=>submit(item)}><FiClock/><span>{item}</span><FiArrowUpLeft/></button><button className="icon-button" aria-label={`${copy.remove}: ${item}`} onClick={()=>saveHistory(recent.filter(v=>v!==item))}><FiX/></button></li>)}</ul>:<p className="form-note">{copy.recentEmpty}</p>}
-   <p className="search-help">{copy.localHistory}</p>
+   <div className="search-history-heading">{recent.length>0&&<h2>{copy.recent}</h2>}{recent.length>0&&<IconButton label={copy.clearAll} onClick={()=>saveHistory([])}><FiTrash2/></IconButton>}</div>
+   {recent.length?<ul>{recent.map(item=><li key={item}><button className="history-query" onClick={()=>submit(item)}><FiClock/><span>{item}</span><FiArrowUpLeft/></button><button className="icon-button" aria-label={`${copy.remove}: ${item}`} onClick={()=>saveHistory(recent.filter(v=>v!==item))}><FiX/></button></li>)}</ul>:<p className="search-empty-prompt">{c.emptyQuery}</p>}
+
   </section>:<>
    {results.error&&<p className="inline-error" role="alert">{t.connectionError}<button onClick={results.retry}>{t.retry}</button></p>}
-   {!db?<p className="empty-state">{t.connectionError}</p>:results.busy&&!results.items.length?<div className="skeleton-list" role="status" aria-label={t.loading}><i/><i/></div>:!results.items.length&&!results.error?<div className="empty-state"><p>{c.searchEmpty}</p><small>{copy.hint}</small></div>:<div className="search-results" aria-busy={results.busy}>
+   {!db?<p className="empty-state">{t.connectionError}</p>:results.busy&&!results.items.length?<div className="skeleton-list" role="status" aria-label={t.loading}><i/><i/></div>:!results.items.length&&!results.error?<div className="empty-state"><p>{c.searchEmpty}</p></div>:<div className="search-results" aria-busy={results.busy}>
     {results.items.map(row=>row.kind==='user'?<article className="search-person" key={`user:${row.profile.id}`}>
      <div className="search-person-top"><UserIdentity id={row.profile.id} name={row.profile.display_name} handle={row.profile.handle} avatarKey={row.profile.avatar_key} size={40}/><FollowButton id={row.profile.id} following={row.profile.following}/></div>
      {row.profile.bio&&<Link className="search-person-bio" href={`/${locale}/profile/?id=${row.profile.id}`}>{row.profile.bio}</Link>}

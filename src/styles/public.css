@@ -47,13 +47,13 @@
   gap: 6px;
   align-items: center;
 }
-.app-nav svg, .sidebar-categories summary svg {
+.app-nav svg {
   width: 21px;
   height: 21px;
   flex-shrink: 0;
   stroke-width: 1.7;
 }
-.app-nav>a:hover, .sidebar-categories summary:hover {
+.app-nav>a:hover {
   background: var(--soft);
   color: var(--fg);
 }
@@ -80,19 +80,6 @@
 .app-body .footer nav {
   gap: 14px;
   flex-wrap: wrap;
-}
-.sidebar-categories summary::-webkit-details-marker {
-  display: none;
-}
-.sidebar-categories>div {
-  display: grid;
-  gap: 3px;
-  max-height: 170px;
-  overflow-y: auto;
-  padding: 4px 10px 0 53px;
-}
-.sidebar-categories a:hover {
-  color: var(--fg);
 }
 .sidebar-account {
   margin-top: 0;
@@ -233,6 +220,8 @@
 }
 .search-page {
   padding: 24px var(--page-gutter);
+  max-width: 1120px;
+  margin: 0 auto;
 }
 .global-search-form>svg {
   flex-shrink: 0;
@@ -468,7 +457,7 @@
   min-height: 100dvh;
   width: 100%;
   grid-template-columns: var(--sidebar-width) minmax(0,1fr);
-  --sidebar-width: clamp(216px,16vw,256px);
+  --sidebar-width: 220px;
 }
 .app-sidebar {
   position: sticky;
@@ -523,29 +512,6 @@
   margin-top: 18px;
   font-size: 14px;
 }
-.sidebar-categories {
-  min-height: 0;
-  margin-top: 12px;
-}
-.sidebar-categories summary {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  border-radius: var(--radius-pill);
-  line-height: 1.4;
-  color: var(--muted);
-  text-align: left;
-  list-style: none;
-  cursor: pointer;
-  font-size: 13px;
-  padding: 10px 15px;
-  min-height: 40px;
-}
-.sidebar-categories a {
-  font-size: 13px;
-  color: var(--muted);
-  padding: 6px 0;
-}
 .sidebar-account .user-menu summary {
   display: flex;
   align-items: center;
@@ -575,6 +541,8 @@
 }
 .forum-stream {
   padding: 0 var(--page-gutter);
+  max-width: 1120px;
+  margin: 0 auto;
 }
 .stream-tabs {
   display: flex;
@@ -634,12 +602,6 @@
   font-weight: 550;
   font-size: 14px;
 }
-.search-help {
-  color: var(--muted);
-  line-height: 1.9;
-  font-size: 11px;
-  margin-top: 22px;
-}
 .app-workspace {
   display: flex;
   flex-direction: column;
@@ -654,7 +616,7 @@
   min-height: 0;
 }
 .app-page>.content-wrap:not(.article-page):not(.legal-page):not(.about-page) {
-  max-width: none;
+  max-width: 1120px;
 }
 .app-page>.article-page {
   width: 100%;
@@ -663,11 +625,9 @@
 .app-page>.exchange-page {
   max-width: none;
 }
-.app-page>.settings-page {
-  padding-bottom: 40px;
-}
 .app-page>.wallet-page {
   padding-bottom: 40px;
+  max-width: 1120px;
 }
 .app-page .wallet-balance dl {
   grid-template-columns: repeat(4,minmax(0,1fr));
@@ -683,67 +643,6 @@
   overscroll-behavior: contain;
   padding: 0 2px 16px;
   margin: 0 -2px;
-}
-.app-context {
-  display: none;
-  min-width: 0;
-}
-.context-search {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 46px;
-  padding: 12px 14px;
-  background: var(--soft);
-  border: 1px solid transparent;
-  border-radius: var(--radius-control);
-  font-size: 13px;
-  color: var(--muted);
-}
-.context-search:hover {
-  color: var(--fg);
-  border-color: var(--line);
-}
-.context-search kbd {
-  margin-left: auto;
-  font-size: 11px;
-  font-family: inherit;
-}
-.context-categories {
-  margin-top: 36px;
-}
-.context-categories h2 {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--muted);
-  margin-bottom: 12px;
-}
-.context-categories nav {
-  display: grid;
-  gap: 2px;
-}
-.context-categories a {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 44px;
-  padding: 10px 12px;
-  margin: 0 -12px;
-  border-radius: var(--radius-control);
-  font-size: 14px;
-  gap: 12px;
-  overflow-wrap: anywhere;
-}
-.context-categories a:hover {
-  background: var(--soft);
-}
-.context-categories a svg {
-  color: var(--muted);
-  width: 14px;
-  height: 14px;
 }
 @media (max-width:1200px) {
   .app-shell {
@@ -814,7 +713,7 @@
     font-size: 12px;
   }
   .app-body .page-heading h1 {
-    font-size: 26px;
+    font-size: 24px;
   }
   .app-body .profile-tabs {
     gap: 22px;
@@ -1013,31 +912,6 @@
     color: var(--muted);
     padding: 14px 12px;
   }
-  .mobile-menu-categories {
-    border-top: 1px solid var(--line);
-    margin-top: 18px;
-    padding-top: 20px;
-  }
-  .mobile-menu-categories h3 {
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 8px;
-    font-weight: 400;
-  }
-  .mobile-menu-categories nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px 12px;
-  }
-  .mobile-menu-categories a {
-    display: flex;
-    align-items: center;
-    min-height: 44px;
-    font-size: 13px;
-    padding: 6px 10px;
-    border-radius: var(--radius-control);
-    background: var(--soft);
-  }
   .app-body .post-writing .writer-actions .button {
     font-size: 12px;
     padding: 8px 12px;
@@ -1138,14 +1012,6 @@
     padding: 22px 20px 40px;
     padding-top: 24px;
   }
-  .app-body .settings-nav {
-    gap: 10px 18px;
-  }
-  .app-body .settings-nav a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 40px;
-  }
   .mobile-nav {
     position: fixed;
     z-index: 35;
@@ -1235,12 +1101,13 @@
   .global-search-form .search-submit {
     min-width: 38px;
     min-height: 38px;
-  }.mobile-nav>a>span, .mobile-nav>button>span {
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+  }
+  .mobile-nav>a>span, .mobile-nav>button>span {
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .app-workspace {
     min-height: calc(100dvh - 72px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
   }
@@ -1263,10 +1130,6 @@
   }
   .app-body .profile-tabs button {
     font-size: 12px;
-  }
-  .app-body .settings-page .button {
-    max-width: 100%;
-    white-space: normal;
   }
   .search-header {
     padding-top: 14px;
@@ -1311,9 +1174,6 @@
   }
   .search-suggestion-panel li>a, .search-suggestion-panel li>button {
     padding: 12px;
-  }
-  .search-help {
-    font-size: 11px;
   }
   .app-body .post-writing .writer-topbar {
     padding: 12px;
@@ -1407,11 +1267,6 @@
     font-size: 12px;
   }
 }
-@media (max-height:620px) {
-  .sidebar-categories {
-    display: none;
-  }
-}
 @media (max-height:800px) and (min-width:901px) {
   .app-sidebar {
     padding-top: 18px;
@@ -1433,13 +1288,6 @@
     min-height: 40px;
     margin-top: 10px;
   }
-  .sidebar-categories {
-    margin-top: 8px;
-    flex-shrink: 0;
-  }
-  .sidebar-categories>div {
-    max-height: 110px;
-  }
   .sidebar-account {
     padding-top: 12px;
   }
@@ -1448,44 +1296,8 @@
     max-width: 100%;
   }
 }
-@media (min-width:1440px) {
-  .app-shell-context .app-body {
-    grid-template-columns: minmax(0,1fr) clamp(280px,20vw,360px);
-    align-items: start;
-  }
-  .app-context {
-    display: block;
-    position: sticky;
-    top: 0;
-    height: 100dvh;
-    border-left: 1px solid var(--line);
-    padding: 24px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-  }
-  .app-shell-context .sidebar-categories {
-    display: none;
-  }
-}
-@media (min-width:1200px) {
-  .app-page>.settings-page {
-    display: grid;
-    grid-template-columns: repeat(2,minmax(0,1fr));
-    gap: 24px;
-    align-items: start;
-  }
-  .app-page>.settings-page>:not(section) {
-    grid-column: 1 / -1;
-    margin: 0;
-  }
-  .app-page>.settings-page>section {
-    min-width: 0;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-panel);
-    padding: 24px;
-    height: 100%;
-  }
-  .app-page>.settings-page>.button {
-    justify-self: start;
-  }
+.search-empty-prompt {
+  color: var(--muted);
+  font-size: 13px;
+  padding: 24px 0;
 }

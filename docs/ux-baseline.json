@@ -1,0 +1,593 @@
+{
+  "source": "c3fb7d29bffb4ebacbb944b61ea835f9e8b71827",
+  "totals": {
+    "routeFiles": 25,
+    "publicRoutes": 19,
+    "adminRoutes": 6,
+    "componentFiles": 105,
+    "copyParagraphNodes": 228
+  },
+  "adminSections": [
+    "dashboard",
+    "posts",
+    "articles",
+    "moderation",
+    "members",
+    "categories",
+    "wallet",
+    "market",
+    "predictions",
+    "monitor",
+    "audit",
+    "settings"
+  ],
+  "settingsTasks": [
+    "profile",
+    "security",
+    "connections",
+    "preferences",
+    "reading"
+  ],
+  "routes": [
+    {
+      "application": "admin",
+      "path": "/[locale]/admin/",
+      "file": "apps/admin/app/[locale]/admin/page.tsx",
+      "redirect": false,
+      "imports": []
+    },
+    {
+      "application": "admin",
+      "path": "/[locale]/auth/callback/",
+      "file": "apps/admin/app/[locale]/auth/callback/page.tsx",
+      "redirect": false,
+      "imports": []
+    },
+    {
+      "application": "admin",
+      "path": "/[locale]/",
+      "file": "apps/admin/app/[locale]/page.tsx",
+      "redirect": false,
+      "imports": []
+    },
+    {
+      "application": "admin",
+      "path": "/[locale]/settings/",
+      "file": "apps/admin/app/[locale]/settings/page.tsx",
+      "redirect": false,
+      "imports": []
+    },
+    {
+      "application": "admin",
+      "path": "/[locale]/write/",
+      "file": "apps/admin/app/[locale]/write/page.tsx",
+      "redirect": false,
+      "imports": []
+    },
+    {
+      "application": "admin",
+      "path": "/",
+      "file": "apps/admin/app/page.tsx",
+      "redirect": true,
+      "imports": [
+        "next/navigation"
+      ]
+    },
+    {
+      "application": "public",
+      "path": "/[locale]/about/",
+      "file": "src/app/[locale]/about/page.tsx",
+      "redirect": false,
+      "imports": [
+        "@/modules/about/About"
+      ]
+    },
+    {
+      "application": "public",
+      "path": "/[locale]/admin/",
+      "file": "src/app/[locale]/admin/page.tsx",
+      "redirect": true,
+      "imports": [
+        "@/lib/site",
+        "next/navigation"
+      ]
+    },
+    {
+      "application": "public",
+      "path": "/[locale]/auth/callback/",
+      "file": "src/app/[locale]/auth/callback/page.tsx",
+      "redirect": true,
+      "imports": [
+        "next/link",
+        "react",
+        "@/components/Provider"
+      ]
+    },
+    {
+      "application": "public",
+      "path": "/[locale]/bookmarks/",
+      "file": "src/app/[locale]/bookmarks/page.tsx",
+      "redirect": false,
+      "imports": [
+        "@/modules/news/NewsExperience"
+      ]
+    },
+    {
+      "application": "public",
+      "path": "/[locale]/community/",
+      "file": "src/app/[locale]/community/page.tsx",
+      "redirect": false,
+      "imports": [
+        "@/modules/forum/Forum"
+      ]
+    },
+    {
+      "application": "public",
+      "path": "/[locale]/market/",
+      "file": "src/app/[locale]/market/page.tsx",
+      "redirect": true,
+      "imports": [
+        "next/navigation"
+      ]
+    },
+    {
+      "application": "public",
+      "path": "/[locale]/news/",
+      "file": "src/app/[locale]/news/page.tsx",
+      "redirect": false,
+      "imports": [
+        "@/modules/news/NewsExperience",
+        "react"
+      ]
+    },
+    {
+      "application": "public",
+      "path": "/[locale]/",
+      "file": "src/app/[locale]/page.tsx",
+      "redirect": false,
+      "imports": [
+        "@/modules/forum/Forum",
+        "@/lib/i18n"
+      ]
+    },
+    {
+      "application": "public",
+      "path": "/[locale]/predictions/",
+      "file": "src/app/[locale]/predictions/page.tsx",
+      "redirect": false,
+      "imports": [
+        "@/modules/predictions/Exchange"
+      ]
+    },
+    {
+      "application": "public",
+      "path": "/[locale]/privacy/",
+      "file": "src/app/[locale]/privacy/page.tsx",
+      "redirect": false,
+      "imports": [
+        "next/navigation",
+        "@/lib/i18n",
+        "@/lib/legal",
+        "@/modules/about/LegalPage"
+      ]
+    },
+    {
+      "application": "public",
+      "path": "/[locale]/profile/",
+      "file": "src/app/[locale]/profile/page.tsx",
+      "redirect": false,
+      "imports": [
+        "@/modules/social/ProfilePage"
+      ]
+    },
+    {
+      "application": "public",
+      "path": "/[locale]/search/",
+      "file": "src/app/[locale]/search/page.tsx",
+      "redirect": false,
+      "imports": [
+        "@/modules/social/SearchPage"
+      ]
+    },
+    {
+      "application": "public",
+      "path": "/[locale]/settings/",
+      "file": "src/app/[locale]/settings/page.tsx",
+      "redirect": false,
+      "imports": [
+        "@/modules/social/SettingsPage"
+      ]
+    },
+    {
+      "application": "public",
+      "path": "/[locale]/terms/",
+      "file": "src/app/[locale]/terms/page.tsx",
+      "redirect": false,
+      "imports": [
+        "next/navigation",
+        "@/lib/i18n",
+        "@/lib/legal",
+        "@/modules/about/LegalPage"
+      ]
+    },
+    {
+      "application": "public",
+      "path": "/[locale]/wallet/market/",
+      "file": "src/app/[locale]/wallet/market/page.tsx",
+      "redirect": false,
+      "imports": [
+        "@/modules/wallet/C2CPage"
+      ]
+    },
+    {
+      "application": "public",
+      "path": "/[locale]/wallet/",
+      "file": "src/app/[locale]/wallet/page.tsx",
+      "redirect": false,
+      "imports": [
+        "@/modules/wallet/WalletPage"
+      ]
+    },
+    {
+      "application": "public",
+      "path": "/[locale]/wallet/predictions/",
+      "file": "src/app/[locale]/wallet/predictions/page.tsx",
+      "redirect": true,
+      "imports": [
+        "next/navigation"
+      ]
+    },
+    {
+      "application": "public",
+      "path": "/[locale]/write/",
+      "file": "src/app/[locale]/write/page.tsx",
+      "redirect": false,
+      "imports": [
+        "@/modules/editor/Writer"
+      ]
+    },
+    {
+      "application": "public",
+      "path": "/",
+      "file": "src/app/page.tsx",
+      "redirect": false,
+      "imports": [
+        "@/components/Provider",
+        "@/components/Shell",
+        "@/modules/forum/Forum"
+      ]
+    }
+  ],
+  "surfaces": [
+    {
+      "file": "src/app/[locale]/auth/callback/page.tsx",
+      "headings": 1,
+      "forms": 0,
+      "copyParagraphs": 0
+    },
+    {
+      "file": "src/components/AuthDialog.tsx",
+      "headings": 1,
+      "forms": 1,
+      "copyParagraphs": 3
+    },
+    {
+      "file": "src/components/ConnectedAccounts.tsx",
+      "headings": 0,
+      "forms": 0,
+      "copyParagraphs": 3
+    },
+    {
+      "file": "src/components/EmailVerification.tsx",
+      "headings": 1,
+      "forms": 0,
+      "copyParagraphs": 6
+    },
+    {
+      "file": "src/components/ExternalContent.tsx",
+      "headings": 0,
+      "forms": 0,
+      "copyParagraphs": 3
+    },
+    {
+      "file": "src/components/ImageInsert.tsx",
+      "headings": 0,
+      "forms": 0,
+      "copyParagraphs": 1
+    },
+    {
+      "file": "src/components/Onboarding.tsx",
+      "headings": 1,
+      "forms": 1,
+      "copyParagraphs": 3
+    },
+    {
+      "file": "src/components/PostComposer.tsx",
+      "headings": 0,
+      "forms": 0,
+      "copyParagraphs": 1
+    },
+    {
+      "file": "src/components/PostImageEdit.tsx",
+      "headings": 1,
+      "forms": 0,
+      "copyParagraphs": 2
+    },
+    {
+      "file": "src/components/PostThreadReader.tsx",
+      "headings": 2,
+      "forms": 0,
+      "copyParagraphs": 3
+    },
+    {
+      "file": "src/components/Preferences.tsx",
+      "headings": 1,
+      "forms": 1,
+      "copyParagraphs": 2
+    },
+    {
+      "file": "src/components/ProfileDialog.tsx",
+      "headings": 1,
+      "forms": 1,
+      "copyParagraphs": 5
+    },
+    {
+      "file": "src/components/ReadingPreferences.tsx",
+      "headings": 1,
+      "forms": 1,
+      "copyParagraphs": 3
+    },
+    {
+      "file": "src/components/RichEditor.tsx",
+      "headings": 0,
+      "forms": 0,
+      "copyParagraphs": 2
+    },
+    {
+      "file": "src/components/RichText.tsx",
+      "headings": 2,
+      "forms": 0,
+      "copyParagraphs": 0
+    },
+    {
+      "file": "src/components/Shell.tsx",
+      "headings": 3,
+      "forms": 0,
+      "copyParagraphs": 0
+    },
+    {
+      "file": "src/components/ThreadComposer.tsx",
+      "headings": 0,
+      "forms": 0,
+      "copyParagraphs": 1
+    },
+    {
+      "file": "src/components/ThreadReplies.tsx",
+      "headings": 1,
+      "forms": 1,
+      "copyParagraphs": 7
+    },
+    {
+      "file": "src/modules/about/About.tsx",
+      "headings": 3,
+      "forms": 0,
+      "copyParagraphs": 2
+    },
+    {
+      "file": "src/modules/about/LegalPage.tsx",
+      "headings": 3,
+      "forms": 0,
+      "copyParagraphs": 1
+    },
+    {
+      "file": "src/modules/admin/Admin.tsx",
+      "headings": 2,
+      "forms": 1,
+      "copyParagraphs": 6
+    },
+    {
+      "file": "src/modules/admin/AdminShell.tsx",
+      "headings": 1,
+      "forms": 0,
+      "copyParagraphs": 1
+    },
+    {
+      "file": "src/modules/admin/Categories.tsx",
+      "headings": 1,
+      "forms": 1,
+      "copyParagraphs": 2
+    },
+    {
+      "file": "src/modules/admin/Monitoring.tsx",
+      "headings": 5,
+      "forms": 0,
+      "copyParagraphs": 9
+    },
+    {
+      "file": "src/modules/admin/Overview.tsx",
+      "headings": 2,
+      "forms": 0,
+      "copyParagraphs": 1
+    },
+    {
+      "file": "src/modules/editor/Writer.tsx",
+      "headings": 3,
+      "forms": 0,
+      "copyParagraphs": 5
+    },
+    {
+      "file": "src/modules/forum/Forum.tsx",
+      "headings": 2,
+      "forms": 0,
+      "copyParagraphs": 0
+    },
+    {
+      "file": "src/modules/identity/IdentityAdmin.tsx",
+      "headings": 6,
+      "forms": 4,
+      "copyParagraphs": 7
+    },
+    {
+      "file": "src/modules/identity/IdentitySettings.tsx",
+      "headings": 1,
+      "forms": 0,
+      "copyParagraphs": 2
+    },
+    {
+      "file": "src/modules/news/NewsExperience.tsx",
+      "headings": 7,
+      "forms": 0,
+      "copyParagraphs": 3
+    },
+    {
+      "file": "src/modules/predictions/BtcChart.tsx",
+      "headings": 0,
+      "forms": 0,
+      "copyParagraphs": 1
+    },
+    {
+      "file": "src/modules/predictions/BtcDetail.tsx",
+      "headings": 0,
+      "forms": 0,
+      "copyParagraphs": 1
+    },
+    {
+      "file": "src/modules/predictions/Exchange.tsx",
+      "headings": 11,
+      "forms": 1,
+      "copyParagraphs": 20
+    },
+    {
+      "file": "src/modules/predictions/ExchangeAdmin.tsx",
+      "headings": 4,
+      "forms": 2,
+      "copyParagraphs": 8
+    },
+    {
+      "file": "src/modules/predictions/MarketChart.tsx",
+      "headings": 0,
+      "forms": 0,
+      "copyParagraphs": 2
+    },
+    {
+      "file": "src/modules/predictions/OfficialSeries.tsx",
+      "headings": 4,
+      "forms": 0,
+      "copyParagraphs": 14
+    },
+    {
+      "file": "src/modules/predictions/PredictionMarket.tsx",
+      "headings": 4,
+      "forms": 1,
+      "copyParagraphs": 4
+    },
+    {
+      "file": "src/modules/predictions/ProductFeatures.tsx",
+      "headings": 3,
+      "forms": 0,
+      "copyParagraphs": 3
+    },
+    {
+      "file": "src/modules/predictions/ReferenceCard.tsx",
+      "headings": 0,
+      "forms": 0,
+      "copyParagraphs": 2
+    },
+    {
+      "file": "src/modules/predictions/ReferencePicker.tsx",
+      "headings": 1,
+      "forms": 0,
+      "copyParagraphs": 4
+    },
+    {
+      "file": "src/modules/predictions/use-exchange.tsx",
+      "headings": 2,
+      "forms": 0,
+      "copyParagraphs": 2
+    },
+    {
+      "file": "src/modules/social/ProfilePage.tsx",
+      "headings": 3,
+      "forms": 0,
+      "copyParagraphs": 5
+    },
+    {
+      "file": "src/modules/social/SearchPage.tsx",
+      "headings": 2,
+      "forms": 1,
+      "copyParagraphs": 8
+    },
+    {
+      "file": "src/modules/social/SettingsPage.tsx",
+      "headings": 7,
+      "forms": 3,
+      "copyParagraphs": 5
+    },
+    {
+      "file": "src/modules/wallet/C2CAdmin.tsx",
+      "headings": 3,
+      "forms": 2,
+      "copyParagraphs": 7
+    },
+    {
+      "file": "src/modules/wallet/C2CPage.tsx",
+      "headings": 8,
+      "forms": 4,
+      "copyParagraphs": 14
+    },
+    {
+      "file": "src/modules/wallet/DepositDialog.tsx",
+      "headings": 1,
+      "forms": 1,
+      "copyParagraphs": 3
+    },
+    {
+      "file": "src/modules/wallet/Gateway.tsx",
+      "headings": 0,
+      "forms": 1,
+      "copyParagraphs": 0
+    },
+    {
+      "file": "src/modules/wallet/GatewaySetup.tsx",
+      "headings": 2,
+      "forms": 0,
+      "copyParagraphs": 0
+    },
+    {
+      "file": "src/modules/wallet/MarketPage.tsx",
+      "headings": 4,
+      "forms": 2,
+      "copyParagraphs": 12
+    },
+    {
+      "file": "src/modules/wallet/PointsComposition.tsx",
+      "headings": 1,
+      "forms": 0,
+      "copyParagraphs": 0
+    },
+    {
+      "file": "src/modules/wallet/PointsIssuance.tsx",
+      "headings": 3,
+      "forms": 2,
+      "copyParagraphs": 7
+    },
+    {
+      "file": "src/modules/wallet/TipDialog.tsx",
+      "headings": 1,
+      "forms": 1,
+      "copyParagraphs": 5
+    },
+    {
+      "file": "src/modules/wallet/WalletAdmin.tsx",
+      "headings": 2,
+      "forms": 0,
+      "copyParagraphs": 2
+    },
+    {
+      "file": "src/modules/wallet/WalletPage.tsx",
+      "headings": 3,
+      "forms": 1,
+      "copyParagraphs": 15
+    }
+  ]
+}

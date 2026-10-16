@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import {HelpDisclosure} from '@/components/HelpDisclosure';
 import {WalletNav} from './WalletNav';
 import dynamic from 'next/dynamic';
 const LedgerTable=dynamic(()=>import('./LedgerTable').then(m=>m.LedgerTable));
@@ -27,11 +28,11 @@ function Wallet(){const{locale}=useApp(),c=walletCopy[locale],wallet=useWallet()
  return <main id="main" className="wallet-page page-wrap content-wrap"><WalletNav active="balance"/><header className="wallet-heading"><div><h1>{c.title}</h1><p>{c.rate}</p></div><button className="icon-button" aria-label={c.retry} disabled={wallet.loading} onClick={()=>{void wallet.refresh();walletChanged();}}><FiRefreshCw/></button></header>
  {wallet.error&&<p className="inline-error" role="alert">{c.error}<button onClick={()=>void wallet.refresh()}>{c.retry}</button></p>}
  {!wallet.data?wallet.loading&&<p role="status">{c.loading}</p>:<><section className="wallet-balance" aria-label={c.available}><span>{c.available}</span><strong>{formatPoints(BigInt(wallet.data.purchased)+BigInt(wallet.data.earned),locale)}<small>{c.points}</small></strong><dl>{(['purchased','earned','held'] as const).map(k=><div key={k}><dt>{c[k]}</dt><dd>{formatPoints(wallet.data![k],locale)}</dd></div>)}<div><dt>{exchangeCopy[locale].held}</dt><dd>{formatPoints(wallet.data.prediction_held??'0',locale)}</dd></div></dl></section>
- <div className="wallet-actions"><button className="button" disabled={wallet.error||wallet.loading||wallet.data.frozen} onClick={()=>setDeposit(true)}><FiArrowDownLeft/>{c.deposit}</button><button className="button" disabled={wallet.error||wallet.loading||wallet.data.frozen||!wallet.data.withdrawals_enabled} onClick={()=>setWithdraw(true)}><FiArrowUpRight/>{c.withdraw}</button><Link className="button" href={`/${locale}/wallet/market/`}>{marketCopy[locale].title}</Link></div>
+ <div className="wallet-actions"><button className="button" disabled={wallet.error||wallet.loading||wallet.data.frozen} onClick={()=>setDeposit(true)}><FiArrowDownLeft/>{c.deposit}</button><button className="button" disabled={wallet.error||wallet.loading||wallet.data.frozen||!wallet.data.withdrawals_enabled} onClick={()=>setWithdraw(true)}><FiArrowUpRight/>{c.withdraw}</button></div>
  {wallet.data.frozen?<p className="wallet-notice" role="status">{c.frozen}</p>:(!wallet.data.deposits_enabled||!wallet.data.withdrawals_enabled)&&<p className="wallet-notice" role="status">{c.paused}</p>}
- {!!wallet.data.deposit_remainder_micro&&<p className="form-note">{depositCopy[locale].dust}: {formatUsdtMicros(BigInt(wallet.data.deposit_remainder_micro))}</p>}<p className="form-note">{c.withdrawalNote}</p><p className="form-note">{gatewayCopy[locale].feeNote}</p></>}
+ {!!wallet.data.deposit_remainder_micro&&<p className="form-note">{depositCopy[locale].dust}: {formatUsdtMicros(BigInt(wallet.data.deposit_remainder_micro))}</p>}</>}
  <nav className="wallet-tabs" aria-label={c.history}>{(['history','requests'] as const).map(k=><button key={k} aria-pressed={tab===k} onClick={()=>setTab(k)}>{c[k]}</button>)}</nav>
- {tab==='history'?<History/>:<WithdrawalList/>}<p className="form-note wallet-footnote">{c.historyNote} <a href="mailto:chentieshu520@gmail.com">{c.support}</a></p>
+ {tab==='history'?<History/>:<WithdrawalList/>}<HelpDisclosure><p>{c.withdrawalNote}</p><p>{gatewayCopy[locale].feeNote}</p><p>{c.historyNote}</p><a className="text-link" href="mailto:chentieshu520@gmail.com">{c.support}</a></HelpDisclosure>
  {deposit&&<DepositDialog onClose={()=>setDeposit(false)}/>}
  {withdraw&&wallet.data&&<WithdrawDialog snapshot={wallet.data} onClose={()=>setWithdraw(false)}/>}</main>;
 }

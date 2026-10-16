@@ -147,10 +147,10 @@
   color: var(--muted);
 }
 .settings-page {
-  max-width: 780px;
+  max-width: 1120px;
 }
 .settings-page h1 {
-  font-size: 28px;
+  font-size: 24px;
   letter-spacing: -.035em;
 }
 .settings-page form {
@@ -329,23 +329,27 @@
 }
 .settings-page section {
   border-bottom: 1px solid var(--line);
-  scroll-margin-top: 20px;
-  padding: 28px 0;
+  scroll-margin-top: 24px;
+  padding: 0 0 28px;
+  margin-bottom: 28px;
 }
 .settings-nav {
-  display: flex;
-  flex-wrap: wrap;
-  font-size: 12px;
+  display: grid;
+  font-size: 13px;
   color: var(--muted);
-  border-bottom: 1px solid var(--line);
-  gap: 10px 22px;
-  padding: 20px 0;
+  gap: 4px;
+  padding: 0;
+  position: sticky;
+  top: 24px;
+  align-self: start;
 }
 .settings-nav a {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 7px;
-  min-height: 36px;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: var(--radius-control);
 }
 .settings-nav svg {
   width: 15px;
@@ -420,9 +424,70 @@
   flex: 0 0 18px;
   margin: 0;
 }
+.settings-page:has(.settings-nav) {
+  display: grid;
+  grid-template-columns: 180px minmax(0,1fr);
+  gap: 28px 40px;
+  align-items: start;
+}
+.settings-heading {
+  grid-column: 1 / -1;
+}
+.settings-heading .back-link {
+  margin-bottom: 16px;
+}
+.settings-content {
+  min-width: 0;
+}
+.settings-pane:not([hidden]) {
+  display: block;
+}
+.settings-pane[hidden] {
+  display: none;
+}
+.settings-nav a[aria-current=page] {
+  background: var(--soft);
+  color: var(--fg);
+  font-weight: 600;
+}
+.settings-signout {
+  margin-top: 4px;
+}
+.settings-content .settings-pane>section:last-child {
+  margin-bottom: 0;
+  border-bottom: 0;
+}
+.settings-page:not(:has(.settings-nav)) {
+  max-width: 640px;
+}
 @media (max-width:900px) {
   .settings-page h2 {
     font-size: 18px;
+  }
+  .settings-page:has(.settings-nav) {
+    grid-template-columns: minmax(0,1fr);
+    gap: 24px;
+  }
+  .settings-nav {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    gap: 8px;
+    top: 0;
+    z-index: 20;
+    padding: 10px 0;
+    background: var(--card);
+    border-bottom: 1px solid var(--line);
+  }
+  .settings-nav a {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+  .settings-page section {
+    scroll-margin-top: 86px;
   }
 }
 @media (max-width:600px) {
@@ -454,15 +519,10 @@
     font-size: 16px;
   }
   .settings-nav {
-    gap: 14px 20px;
-    justify-content: space-between;
-  }
-  .settings-nav a {
-    justify-content: center;
-    min-width: 40px;
+    gap: 4px;
   }
   .settings-nav a>span {
-    display: none;
+    display: inline;
   }
   .settings-nav svg {
     width: 19px;

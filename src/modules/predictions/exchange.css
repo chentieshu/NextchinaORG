@@ -12,7 +12,7 @@
   margin-bottom: 28px;
 }
 .exchange-header h1 {
-  font-size: 28px;
+  font-size: 24px;
   line-height: 1.35;
   letter-spacing: -.7px;
   margin: 0 0 8px;
@@ -657,7 +657,7 @@ html[data-theme=dark] .outcome-text-no, html[data-theme=dark] .market-tile-outco
     min-width: 80px;
   }
   .exchange-page .exchange-header h1 {
-    font-size: 25px;
+    font-size: 24px;
   }
 }
 .market-chart-placeholder { min-height: 420px; }

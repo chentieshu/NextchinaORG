@@ -949,3 +949,30 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     animation: none !important;
   }
 }
+.help-disclosure {
+  margin: 24px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+.help-disclosure>summary {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: fit-content;
+  min-height: 40px;
+  cursor: pointer;
+  list-style: none;
+}
+.help-disclosure>summary::-webkit-details-marker {
+  display: none;
+}
+.help-disclosure>summary:hover {
+  color: var(--fg);
+}
+.help-disclosure>div {
+  display: grid;
+  gap: 12px;
+  padding: 12px 0;
+  line-height: 1.8;
+  max-width: 720px;
+}
