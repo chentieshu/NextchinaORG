@@ -1,0 +1,70 @@
+.btc-terminal { max-width: 1480px; padding: 24px 28px 40px; }
+.terminal-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.terminal-header>div { display: flex; align-items: center; gap: 12px; }
+.terminal-symbol { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 50%; color: var(--muted); font-size: 22px; }
+.terminal-header h1 { font-size: 20px; font-weight: 650; line-height: 1.4; margin: 0; letter-spacing: -.3px; }
+.terminal-header nav { display: flex; gap: 20px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+.terminal-header nav a { display: inline-flex; align-items: center; min-height: 44px; }
+.terminal-header nav a:hover { color: var(--fg); text-decoration: underline; text-underline-offset: 4px; }
+.terminal-round-header { min-height: 52px; margin: 0 0 8px; }
+.terminal-round-header .exchange-meta { font-variant-numeric: tabular-nums; }
+.terminal-round-notice { margin: 8px 0 0; color: var(--muted); font-size: 12px; }
+.terminal-round-notice:empty { margin: 0; }
+.terminal-waiting { min-height: 360px; display: grid; place-items: center; color: var(--muted); font-size: 13px; }
+.terminal-price-details { font-size: 10px; color: var(--muted); margin-top: 8px; }
+.terminal-price-details summary { cursor: pointer; min-height: 28px; }
+.btc-terminal .exchange-detail-grid { grid-template-columns: minmax(0,1fr) 340px; gap: 14px; }
+.btc-terminal .btc-detail { padding: 18px; }
+.btc-terminal .btc-chart-canvas { height: 300px; }
+.btc-terminal .btc-price-grid { margin-bottom: 12px; }
+.btc-terminal .exchange-ticket-column { grid-column: 2; grid-row: 1 / span 2; }
+.btc-terminal .market-information { grid-column: 1; grid-row: 2; }
+.btc-terminal .trade-ticket { margin-bottom: 0; }
+.btc-terminal .market-account { border-top: 1px solid var(--line); padding-top: 20px; }
+@media(min-width:1600px) {
+ .btc-terminal .exchange-detail-grid { grid-template-columns: minmax(0,1fr) 260px 320px; }
+ .btc-terminal .exchange-ticket-column { grid-column: 3; grid-row: 1; }
+ .btc-terminal .market-information { grid-column: 2; grid-row: 1; }
+}
+@media(max-width:1100px) and (min-width:901px) {
+ .btc-terminal { padding: 20px 18px 32px; }
+ .btc-terminal .exchange-detail-grid { grid-template-columns: minmax(0,1fr) 290px; gap: 12px; }
+}
+@media(max-width:900px) {
+ .btc-terminal { padding: 16px 16px 32px; }
+ .btc-terminal .exchange-detail-grid { grid-template-columns: minmax(0,1fr); gap: 12px; }
+ .btc-terminal .exchange-ticket-column { grid-column: 1; grid-row: 2; }
+ .btc-terminal .market-information { grid-row: 3; }
+ .btc-terminal .btc-chart-canvas { height: 240px; }
+ .btc-terminal .btc-ticket .exchange-outcomes button { min-height: 64px; }
+ .btc-terminal .btc-ticket form { grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 12px; }
+ .btc-terminal .btc-ticket form>label { grid-row: 1; }
+ .btc-terminal .btc-ticket .btc-use-quote { grid-column: 1; grid-row: 2; margin: 0; min-height: 44px; }
+ .btc-terminal .btc-quick { grid-column: 2; grid-row: 2; gap: 5px; }
+ .btc-terminal .btc-ticket form>:not(label,.btc-use-quote,.btc-quick) { grid-column: 1 / -1; }
+ .btc-terminal .btc-ticket .ticket-max { grid-column: 2; min-height: 32px; }
+ .btc-terminal .btc-ticket .ticket-summary { border-top: 1px solid var(--line); padding-top: 12px; }
+ .btc-terminal .btc-ticket .btc-advanced { margin-top: 0; }
+}
+@media(max-width:600px) {
+ .btc-terminal { padding: 12px 12px 28px; }
+ .terminal-header { gap: 0; padding-bottom: 0; }
+ .terminal-header h1 { font-size: 18px; }
+ .terminal-header nav { gap: 18px; font-size: 11px; width: 100%; }
+ .terminal-round-header { min-height: 44px; margin-bottom: 4px; }
+ .btc-terminal .btc-detail { padding: 12px; }
+ .btc-terminal .btc-round-head { margin-bottom: 12px; }
+ .btc-terminal .btc-price-grid { grid-template-columns: minmax(0,1.3fr) minmax(0,1fr); gap: 8px; align-items: start; }
+ .btc-terminal .btc-current { gap: 3px; }
+ .btc-terminal .btc-current strong { font-size: 26px; }
+ .btc-terminal .btc-opening { padding-top: 0; border-top: 0; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; }
+ .btc-terminal .btc-opening>span { font-size: 10px; }
+ .btc-terminal .btc-opening b { font-size: 14px; }
+ .btc-terminal .btc-chart-canvas { height: 180px; }
+ .btc-terminal .btc-chart-placeholder { min-height: 212px; }
+ .btc-terminal .btc-feed-state { margin-top: 4px; }
+ .btc-terminal .terminal-price-details { margin-top: 0; }
+ .btc-terminal .btc-price-table { font-size: 10px; }
+ .btc-terminal .btc-ticket { padding: 14px; }
+ .btc-terminal .btc-ticket .exchange-outcomes { margin-bottom: 12px; }
+}

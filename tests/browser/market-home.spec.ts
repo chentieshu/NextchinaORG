@@ -11,8 +11,8 @@ async function setup(page:Page){
  await page.route('**/rest/v1/rpc/omni_exchange_history',r=>{history.push(r.request().postDataJSON());return r.fulfill({json:{rows:[],has_more:false,step:60,server_time:new Date().toISOString()}});});
  return{state,reads,history,market};
 }
-test('home opens the market board, keeps filters on return and loads charts only in details',async({page})=>{
- const s=await setup(page);await page.goto('/zh-CN/');await expect(page.locator('main h1')).toHaveText('预测市场');await expect(page.locator('.market-row-link')).toHaveCount(1);
+test('market discovery keeps the market board, keeps filters on return and loads charts only in details',async({page})=>{
+ const s=await setup(page);await page.goto('/zh-CN/predictions/');await expect(page.locator('main h1')).toHaveText('预测市场');await expect(page.locator('.market-row-link')).toHaveCount(1);
  await expect(page.locator('.app-nav a[aria-current=page]')).toHaveText('预测市场');await expect(page.locator('.app-nav').getByRole('link',{name:'文章',exact:true})).toHaveCount(0);
  expect(s.history).toHaveLength(0);expect(s.reads.at(-1).state_filter).toBe('open');await expect(page.locator('.market-probability-cell')).toContainText('64%');
  await page.getByLabel('搜索预测市场').fill('不存在');await expect(page.locator('.exchange-empty')).toContainText('暂无匹配的其他市场');await expect(page.locator('.official-strip')).toBeVisible();
@@ -21,10 +21,10 @@ test('home opens the market board, keeps filters on return and loads charts only
  await page.getByRole('button',{name:'我的关注',exact:true}).click();await expect(page).toHaveURL(/view=watchlist/);await page.reload();await expect(page.getByRole('button',{name:'我的关注',exact:true})).toHaveAttribute('aria-pressed','true');
  expect(s.state.writes).toHaveLength(0);
 });
-test('home and square keep clear navigation and no overflow in five languages and both themes',async({page})=>{
+test('market discovery and square keep clear navigation and no overflow in five languages and both themes',async({page})=>{
  const s=await setup(page),errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  for(const theme of ['light','dark']){s.state.profile.theme=theme;for(const locale of ['zh-CN','en','ja','es','zh-TW']){for(const width of [320,390,768,1440]){
-  await page.setViewportSize({width,height:900});await page.goto(`/${locale}/`);await expect(page.locator('.market-table tbody tr')).toHaveCount(1);await expect(page.locator('.official-strip')).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(width);
+  await page.setViewportSize({width,height:900});await page.goto(`/${locale}/predictions/`);await expect(page.locator('.market-table tbody tr')).toHaveCount(1);await expect(page.locator('.official-strip')).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(width);
   const nav=page.locator(width>900?'.app-nav':'.mobile-nav');await expect(nav.locator('a[aria-current=page]')).toHaveCount(1);
   if(locale==='zh-CN'&&[390,1440].includes(width))await page.screenshot({path:test.info().outputPath(`market-home-${theme}-${width}.png`),fullPage:true});
  }}}

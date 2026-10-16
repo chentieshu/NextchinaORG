@@ -10,7 +10,7 @@ import {terminalCopy} from './terminal-copy';
 import type {Market} from './types';
 import './official.css';
 type Series={id:string;enabled:boolean;healthy:boolean;last_success:string|null;error:string|null;updated_at:string;server_time:string;current:Market|null;next:Market|null;history:Market[]};
-function useOfficial(before:string|null=null){
+export function useOfficial(before:string|null=null){
  const{db,online}=useApp(),[data,setData]=useState<Series|null>(null),[error,setError]=useState(false),[revision,setRevision]=useState(0);
  const reload=useCallback(()=>setRevision(n=>n+1),[]);
  useEffect(()=>{if(!db||!online)return;const controller=new AbortController();let busy=false;const load=async()=>{if(busy||document.visibilityState!=='visible')return;busy=true;try{const r=await db.rpc('omni_exchange_official_read',{before_start:before}).abortSignal(AbortSignal.any([controller.signal,AbortSignal.timeout(10000)]));if(r.error||!r.data||r.data.id!=='btc-3m'||!Array.isArray(r.data.history))throw Error();if(!controller.signal.aborted){setData(r.data);setError(false);}}catch{if(!controller.signal.aborted)setError(true);}finally{busy=false;}};void load();const timer=setInterval(()=>void load(),30000);document.addEventListener('visibilitychange',load);window.addEventListener('wallet:changed',load);return()=>{controller.abort();clearInterval(timer);document.removeEventListener('visibilitychange',load);window.removeEventListener('wallet:changed',load);};},[db,online,before,revision]);

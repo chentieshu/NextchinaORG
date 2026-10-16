@@ -30,5 +30,5 @@ test('language selection on the root homepage opens the selected language',async
  await page.locator('#preferences').getByRole('button',{name:'保存',exact:true}).click();
  await expect(page).toHaveURL(`${testOrigin}/en/settings/#preferences`);
  await page.goto('/');await expect(page).toHaveURL(`${testOrigin}/en/`);
- await expect(page.locator('main h1')).toHaveText('Prediction markets');
+ await expect(page.locator('main h1')).toHaveText('BTC · 3-minute prediction');
 });
