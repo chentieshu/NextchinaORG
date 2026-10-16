@@ -29,6 +29,7 @@
     "head_sampling_rate": 0.1
   },
   "ratelimits": [
+    { "name": "PRICE_LIMITER", "namespace_id": "1005", "simple": { "limit": 120, "period": 60 } },
     {
       "name": "PAYOUT_LIMITER",
       "namespace_id": "1004",

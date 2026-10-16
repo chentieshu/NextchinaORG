@@ -1,8 +1,10 @@
 // Private service binding only. No wallet credentials, database access or public route.
 // Placement applies to fetch handlers, not Cron handlers.
+import {displayPrices} from './display';
 export default {
- async fetch(request:Request):Promise<Response>{
+ async fetch(request:Request,_env:unknown,ctx:ExecutionContext):Promise<Response>{
   const u=new URL(request.url),q=u.searchParams;
+  if(u.origin==='https://prices.internal'&&u.pathname==='/v1/btc')return displayPrices(request,ctx);
   const allowed=request.method==='GET'&&['https://api-gcp.binance.com','https://data-api.binance.vision'].includes(u.origin)&&(
    u.pathname==='/api/v3/time'&&!u.search||
    u.pathname==='/api/v3/klines'&&q.get('symbol')==='BTCUSDT'&&q.get('interval')==='3m'&&q.get('timeZone')==='0'&&['1','3'].includes(q.get('limit')??'')&&

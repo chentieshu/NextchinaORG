@@ -25,8 +25,8 @@ test('official BTC permanent hub, current and next rounds work in five mobile la
  await page.goto('/zh-CN/predictions/');await expect(page.locator('.official-series')).toContainText('Teamcn 官方');await page.locator('.official-series h2 a').click();await expect(page).toHaveURL(/series=btc-3m/);await expect(page.locator('.official-round-link')).toHaveCount(3);await expect(page.locator('.official-series')).toContainText('尚未开始');
  for(const locale of ['zh-CN','en','ja','es','zh-TW']){await page.setViewportSize({width:320,height:844});await page.goto(`/${locale}/predictions/?series=btc-3m`);await expect(page.locator('.official-countdown b')).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
  await page.setViewportSize({width:390,height:844});await page.goto('/zh-CN/predictions/?series=btc-3m');await page.screenshot({path:test.info().outputPath('official-btc-mobile.png'),fullPage:true});
- await page.locator('.official-round-link').first().click();await expect(page.locator('.official-facts')).toContainText('65000.00000000');await expect(page.locator('.trade-ticket')).toContainText('上涨（含持平）');await expect(page.locator('.exchange-price-head strong')).toHaveText('—');expect(s.requests).toEqual([]);
- s.state.rows=[next];await page.goto(`/zh-CN/predictions/?id=${next.id}`);await expect(page.locator('.trade-ticket')).toContainText('尚未开始');await expect(page.locator('.trade-ticket').getByRole('button',{name:'核对订单',exact:true})).toBeDisabled();
+ await page.locator('.official-round-link').first().click();await expect(page.getByTestId('btc-opening')).toContainText('65,000.00');await expect(page.locator('.trade-ticket')).toContainText('上涨包含持平');await expect(page.getByTestId('btc-current')).toContainText('—');expect(s.requests).toEqual([]);
+ s.state.rows=[next];await page.goto(`/zh-CN/predictions/?id=${next.id}`);await expect(page.locator('.trade-ticket')).toContainText('尚未开始');await expect(page.locator('.trade-ticket').getByRole('button',{name:'核对买入 · 上涨',exact:true})).toBeDisabled();
 });
 
 test('official series administration uses reason, version check and explicit confirmation',async({page})=>{

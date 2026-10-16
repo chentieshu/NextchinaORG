@@ -92,3 +92,15 @@ REST 无 isClosed 标记，因此截止后至少等待 10 秒，并要求两次�
 来源：[Binance 公共市场数据](https://developers.binance.com/en/docs/products/spot/faqs/market_data_only)、[K 线接口](https://developers.binance.com/en/docs/catalog/core-trading-spot-trading/api/rest-api/market#klinecandlestick-data)。
 
 部署顺序：先 `npx wrangler deploy --config workers/prices/wrangler.jsonc`，再部署钱包 Worker；后者绑定 `PRICE_SOURCE`。Cron 不受 Placement Hints 影响，因此将行情 fetch 独立为私有服务，不能仅给定时任务设置 placement 后假定地区固定。证据 URL 采用 Binance 官方 [GCP 端点](https://developers.binance.com/en/docs/products/spot/rest-api)。
+
+### BTC 详情页参考行情
+
+详情页将 BTC/USDT 价格图与积分份额价格分开。首屏展示当前／最后参考价、核验开盘价、相对变化、服务器校准的倒计时；结束并取得核验结果后改为展示核验收盘价。BTC 图使用 Lightweight Charts，固定整个三分钟时间轴，未发生的时间留白，开盘价为水平虚线。份额价格图只在选中对应页签后加载。上涨含持平，下跌为严格低于开盘价。
+
+浏览器只读 `wallet.teamcn.org/v1/markets/btc?start=<UTC毫秒>`，不发送登录凭据。钱包 Worker 按 IP 限流，经既有私有服务绑定从 `api-gcp.binance.com` 读取 BTCUSDT 一秒 K 线，每轮最多 180 点；响应限制 64KB、8 秒超时、禁止重定向，校验时间窗口、顺序、十进制格式和 OHLC。此路径没有数据库查询、资金操作或网关密钥转发。
+
+私有价格服务使用 Cloudflare Cache API：进行中快照缓存五秒，完整结束快照一天，HTTP 异常按 10–300 秒退避。缓存携带原始采集时间及最后数据时间，不把缓存命中时间当作最新行情时间。前台每五秒单请求刷新，失败十秒后重试，隐藏／离线暂停；完整结束快照停止轮询。过去二十秒没有新数据时标记延迟并保留已确认画面；倒计时在本地基于服务器时间与单调时钟运行，不逐秒查询数据库。行情展示不参与现有三分钟原始 K 线的双次核验和公示结算。
+
+下单方向显示订单簿真实最优买卖报价，没有报价显示空状态。显式点击方向或“使用最优报价”才填入价格，自动刷新不覆盖限价和数量；提供快捷份额、买卖限价保护、核对确认与条件返还说明。高级订单选项默认收起。小屏采用价格／图表、下单、订单簿顺序，沿用底部导航，不增加叠加固定栏。
+
+测试覆盖参考价数据校验、缓存及限流、真实 workerd Cache API、资金接口隔离、五语言 320/390/768px、深色主题、涨跌下单确认、隐藏／离线、到期与未来期次。页面交互参考 [Polymarket BTC 短周期页面](https://polymarket.com/event/btc-updown-5m-1788624600?outcomeIndex=1) 和 [限价单说明](https://help.polymarket.com/en/articles/13364444-limit-orders)；行情格式参考 [Binance K 线接口](https://developers.binance.com/en/docs/catalog/core-trading-spot-trading/api/rest-api/market)。

@@ -1,5 +1,6 @@
 import {confirmedTransfers,USDT_CONTRACT,type Transfer} from './tron';
 import {runOfficial} from './official';
+import {validBtcStart} from '../../../src/modules/predictions/btc-data';
 export {runOfficial,validCandle} from './official';
 const TRON_ORIGIN='https://api.trongrid.io';
 type Target={address:string;hex:string;assigned_ms:number;fingerprint:string|null;lease_token:string};
@@ -65,6 +66,13 @@ export default {
   if(allowed){headers['Access-Control-Allow-Origin']=origin;headers.Vary='Origin';}
   if(request.method==='OPTIONS')return new Response(null,{status:allowed?204:403,headers:allowed?{...headers,'Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'Authorization, Content-Type','Access-Control-Max-Age':'600'}:headers});
   const url=new URL(request.url);
+  if(url.pathname==='/v1/markets/btc'&&request.method==='GET'){
+   if(origin&&!allowed)return Response.json({error:'origin_denied'},{status:403,headers});
+   const start=validBtcStart(url.searchParams.get('start'));
+   if(start===null||[...url.searchParams.keys()].length!==1)return Response.json({error:'invalid_round'},{status:400,headers});
+   if(!(await env.PRICE_LIMITER.limit({key:request.headers.get('CF-Connecting-IP')??'unknown'})).success)return Response.json({error:'rate_limited'},{status:429,headers:{...headers,'Retry-After':'10'}});
+   try{const response=await env.PRICE_SOURCE.fetch(`https://prices.internal/v1/btc?start=${start}`);return new Response(response.body,{status:response.status,headers:{...headers,...(response.headers.has('Retry-After')?{'Retry-After':response.headers.get('Retry-After')!}:{})}});}catch{return Response.json({error:'price_unavailable'},{status:503,headers});}
+  }
   if(url.pathname==='/health'&&request.method==='GET')return Response.json({service:'chinateam-wallet',status:env.WALLET_GATEWAY_KEY&&env.TRONGRID_API_KEY?'configured':'setup_required'},{headers});
   if(url.pathname!=='/v1/payout/verify'||request.method!=='POST')return Response.json({error:'not_found'},{status:404,headers});
   if(!allowed)return Response.json({error:'origin_denied'},{status:403,headers});
