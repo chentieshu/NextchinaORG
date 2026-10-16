@@ -59,7 +59,7 @@ export async function scan(env:Env){
  const result={status:failures?'retry_pending':'ok',addresses:targets.length,credited,failures};console.log(JSON.stringify({event:'wallet_scan',...result}));return result;
 }
 export default {
- async scheduled(_controller:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(runOfficial((name,body)=>rpc(env,name,body)).catch(e=>console.error(JSON.stringify({event:'official_btc_failed',...failureContext(e)}))));ctx.waitUntil(rpc(env,'omni_wallet_c2c_expire',{}).catch(e=>console.error(JSON.stringify({event:'c2c_expiry_failed',...failureContext(e)}))));ctx.waitUntil(scan(env).catch(e=>{console.error(JSON.stringify({event:'wallet_scan_failed',...failureContext(e)}));}));},
+ async scheduled(_controller:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(runOfficial((name,body)=>rpc(env,name,body),(input,init)=>env.PRICE_SOURCE.fetch(input,init)).catch(e=>console.error(JSON.stringify({event:'official_btc_failed',...failureContext(e)}))));ctx.waitUntil(rpc(env,'omni_wallet_c2c_expire',{}).catch(e=>console.error(JSON.stringify({event:'c2c_expiry_failed',...failureContext(e)}))));ctx.waitUntil(scan(env).catch(e=>{console.error(JSON.stringify({event:'wallet_scan_failed',...failureContext(e)}));}));},
  async fetch(request:Request,env:Env):Promise<Response>{
   const origin=request.headers.get('Origin')??'',allowed=env.ALLOWED_ORIGINS.split(',').includes(origin),headers:Record<string,string>={'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};
   if(allowed){headers['Access-Control-Allow-Origin']=origin;headers.Vary='Origin';}

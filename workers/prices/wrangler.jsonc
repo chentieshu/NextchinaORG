@@ -1,0 +1,11 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "teamcn-prices",
+  "account_id": "4c7d8ee3a4d2568ad8e306be077f11a1",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-15",
+  "workers_dev": false,
+  "preview_urls": false,
+  "placement": { "region": "aws:ap-southeast-1" },
+  "observability": { "enabled": true, "head_sampling_rate": 0.1 }
+}

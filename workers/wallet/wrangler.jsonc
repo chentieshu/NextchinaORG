@@ -8,6 +8,7 @@
     "nodejs_compat"
   ],
   "workers_dev": true,
+  "services": [{ "binding": "PRICE_SOURCE", "service": "teamcn-prices" }],
   "routes": [
     {
       "pattern": "wallet.chinateam.org",

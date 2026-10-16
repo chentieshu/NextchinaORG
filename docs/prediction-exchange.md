@@ -77,16 +77,18 @@ Teamcn 官方 BTC 三分钟系列常驻，使用独立的自动轮转和行情�
 
 固定入口 `/zh-CN/predictions/?series=btc-3m`，并在发现页常驻。UTC 每三分钟一轮；钱包 Worker 的现有一分钟 Cron 预建当前与下一期。下一期在开始时间和开盘价均已核验前不可下单。每一期是独立市场，正在填写的订单不自动跳到下一期。后台可暂停或恢复整个系列，既有持仓继续结算。
 
-唯一价格源为 Binance 公共市场数据域 `data-api.binance.vision` 的 `BTCUSDT` 现货 `3m` UTC K 线。区间 `[T, T+180000)`，比较未经显示四舍五入的十进制价格：Close >= Open 为上涨（包括持平），否则下跌。起止时刻、固定源 URL 和 v1 规则先保存，再开放订单。
+唯一价格源为 Binance 公共市场数据域 `api-gcp.binance.com` 的 `BTCUSDT` 现货 `3m` UTC K 线。区间 `[T, T+180000)`，比较未经显示四舍五入的十进制价格：Close >= Open 为上涨（包括持平），否则下跌。起止时刻、固定源 URL 和 v1 规则先保存，再开放订单。
 
 REST 无 isClosed 标记，因此截止后至少等待 10 秒，并要求两次相隔至少 30 秒、内容完全相同的闭合 K 线观察，然后进入 5 分钟公开异议期。这是 Teamcn 的核验策略，不是 Binance 最终性保证。存在未处理异议时不会最终确认；处理异议重新公示。无异议则 Cron 自动确认，用户从持仓领取，重复领取不重复付款。
 
 到期自动释放未成交委托。缺失、限流、时钟偏差及网络错误退避重试；行情健康超过 150 秒未更新停止接受新单。矛盾证据保留并停止自动裁决；不能切换另一来源或人工指定涨跌。超过 24 小时且没有已验证证据时，总管理员可按事先公布规则提议无效结果，仍需公示。
 
-任务有 90 秒租约，每轮最多处理 4 期，以最近尝试时间轮转避免单个缺失期阻塞其余期次。每一期单独事务沿用市场锁、按 UUID 顺序的钱包锁及双重记账。外部请求仅允许固定公开域，无 API 密钥，8 秒超时、64KB 上限，429/418 遵守退避。复用现有网关密钥，不新增私钥或资金功能。
+任务有 90 秒租约，每轮最多处理 4 期，以最近尝试时间轮转避免单个缺失期阻塞其余期次。每一期单独事务沿用市场锁、按 UUID 顺序的钱包锁及双重记账。币安公共行情采集由私有 `teamcn-prices` Worker 的 fetch handler 在新加坡执行，Cron 通过服务绑定调用；该服务不持有密钥、没有数据库权限，也没有公开路由。外部请求仅允许固定公开域，无 API 密钥，8 秒超时、64KB 上限，429/418 遵守退避。复用现有网关密钥，不新增私钥或资金功能。
 
 常驻入口每 30 秒只取轮次摘要（最多 12 期加游标），不查询这些期次的订单簿、余额或私有持仓；页面隐藏或离线时停止刷新。独立期次不挤占普通市场发现列表。无做市商或对手单时不生成虚构成交和概率。
 
 验证：`official-btc.test.mjs` 覆盖权限、租约、未来期、暂停、健康过期、重复开局、到期退款、冲突、异议、幂等结算和总账守恒；`official-worker.test.mjs` 覆盖源限制、凭据隔离、异常数据和退避；浏览器覆盖五语言小屏及后台系列开关。
 
 来源：[Binance 公共市场数据](https://developers.binance.com/en/docs/products/spot/faqs/market_data_only)、[K 线接口](https://developers.binance.com/en/docs/catalog/core-trading-spot-trading/api/rest-api/market#klinecandlestick-data)。
+
+部署顺序：先 `npx wrangler deploy --config workers/prices/wrangler.jsonc`，再部署钱包 Worker；后者绑定 `PRICE_SOURCE`。Cron 不受 Placement Hints 影响，因此将行情 fetch 独立为私有服务，不能仅给定时任务设置 placement 后假定地区固定。证据 URL 采用 Binance 官方 [GCP 端点](https://developers.binance.com/en/docs/products/spot/rest-api)。

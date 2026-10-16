@@ -18,3 +18,6 @@ wallet-dist/
 
 apps/admin/.next/
 apps/admin/out/
+
+workers/prices/worker-configuration.d.ts
+prices-dist/
