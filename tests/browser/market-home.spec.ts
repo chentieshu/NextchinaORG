@@ -15,6 +15,7 @@ test('home opens the market board, keeps filters on return and loads charts only
  const s=await setup(page);await page.goto('/zh-CN/');await expect(page.locator('main h1')).toHaveText('预测市场');await expect(page.locator('.market-row-link')).toHaveCount(1);
  await expect(page.locator('.app-nav a[aria-current=page]')).toHaveText('预测市场');await expect(page.locator('.app-nav').getByRole('link',{name:'文章',exact:true})).toHaveCount(0);
  expect(s.history).toHaveLength(0);expect(s.reads.at(-1).state_filter).toBe('open');await expect(page.locator('.market-probability-cell')).toContainText('64%');
+ await page.getByLabel('搜索预测市场').fill('不存在');await expect(page.locator('.exchange-empty')).toContainText('暂无匹配的其他市场');await expect(page.locator('.official-strip')).toBeVisible();
  await page.getByLabel('搜索预测市场').fill('开源');await expect(page).toHaveURL(/q=/);await page.locator('.market-row-link').click();await expect(page.locator('.trade-ticket')).toBeVisible();await expect.poll(()=>s.history.length).toBeGreaterThan(0);
  await page.goBack();await expect(page.getByLabel('搜索预测市场')).toHaveValue('开源');await expect(page.locator('.market-row-link')).toHaveCount(1);
  await page.getByRole('button',{name:'我的关注',exact:true}).click();await expect(page).toHaveURL(/view=watchlist/);await page.reload();await expect(page.getByRole('button',{name:'我的关注',exact:true})).toHaveAttribute('aria-pressed','true');
