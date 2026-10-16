@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import {SquareNavigation} from '@/modules/forum/SquareNavigation';
 import {useSearchParams,useRouter} from 'next/navigation';
 import {useEffect,useRef,useState} from 'react';
 import {FiHeart,FiBookmark,FiMessageCircle,FiArrowLeft,FiLink,FiRepeat,FiClock,FiTrendingUp,FiEdit3} from 'react-icons/fi';
@@ -55,16 +56,16 @@ export function ArticleActions({article,compact=false}:{article:Article;compact?
 export function NewsPage(){
  const{t,profile,locale}=useApp(),params=useSearchParams(),router=useRouter(),id=params.get('id');
  const filters:FeedFilters={category:params.get('category')??'all',query:params.get('q')??'',sort:params.get('sort')==='popular'?'popular':'latest',mine:false};
- function filter(patch:Partial<FeedFilters>){const next={...filters,...patch},query=new URLSearchParams();if(next.category!=='all')query.set('category',next.category);if(next.query)query.set('q',next.query);if(next.sort!=='latest')query.set('sort',next.sort);router.push(`/${locale}/news/${query.size?'?'+query:''}`,{scroll:false});}
+ function filter(patch:Partial<FeedFilters>){const next={...filters,...patch},query=new URLSearchParams({tab:'articles'});if(next.category!=='all')query.set('category',next.category);if(next.query)query.set('q',next.query);if(next.sort!=='latest')query.set('sort',next.sort);router.push(`/${locale}/square/${query.size?'?'+query:''}`,{scroll:false});}
  if(id)return <ArticleDetail id={id}/>;
- return <main id="main" className="page-wrap content-wrap news-page"><div className="page-heading"><h1 className="page-title">{t.news}</h1>{profile&&!profile.disabled&&profile.role!=='member'&&<Link className="button primary" href={`/${locale}/write/?kind=news`}>{forumCopy[locale].newNews}</Link>}</div><ArticleFeed controls={{value:filters,onChange:filter}} newsLanguage={profile?.news_locale}/></main>;
+ return <main id="main" className="page-wrap content-wrap news-page"><SquareNavigation articles/><ArticleFeed controls={{value:filters,onChange:filter}} newsLanguage={profile?.news_locale}/></main>;
 }
 export function ArticleDetail({id,expectedType='news'}:{id:string;expectedType?:'news'|'post'}){
  const{t,locale,db,demo,notify,contentVersion,authStatus,user,rememberArticles,categoryName,profile,articles}=useApp();const[article,setArticle]=useState<Article|null>(null),[fetching,setFetching]=useState(!demo),[failed,setFailed]=useState(false),[attempt,setAttempt]=useState(0);const identity=useRef(user?.id);const[showQuotes,setShowQuotes]=useState(false),[selectedLanguage,setSelectedLanguage]=useState<Locale|null>(null);const requestedLanguage=useSearchParams().get('lang');
  useEffect(()=>{if(!db){setFetching(false);return;}const changed=identity.current!==user?.id;identity.current=user?.id;const controller=new AbortController();let active=true;const timeout=setTimeout(()=>controller.abort(),15000);setFetching(true);setFailed(false);setArticle(old=>changed||old?.id!==id||old.content_type!==expectedType?null:old);
   Promise.all([db.rpc('omni_social_context',{article_ids:[id]}).abortSignal(controller.signal),db.from('omni_articles').select('*').eq('id',id).eq('content_type',expectedType).abortSignal(controller.signal).maybeSingle(),db.rpc('omni_content_counts',{target_article:id}).abortSignal(controller.signal)]).then(async([social,row,counts])=>{let fresh=row.data?{...row.data,...counts.data?.[0],...social.data?.[0]}:null;let identityError=false;if(fresh?.author_id){const identity=await db.rpc('omni_public_profiles',{profile_ids:[fresh.author_id]}).abortSignal(controller.signal);identityError=!!identity.error;if(identity.data?.[0])fresh={...fresh,author_name:identity.data[0].display_name,author_avatar_key:identity.data[0].avatar_key,author_handle:identity.data[0].handle};}if(active){if(!row.error){setArticle(fresh);if(fresh)rememberArticles([fresh]);}setFailed(!!row.error||!!counts.error||!!social.error||identityError);setFetching(false);}});return()=>{active=false;clearTimeout(timeout);controller.abort();};
  },[db,id,expectedType,attempt,contentVersion,authStatus,user?.id,rememberArticles]);
- const back=`/${locale}/${expectedType==='post'?'':'news/'}`;
+ const back=`/${locale}/square/${expectedType==='post'?'':'?tab=articles'}`;
  if(fetching&&(!article||article.id!==id||article.content_type!==expectedType))return <main id="main" className="empty-state" role="status">{t.loading}</main>;
  if(!article)return <main id="main" className="empty-state"><h1>{failed?t.connectionError:t.articleMissing}</h1>{failed&&<button className="button" onClick={()=>setAttempt(a=>a+1)}>{t.retry}</button>}<Link className="text-link" href={back}>{t.back}</Link></main>;
  if(expectedType==='post')return <PostThreadReader key={article.id} article={article} failed={failed} onChange={()=>setAttempt(a=>a+1)}/>;

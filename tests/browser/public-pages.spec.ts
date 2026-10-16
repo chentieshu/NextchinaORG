@@ -6,7 +6,7 @@ test('the root homepage and all policies are readable without login or JavaScrip
  try{
   const root=await page.goto('/');expect(root?.status()).toBe(200);
   await expect(page).toHaveURL(`${testOrigin}/`);
-  await expect(page.locator('main h1')).toHaveText('论坛');
+  await expect(page.locator('main h1')).toHaveText('预测市场');
   await expect(page.locator('.spotlight,.purpose-note')).toHaveCount(0);
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.locator('footer').getByRole('link',{name:'隐私说明'}).click();
@@ -30,5 +30,5 @@ test('language selection on the root homepage opens the selected language',async
  await page.locator('#preferences').getByRole('button',{name:'保存',exact:true}).click();
  await expect(page).toHaveURL(`${testOrigin}/en/settings/#preferences`);
  await page.goto('/');await expect(page).toHaveURL(`${testOrigin}/en/`);
- await expect(page.locator('main h1')).toHaveText('Forum');
+ await expect(page.locator('main h1')).toHaveText('Prediction markets');
 });

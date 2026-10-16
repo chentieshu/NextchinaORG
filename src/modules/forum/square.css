@@ -1,0 +1,9 @@
+.square-heading { padding-top: 28px; }
+.square-title { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 36px; margin-bottom: 12px; }
+.square-title h1 { margin: 0; font-size: 24px; font-weight: 650; letter-spacing: -.5px; }
+.square-title .text-link { font-size: 13px; }
+.square-tabs { display: flex; gap: 28px; border-bottom: 1px solid var(--line); }
+.square-tabs a { min-height: 48px; display: flex; align-items: center; font-size: 14px; border-bottom: 2px solid transparent; color: var(--muted); }
+.square-tabs a[aria-current=page] { border-color: var(--fg); color: var(--fg); font-weight: 600; }
+.news-page:has(.square-heading) { padding-top: 0; }
+@media(max-width:600px){ .square-heading { padding-top: 20px; } .square-title h1 { font-size: 22px; } }

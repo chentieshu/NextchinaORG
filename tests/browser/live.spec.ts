@@ -6,7 +6,7 @@ test('public content requests succeed with fixtures and anonymous administration
  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
  const articles=page.waitForResponse(r=>r.url().includes('/rpc/omni_content_feed'));
  const settings=page.waitForResponse(r=>r.url().includes('/rest/v1/omni_settings?'));
- await page.goto('/zh-CN/');
+ await page.goto('/zh-CN/square/');
  for(const response of await Promise.all([articles,settings]))expect(response.status()).toBe(200);
  await expect(page.getByText('以下为界面演示文章，用于展示阅读体验，并非实时文章。')).toHaveCount(0);
  await page.goto('/zh-CN/admin/');

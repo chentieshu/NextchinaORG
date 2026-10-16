@@ -3,7 +3,7 @@ import {fixture,story} from './fixtures';
 test.skip(!process.env.AUTH_FIXTURES,'Visual checks use isolated requests.');
 
 test('public navigation changes once at the shared breakpoint and content stays readable',async({page})=>{
- const state=await fixture(page);state.articles.push(story());await page.goto('/zh-CN/');
+ const state=await fixture(page);state.articles.push(story());await page.goto('/zh-CN/square/');
  for(const width of [320,380,600,601,900,901,1200,1440]){
   await page.setViewportSize({width,height:900});
   if(width<=900){await expect(page.locator('.app-sidebar')).toBeHidden();await expect(page.locator('.mobile-nav')).toBeVisible();}

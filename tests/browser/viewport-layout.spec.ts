@@ -4,7 +4,7 @@ test.skip(!process.env.AUTH_FIXTURES,'All data uses isolated fixtures.');
 
 test('the public frame fills every viewport and keeps one navigation without duplicate discovery rails',async({page})=>{
  const state=await fixture(page);state.articles.push(story());
- await page.goto('/zh-CN/');await expect(page.locator('.article-card')).toHaveCount(1);
+ await page.goto('/zh-CN/square/');await expect(page.locator('.article-card')).toHaveCount(1);
  for(const width of [320,600,900,901,1280,1440,1920,2560]){
   await page.setViewportSize({width,height:900});
   const frame=await page.locator('.app-shell').boundingBox();expect(frame!.x).toBe(0);expect(frame!.width).toBe(width);
@@ -13,15 +13,15 @@ test('the public frame fills every viewport and keeps one navigation without dup
   await expect(page.locator('.app-context,.sidebar-categories')).toHaveCount(0);
   if(width===1920)await page.screenshot({path:test.info().outputPath('viewport-desktop.png')});
  }
- await page.locator('.app-nav').getByRole('link',{name:'文章',exact:true}).click();await page.locator('.category-tabs').getByRole('button',{name:'开源',exact:true}).click();
- await expect(page).toHaveURL(/news\/\?category=opensource/);await expect(page.locator('.category-tabs button[aria-pressed=true]')).toHaveText('开源');
+ await page.locator('.square-tabs').getByRole('link',{name:'文章',exact:true}).click();await page.locator('.category-tabs').getByRole('button',{name:'开源',exact:true}).click();
+ await expect(page).toHaveURL(/square\/\?tab=articles&category=opensource/);await expect(page.locator('.category-tabs button[aria-pressed=true]')).toHaveText('开源');
  await page.locator('.app-nav').getByRole('link',{name:'搜索',exact:true}).click();await expect(page).toHaveURL(/search\/$/);
- await page.goto('/zh-CN/');await page.keyboard.press('Control+k');await expect(page).toHaveURL(/search\/$/);
+ await page.goto('/zh-CN/square/');await page.keyboard.press('Control+k');await expect(page).toHaveURL(/search\/$/);
 });
 
 test('short desktop navigation scrolls independently while the account menu remains reachable',async({page})=>{
  const state=await fixture(page,'super_admin');for(let i=0;i<12;i++)state.articles.push(story(`20000000-0000-4000-8000-${String(i+10).padStart(12,'0')}`));
- await page.setViewportSize({width:1280,height:480});await page.goto('/zh-CN/');await expect(page.locator('.article-card')).toHaveCount(12);
+ await page.setViewportSize({width:1280,height:480});await page.goto('/zh-CN/square/');await expect(page.locator('.article-card')).toHaveCount(12);
  const scroller=page.locator('.sidebar-scroller');expect(await scroller.evaluate(node=>node.scrollHeight>node.clientHeight)).toBe(true);
  await page.evaluate(()=>window.scrollTo(0,600));
  const sidebar=await page.locator('.app-sidebar').boundingBox();expect(sidebar!.y).toBe(0);expect(sidebar!.height).toBe(480);

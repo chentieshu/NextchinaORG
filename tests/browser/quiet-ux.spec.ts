@@ -26,7 +26,7 @@ test('categories and sort survive reload and back; the account keeps secondary d
  await expect(page).toHaveURL(/category=opensource/);await page.reload();await expect(page.locator('.category-tabs button[aria-pressed=true]')).toHaveText('开源');
  await page.locator('.feed-tools select').selectOption('popular');await expect(page).toHaveURL(/sort=popular/);
  await page.goBack();await expect(page.locator('.feed-tools select')).toHaveValue('latest');
- await page.goto('/zh-CN/');await expect(page.locator('.app-nav a')).toHaveCount(6);
+ await page.goto('/zh-CN/');await expect(page.locator('.app-nav a')).toHaveCount(5);
  await expect(page.locator('.app-context,.sidebar-categories')).toHaveCount(0);
  await page.locator('.sidebar-account summary').click();await page.locator('.sidebar-account .dropdown').getByRole('link',{name:'我的收藏',exact:true}).click();await expect(page).toHaveURL(/bookmarks\/$/);
 });

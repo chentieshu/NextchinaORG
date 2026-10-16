@@ -1,17 +1,17 @@
-.btc-detail { padding: 24px; }
-.btc-round-head { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 24px; }
+.btc-detail { padding: 20px; container-type: inline-size; }
+.btc-round-head { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 16px; }
 .btc-timer { display: flex; gap: 12px; align-items: center; font-variant-numeric: tabular-nums; }
 .btc-timer small { font-size: 11px; color: var(--muted); }
 .btc-timer b { font-size: 23px; font-weight: 650; min-width: 58px; text-align: right; }
 .btc-timer-ending b { color: var(--warning); }
-.btc-price-grid { display: grid; gap: 20px; grid-template-columns: minmax(0,1fr); margin-bottom: 24px; font-variant-numeric: tabular-nums; }
+.btc-price-grid { display: grid; gap: 20px; grid-template-columns: minmax(0,1fr); margin-bottom: 20px; font-variant-numeric: tabular-nums; }
 .btc-current { display: flex; flex-direction: column; gap: 6px; }
 .btc-current>span,.btc-opening>span { color: var(--muted); font-size: 12px; }
 .btc-current strong { font-size: clamp(25px,3vw,38px); letter-spacing: -.8px; line-height: 1.2; font-weight: 650; }
 .btc-current strong small,.btc-opening b small { color: var(--muted); font-size: 11px; letter-spacing: 0; font-weight: 400; }
 .btc-current>small { font-size: 12px; }
 .btc-current>small span { color: var(--muted); margin-left: 4px; }
-.btc-opening { display: flex; border-top: 1px solid var(--line); padding-top: 14px; align-items: baseline; justify-content: space-between; gap: 10px; }
+.btc-opening { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding-top: 12px; border-top: 1px solid var(--line); flex-wrap: wrap; }
 .btc-opening b { font-size: 17px; font-weight: 550; white-space: nowrap; }
 .btc-chart-canvas { width: 100%; height: 240px; min-width: 0; }
 .btc-chart-placeholder { min-height: 280px; display: grid; place-content: center; padding: 16px; color: var(--muted); font-size: 13px; }
@@ -51,10 +51,15 @@
  .btc-timer { gap: 6px; }
  .btc-timer b { font-size: 21px; }
  .btc-current strong { font-size: 32px; }
- .btc-opening { flex-wrap: wrap; }
+ .btc-price-grid { grid-template-columns: minmax(0,1fr); gap: 14px; }
  .btc-opening b { font-size: 16px; }
  .btc-chart-canvas { height: 240px; }
  .btc-ticket .exchange-outcomes button { min-height: 72px; }
  .btc-quick button,.btc-ticket .btc-use-quote { min-height: 44px; }
  .btc-round-nav a { min-height: 44px; }
+}
+
+@container(min-width:520px) {
+ .btc-price-grid { grid-template-columns: minmax(0,1fr) auto; }
+ .btc-opening { flex-direction: column; align-items: flex-end; justify-content: flex-start; padding-top: 2px; border-top: 0; }
 }

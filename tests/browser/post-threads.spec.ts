@@ -17,7 +17,7 @@ test('compose and reorder a thread with separate photos, restore its draft, then
  await page.getByRole('button',{name:'全部发布',exact:true}).click();await expect(page).toHaveURL(/community\/\?id=/);await expect(page.locator('.post-thread-part')).toHaveCount(2);await expect(page.locator('.post-gallery>button')).toHaveCount(5);expect(state.articles.length).toBe(2);expect(state.articles.every(a=>a.status==='published')).toBeTruthy();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();if(process.env.SCREENSHOT_DIR)await page.screenshot({path:process.env.SCREENSHOT_DIR+'/thread-detail-mobile.png',fullPage:true});
  await page.getByRole('link',{name:'续写串文',exact:true}).click();await expect(page).toHaveURL(/write\/\?append=/);await page.locator('.thread-composer .tiptap').fill('第三则：继续旅程。');await page.getByRole('button',{name:'保存草稿',exact:true}).click();await expect(page.getByText('续写草稿已保存在此设备。')).toBeVisible();expect(state.articles.length).toBe(2);await page.reload();await expect(page.locator('.tiptap')).toHaveText('第三则：继续旅程。');await page.getByRole('button',{name:'发布',exact:true}).click();await expect(page.locator('.post-thread-part')).toHaveCount(3);expect(state.articles.length).toBe(3);expect(state.articles.at(-1)?.thread_position).toBe(3);
- await page.goto('/zh-CN/');await expect(page.locator('.social-post')).toHaveCount(1);await expect(page.getByRole('link',{name:/查看串文/})).toBeVisible();
+ await page.goto('/zh-CN/square/');await expect(page.locator('.social-post')).toHaveCount(1);await expect(page.getByRole('link',{name:/查看串文/})).toBeVisible();
 });
 
 test('one pending image blocks the whole thread; removal aborts only that part and stale drafts retain input',async({page})=>{

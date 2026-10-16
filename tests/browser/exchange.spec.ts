@@ -35,9 +35,9 @@ test('official series administration uses reason, version check and explicit con
  await page.goto('https://tree.teamcn.org/zh-CN/#predictions');const panel=page.locator('.official-admin');await expect(panel).toContainText('行情源正常');await expect(panel.getByRole('button',{name:'暂停新增交易',exact:true})).toBeDisabled();await panel.getByLabel('操作原因',{exact:true}).fill('暂停系列并核对行情');await panel.getByRole('button',{name:'暂停新增交易',exact:true}).click();expect(s.requests).toEqual([]);await expect(page.getByRole('dialog')).toContainText('BTC');await page.getByRole('dialog').getByRole('button',{name:'确认',exact:true}).click();await expect.poll(()=>s.requests.at(-1)?.action).toBe('official_config');expect(s.requests.at(-1).payload).toEqual({enabled:false,expected:updated,note:'暂停系列并核对行情'});
 });
 test('independent market discovery, detail, filters and five mobile languages show real data',async({page})=>{
- const s=await setup(page);await page.goto('/zh-CN/predictions/');await expect(page.locator('.exchange-market-tile')).toHaveCount(1);await expect(page.locator('.app-nav').getByRole('link',{name:'预测市场',exact:true})).toBeVisible();await expect(page.locator('.wallet-sections')).toHaveCount(0);
- await page.getByLabel('搜索预测市场').fill('不存在');await expect(page.locator('.exchange-market-tile')).toHaveCount(0);await page.getByLabel('搜索预测市场').fill('稳定');await expect(page.locator('.exchange-market-tile')).toHaveCount(1);
- await page.locator('.exchange-market-tile').click();await expect(page.locator('.trade-ticket')).toBeVisible();await expect(page.locator('.orderbook-columns')).toContainText('0.65');expect(s.requests).toEqual([]);await expect(page.locator('.history-canvas canvas').first()).toBeVisible();await page.screenshot({path:test.info().outputPath('prediction-desktop.png'),fullPage:true,animations:'disabled'});
+ const s=await setup(page);await page.goto('/zh-CN/predictions/');await expect(page.locator('.market-row-link')).toHaveCount(1);await expect(page.locator('.app-nav').getByRole('link',{name:'预测市场',exact:true})).toBeVisible();await expect(page.locator('.wallet-sections')).toHaveCount(0);
+ await page.getByLabel('搜索预测市场').fill('不存在');await expect(page.locator('.market-row-link')).toHaveCount(0);await page.getByLabel('搜索预测市场').fill('稳定');await expect(page.locator('.market-row-link')).toHaveCount(1);
+ await page.locator('.market-row-link').click();await expect(page.locator('.trade-ticket')).toBeVisible();await expect(page.locator('.orderbook-columns')).toContainText('0.65');expect(s.requests).toEqual([]);await expect(page.locator('.history-canvas canvas').first()).toBeVisible();await page.screenshot({path:test.info().outputPath('prediction-desktop.png'),fullPage:true,animations:'disabled'});
  for(const locale of ['zh-CN','en','ja','es','zh-TW']){for(const width of [320,390,768]){await page.setViewportSize({width,height:844});await page.goto(`/${locale}/predictions/?id=${marketId}`);await expect(page.locator('.trade-ticket')).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}}
  await expect(page.locator('.history-canvas canvas').first()).toBeVisible();await page.setViewportSize({width:390,height:844});await page.screenshot({path:test.info().outputPath('prediction-mobile.png'),fullPage:true});
 });
@@ -45,7 +45,7 @@ test('independent market discovery, detail, filters and five mobile languages sh
 test('following, midpoint probability, portfolio cost and protected execution options',async({page})=>{
  const s=await setup(page);Object.assign(s.state.rows[0],{best_yes_bid:60,best_yes_ask:65,watching:false});
  s.state.positions=[{market_id:marketId,outcome:'yes',quantity:'25',reserved:'5',claimed:'0',cost_units:'150000',realized_units:'-1000'}];
- await page.goto('/zh-CN/predictions/');await expect(page.locator('.market-tile-price')).toContainText('62.5%');
+ await page.goto('/zh-CN/predictions/');await expect(page.locator('.market-probability-cell')).toContainText('62.5%');
  await page.getByRole('button',{name:'关注市场',exact:true}).click();await expect(page.getByRole('button',{name:'取消关注',exact:true})).toHaveAttribute('aria-pressed','true');
  await page.getByRole('button',{name:'我的关注',exact:true}).click();await expect.poll(()=>s.reads.at(-1)?.view_kind).toBe('watchlist');
  await page.getByRole('button',{name:'我的持仓',exact:true}).click();await expect(page.locator('.portfolio-positions')).toContainText('剩余成本');await expect(page.locator('.portfolio-positions')).toContainText('−0.1');
@@ -77,7 +77,7 @@ test('a shared market opens in the writer and cards render in post lists and det
  const s=await setup(page);const url=`https://teamcn.org/zh-CN/predictions/?id=${marketId}`;
  await page.goto('/zh-CN/write/?prediction='+encodeURIComponent(url));await expect(page.locator('.editor-embed')).toContainText(marketId);
  s.f.articles.push(story(articleId,'关于预测市场的讨论',{media:[{type:'embed',url}],translations:{'zh-CN':{title:'',summary:'关于预测市场的讨论',body:'关于预测市场的讨论',document:{type:'doc',content:[{type:'paragraph',content:[{type:'text',text:'关于预测市场的讨论'}]},{type:'embed',attrs:{url}}]}}}}));
- await page.goto('/zh-CN/');await expect(page.locator('.prediction-reference-compact')).toContainText(s.state.rows[0].title);await page.locator('.post-excerpt').click();await expect(page.locator('.prediction-reference').first()).toContainText('64%');
+ await page.goto('/zh-CN/square/');await expect(page.locator('.prediction-reference-compact')).toContainText(s.state.rows[0].title);await page.locator('.post-excerpt').click();await expect(page.locator('.prediction-reference').first()).toContainText('64%');
  await page.goto(`/zh-CN/predictions/?share=${shareId}`);await expect(page.locator('.prediction-reference')).toContainText('数量已隐藏');await expect(page.locator('.prediction-reference')).toContainText('@test_writer');
 });
 test('owner manages predictions separately and reviews publishing without automatic money writes',async({page})=>{
@@ -88,8 +88,8 @@ test('editors cannot reach prediction administration',async({page})=>{await setu
 
 test('history loads only in details, supports periods, accessible data, themes and incremental refresh',async({page})=>{
  const s=await setup(page);const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('/zh-CN/predictions/');await expect(page.locator('.exchange-market-tile')).toBeVisible();expect(s.historyReads).toHaveLength(0);
- await page.locator('.exchange-market-tile').click();await expect(page.locator('.history-canvas canvas').first()).toBeVisible();await expect(page.locator('.market-history')).toHaveAttribute('data-history-count','24');
+ await page.goto('/zh-CN/predictions/');await expect(page.locator('.market-row-link')).toBeVisible();expect(s.historyReads).toHaveLength(0);
+ await page.locator('.market-row-link').click();await expect(page.locator('.history-canvas canvas').first()).toBeVisible();await expect(page.locator('.market-history')).toHaveAttribute('data-history-count','24');
  await page.getByRole('button',{name:'7天',exact:true}).click();await expect.poll(()=>s.historyReads.at(-1)?.period).toBe('1w');
  await page.locator('.history-table summary').click();await expect(page.locator('.history-table tbody tr')).toHaveCount(24);
  await page.locator('.history-table summary').click();await page.emulateMedia({colorScheme:'dark'});await expect(page.locator('html')).toHaveAttribute('data-theme','dark');await expect(page.locator('.history-ranges button[aria-pressed=true]')).toHaveCSS('background-color','rgb(32, 34, 38)');await expect(page.locator('.history-ranges button[aria-pressed=true]')).toHaveCSS('color','rgb(236, 236, 238)');await page.screenshot({path:test.info().outputPath('prediction-dark.png'),fullPage:true,animations:'disabled'});
