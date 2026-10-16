@@ -81,3 +81,11 @@ test('home keeps prices and the order panel close on phones in five languages an
   if(locale==='zh-CN'&&[390,1440,1920].includes(width))await page.screenshot({path:test.info().outputPath(`btc-home-${theme}-${width}.png`),fullPage:true});
  }}}expect(errors).toEqual([]);
 });
+
+test('resizing the home chart preserves the complete round without requiring Reset chart',async({page})=>{
+ await setup(page);await page.setViewportSize({width:1440,height:1000});await page.goto('/en/');const chart=page.locator('.btc-chart-canvas');await expect(chart.locator('canvas').first()).toBeVisible();
+ for(const width of [390,768,1920,320]){
+  await page.setViewportSize({width,height:900});await page.mouse.move(1,1);await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));const resized=await chart.screenshot();
+  await page.getByRole('button',{name:'Reset chart',exact:true}).click();await page.mouse.move(1,1);const reset=await chart.screenshot();expect(resized.equals(reset)).toBe(true);
+ }
+});
