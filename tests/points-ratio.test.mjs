@@ -1,0 +1,46 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {readFile,readdir} from 'node:fs/promises';import {randomUUID} from 'node:crypto';import {PGlite} from '@electric-sql/pglite';import {pg_trgm} from '@electric-sql/pglite/contrib/pg_trgm';
+test('1:1 conversion preserves historical balances, locks legacy quotes, keeps dust and verifies USDT payouts',async()=>{
+ const db=new PGlite({extensions:{pg_trgm}});try{
+ await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,phone text,raw_user_meta_data jsonb default '{}');create table auth.sessions(id uuid primary key,user_id uuid,not_after timestamptz);create table auth.mfa_amr_claims(session_id uuid,authentication_method text,updated_at timestamptz);create table auth.mfa_factors(id uuid,user_id uuid,status text);create table auth.identities(id uuid default gen_random_uuid(),user_id uuid references auth.users(id),provider text,provider_id text,identity_data jsonb default '{}');create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth,public to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;`);
+ const files=(await readdir('supabase/migrations')).filter(f=>f.endsWith('.sql')).sort(),migration=files.find(f=>f.endsWith('_teamcn_points_one_to_one.sql'));
+ for(const f of files.filter(f=>f!==migration))await db.exec(await readFile('supabase/migrations/'+f,'utf8'));
+ const a=randomUUID(),b=randomUUID(),owner=randomUUID();
+ const root=async sql=>{await db.exec('reset role');return(await db.exec(sql)).at(-1).rows;};
+ const as=async(id,sql)=>{await db.exec(`reset role;set role ${id?'authenticated':'anon'};select set_config('request.jwt.claim.sub','${id??''}',false),set_config('request.jwt.claims','${JSON.stringify({session_id:id,email:id+'@example.test'})}',false)`);return(await db.query(sql)).rows[0]?.s;};
+ await root(`insert into auth.users(id,email,email_confirmed_at) select id,id::text||'@example.test',now() from unnest(array['${owner}','${a}','${b}']::uuid[]) id;update public.omni_profiles set profile_completed_at=now();update public.omni_profiles set role='super_admin' where id='${owner}';insert into auth.sessions select id,id,null from auth.users;insert into auth.mfa_amr_claims select id,'otp',now() from auth.users;update omni_private.wallet_settings set deposits_enabled=true,tipping_enabled=true,withdrawals_enabled=true,withdrawal_fee_bps=100;update omni_private.wallet_gateway set last_heartbeat=now(),secret_hash=encode(sha256(convert_to('${'a'.repeat(64)}','UTF8')),'hex');`);
+ await root(`select omni_private.wallet_credit_verified('${a}','${randomUUID()}','${'1'.repeat(64)}',0,1000000,'legacy funding')`);
+ const old=await as(a,`select omni_wallet_create_deposit('${randomUUID()}',10000000) s`),before=await as(a,'select omni_wallet_snapshot() s');
+ assert.equal(before.purchased,'1000000');
+ await root(await readFile('supabase/migrations/'+migration,'utf8'));
+ let snapshot=await as(a,'select omni_wallet_snapshot() s');assert.equal(snapshot.purchased,before.purchased,'existing 100 points stay 100 points');assert.equal(snapshot.points_per_usdt,1);assert.equal(snapshot.withdrawal_min_units,'10000');
+ assert.equal((await as(a,'select omni_wallet_deposit_status() s')).order.points_per_usdt,100);
+ await assert.rejects(as(a,`select omni_wallet_withdraw('${randomUUID()}',10000,'TPxCJN86sfZPPE6M4PMAgDuTruT9fPPB3Z') s`),/refresh your browser/);
+ await assert.rejects(as(a,`select omni_wallet_create_deposit('${randomUUID()}',10000000) s`),/refresh your browser/);
+ const hex=(await root(`select omni_private.wallet_tron_hex('${old.address}') h`))[0].h;
+ const gateway=async sql=>{await db.exec(`reset role;set role anon;select set_config('request.jwt.claim.sub','',false);select set_config('request.headers','{"x-wallet-gateway-key":"${'a'.repeat(64)}"}',false)`);return(await db.query(sql)).rows[0]?.s;};
+ const ingest=(tx,micro)=>gateway(`select omni_wallet_ingest_tron('${old.address}','${tx}',${Date.now()},'${JSON.stringify([{index:0,from:'9'.repeat(40),to:hex,amount:micro}])}') s`);
+ await ingest('2'.repeat(64),old.actual_micro);assert.equal((await as(a,'select omni_wallet_snapshot() s')).purchased,String(1000000n+BigInt(old.actual_micro)));
+ await ingest('2'.repeat(64),old.actual_micro);const legacyBalance=BigInt((await as(a,'select omni_wallet_snapshot() s')).purchased);
+ await ingest('3'.repeat(64),old.actual_micro);assert.equal(BigInt((await as(a,'select omni_wallet_snapshot() s')).purchased),legacyBalance+BigInt(old.actual_micro)/100n,'reusing a legacy amount cannot farm the 100:1 rate');
+ await root(`update omni_private.wallet_deposit_orders set created_at=now()-interval '1 minute' where id='${old.id}'`);
+ const fresh=await as(a,`select omni_wallet_create_deposit_v2('${randomUUID()}',10000000) s`);assert.equal(fresh.points_per_usdt,1);assert.notEqual(fresh.actual_micro,old.actual_micro);assert.equal(BigInt(fresh.actual_micro)%100n,0n);assert.equal(fresh.expected_units,String(BigInt(fresh.actual_micro)/100n));
+ const beforeNew=BigInt((await as(a,'select omni_wallet_snapshot() s')).purchased);await ingest('4'.repeat(64),fresh.actual_micro);snapshot=await as(a,'select omni_wallet_snapshot() s');assert.equal(BigInt(snapshot.purchased),beforeNew+BigInt(fresh.expected_units));
+ const paid=(await as(a,'select omni_wallet_deposit_status() s')).order;assert.equal(paid.credited_units,fresh.expected_units);assert.equal(paid.credited_micro,fresh.actual_micro);
+ const tiny=`select omni_private.wallet_credit_verified('${b}','${randomUUID()}','${'5'.repeat(64)}',0,1,'fractional deposit',true)`;
+ await root(tiny);await root(tiny);snapshot=await as(b,'select omni_wallet_snapshot() s');assert.equal(snapshot.purchased,'0');assert.equal(snapshot.deposit_remainder_micro,1);
+ await root(`select omni_private.wallet_credit_verified('${b}','${randomUUID()}','${'6'.repeat(64)}',0,99,'fractional deposit',true)`);snapshot=await as(b,'select omni_wallet_snapshot() s');assert.equal(snapshot.purchased,'1');assert.equal(snapshot.deposit_remainder_micro,0);
+ await assert.rejects(as(a,'select * from omni_private.wallet_deposit_dust'),/permission denied/);
+ const post=await as(b,`insert into omni_articles(category,original_locale,translations,author_id,content_type,status) values('ai','en','{"en":{"body":"A post to tip","title":"","summary":"A post to tip"}}','${b}','post','published') returning id s`);
+ await as(a,`select omni_wallet_tip('${randomUUID()}','${post}',20000) s`);
+ const key=randomUUID(),withdraw=await as(b,`select omni_wallet_withdraw_v2('${key}',10000,'TPxCJN86sfZPPE6M4PMAgDuTruT9fPPB3Z') s`);assert.equal(await as(b,`select omni_wallet_withdraw_v2('${key}',10000,'TPxCJN86sfZPPE6M4PMAgDuTruT9fPPB3Z') s`),withdraw);
+ await as(owner,`select omni_wallet_review('${withdraw}','process','pending') s`);assert.equal((await as(owner,`select omni_wallet_payout_target('${withdraw}') s`)).amount,'990000');
+ await assert.rejects(root(`select omni_private.wallet_settle_verified('${withdraw}','${'7'.repeat(64)}',0,9900)`),/Invalid settlement/);
+ await root(`select omni_private.wallet_settle_verified('${withdraw}','${'7'.repeat(64)}',0,990000)`);assert.equal((await as(b,'select omni_wallet_snapshot() s')).held,'0');
+ assert.equal((await root('select sum(balance)::text value from omni_private.wallet_accounts'))[0].value,'0');
+ assert.equal((await root('select minimum_collateral::text value from omni_private.c2c_settings'))[0].value,'10000000','1000 USDT collateral backs 1000 points');
+ await root(`insert into auth.users(id,email,email_confirmed_at) select gen_random_uuid(),'slot-'||i||'@example.test',now() from generate_series(1,98) i;
+ insert into omni_private.wallet_deposit_quotes(user_id,treasury,requested_micro,actual_micro,purpose) select id,'${old.address}',20000000,20000000+100*row_number() over(order by id),'points' from auth.users where email like 'slot-%';`);
+ const lastSlot=await as(b,`select omni_wallet_create_deposit_v2('${randomUUID()}',20000000) s`);assert.equal(lastSlot.actual_micro,'20009900','choose the sole free exact-amount slot instead of colliding');
+ await assert.rejects(as(owner,`select omni_wallet_create_deposit_v2('${randomUUID()}',20000000) s`),/Deposit amount unavailable/);
+ }finally{await db.close();}
+});

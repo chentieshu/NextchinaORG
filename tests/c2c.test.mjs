@@ -50,8 +50,8 @@ test('C2C collateral, role checks, escrow, fees, appeals and voucher invariants'
  // A chain-confirmed collateral order must never also credit spendable points.
  await action(buyer,'apply',{name:'Second shop',contact:'https://example.test/',description:''});
  const key='a'.repeat(64);await root(`update omni_private.wallet_settings set deposits_enabled=true;update omni_private.wallet_gateway set secret_hash=encode(sha256(convert_to('${key}','UTF8')),'hex'),last_heartbeat=now();`);
- const depositRequest=randomUUID(),q=await as(buyer,`select omni_c2c_create_deposit('${depositRequest}',1000000000) s`);
- await assert.rejects(as(buyer,`select omni_wallet_create_deposit('${depositRequest}',1000000000) s`),/Deposit request changed/);
+ const depositRequest=randomUUID(),q=await as(buyer,`select omni_c2c_create_deposit_v2('${depositRequest}',1000000000) s`);
+ await assert.rejects(as(buyer,`select omni_wallet_create_deposit_v2('${depositRequest}',1000000000) s`),/Deposit request changed/);
  assert.equal((await as(buyer,'select omni_wallet_deposit_status() s')).order,null);
  assert.equal((await as(buyer,'select omni_c2c_deposit_status() s')).order.id,q.id);
  const priorPoints=(await as(buyer,'select omni_wallet_snapshot() s')).purchased;
@@ -60,7 +60,7 @@ test('C2C collateral, role checks, escrow, fees, appeals and voucher invariants'
  const gateway=async query=>{await db.exec(`reset role;set role anon;select set_config('request.jwt.claim.sub','',false);select set_config('request.headers','{"x-wallet-gateway-key":"${key}"}',false)`);return(await db.query(query)).rows[0].s;};
  const ingest=`select omni_wallet_ingest_tron('${q.address}','${tx}',${Date.now()},'${transfers}') s`;
  assert.equal(await gateway(ingest),1);assert.equal(await gateway(ingest),0);
- assert.equal((await read(buyer)).merchant.collateral,q.actual_micro);assert.equal((await as(buyer,'select omni_wallet_snapshot() s')).purchased,priorPoints);
+ assert.equal((await read(buyer)).merchant.collateral,String(BigInt(q.actual_micro)/100n));assert.equal((await as(buyer,'select omni_wallet_snapshot() s')).purchased,priorPoints);
  // Paid orders are excluded from automatic timeout settlement.
  await action(seller,'apply',{name:'Reapply',contact:'https://example.test/',description:''});await action(owner,'approve',{merchant:seller,note:'review again'});
  await action(seller,'offer',{...offer,expected:(await read(seller)).offer.updated_at});listed=(await read(buyer,'market')).rows[0];

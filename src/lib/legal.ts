@@ -2,7 +2,7 @@ import type {Locale} from './i18n';
 import {c2cLegal} from './c2c-legal';
 import {identityLegal} from './identity-legal';
 export const supportEmail="chentieshu520@gmail.com";
-export const legalUpdated='2026-10-15';
+export const legalUpdated='2026-10-16';
 export const googleDataPolicy="https://developers.google.com/terms/api-services-user-data-policy";
 type Section={title:string;paragraphs:string[]};
 type Document={title:string;intro:string;sections:Section[]};
@@ -603,8 +603,8 @@ const walletLegal:Record<Locale,{privacy:Section;terms:Section}>={
     "terms": {
       "title": "积分、打赏与提现",
       "paragraphs": [
-        "资金功能在完成配置并开放后才可使用。仅支持 TRON（TRC20）USDT；1 USDT = 100 积分。先创建充值订单，再向页面显示的地址发送完整的精确金额。订单金额在所选金额上增加不足 0.01 USDT 以识别付款，全部实际到账金额均兑换积分，不额外收取该差额。可使用支持完整金额的钱包或交易所；提币手续费扣除后须足额到账，不要取整或拆分。充值网络资源费由用户承担。订单有效期 30 分钟，精确金额不会重新分配给其他用户；按原金额支付的迟到款仍在核验后计入原账号。金额错误、订单创建前付款、其他网络或代币不自动入账，请联系支持对账。链上最终确认和索引延迟可能影响到账时间。",
-        "充值积分用于打赏，收到的打赏可申请提现。最低提现 1 USDT（100 积分），手续费为申请金额的 1%，不足 0.000001 USDT 的手续费向上取整；例如申请 1 USDT，到账 0.99 USDT。平台另行承担支付时的 TRON 网络资源费用。提现需邮箱验证码验证，经后台审核后人工转账，不承诺即时到账。待审核申请可取消；开始处理后资金继续冻结至付款核验或人工对账。打赏确认后立即记账，请核对收款人和金额。"
+        "资金功能在完成配置并开放后才可使用。仅支持 TRON（TRC20）USDT；1 USDT = 1 积分。先创建充值订单，再向页面显示的地址发送完整的精确金额。订单金额在所选金额上增加不足 0.01 USDT 以识别付款，全部实际到账金额均兑换积分，不额外收取该差额。可使用支持完整金额的钱包或交易所；提币手续费扣除后须足额到账，不要取整或拆分。充值网络资源费由用户承担。订单有效期 30 分钟，精确金额不会重新分配给其他用户；按原金额支付的迟到款仍在核验后计入原账号。金额错误、订单创建前付款、其他网络或代币不自动入账，请联系支持对账。链上最终确认和索引延迟可能影响到账时间。",
+        "充值积分用于打赏，收到的打赏可申请提现。最低提现 1 USDT（1 积分），手续费为申请金额的 1%，不足 0.0001 USDT 的手续费向上取整；例如申请 1 USDT，到账 0.99 USDT。平台另行承担支付时的 TRON 网络资源费用。提现需邮箱验证码验证，经后台审核后人工转账，不承诺即时到账。待审核申请可取消；开始处理后资金继续冻结至付款核验或人工对账。打赏确认后立即记账，请核对收款人和金额。"
       ]
     }
   },
@@ -619,8 +619,8 @@ const walletLegal:Record<Locale,{privacy:Section;terms:Section}>={
     "terms": {
       "title": "Points, tips and withdrawals",
       "paragraphs": [
-        "Payments require configuration and activation. Only TRON (TRC20) USDT is supported; 1 USDT equals 100 points. Create an order before sending the full exact amount to the displayed address. An identifying amount of less than 0.01 USDT is added to your selection; the entire received amount becomes points, so this difference is not a fee. Use a wallet or exchange that supports the full amount; the amount received after withdrawal fees must match. Do not round or split payments. You pay deposit network resources. Orders last 30 minutes. Exact amounts are never reassigned to another user; late payments of the original amount are credited to the same account after verification. Incorrect amounts, transfers before order creation, other networks or tokens are not credited automatically; contact support. Final confirmation and indexing may delay credit.",
-        "Purchased points fund tips; tip earnings can be withdrawn. The minimum is 1 USDT (100 points). The fee is 1% of the requested amount, rounded up to the nearest 0.000001 USDT. A 1 USDT request pays out 0.99 USDT. The platform separately covers TRON network resources for payouts. Withdrawals require email verification, administrator review and manual payment, with no instant-payment promise. Pending requests may be cancelled; processing funds stay held until payment verification or manual reconciliation. Confirmed tips are booked immediately; check the recipient and amount."
+        "Payments require configuration and activation. Only TRON (TRC20) USDT is supported; 1 USDT equals 1 point. Create an order before sending the full exact amount to the displayed address. An identifying amount of less than 0.01 USDT is added to your selection; the entire received amount becomes points, so this difference is not a fee. Use a wallet or exchange that supports the full amount; the amount received after withdrawal fees must match. Do not round or split payments. You pay deposit network resources. Orders last 30 minutes. Exact amounts are never reassigned to another user; late payments of the original amount are credited to the same account after verification. Incorrect amounts, transfers before order creation, other networks or tokens are not credited automatically; contact support. Final confirmation and indexing may delay credit.",
+        "Purchased points fund tips; tip earnings can be withdrawn. The minimum is 1 USDT (1 point). The fee is 1% of the requested amount, rounded up to the nearest 0.0001 USDT. A 1 USDT request pays out 0.99 USDT. The platform separately covers TRON network resources for payouts. Withdrawals require email verification, administrator review and manual payment, with no instant-payment promise. Pending requests may be cancelled; processing funds stay held until payment verification or manual reconciliation. Confirmed tips are booked immediately; check the recipient and amount."
       ]
     }
   },
@@ -635,8 +635,8 @@ const walletLegal:Record<Locale,{privacy:Section;terms:Section}>={
     "terms": {
       "title": "積分、打賞與提領",
       "paragraphs": [
-        "資金功能完成設定並開放後才可使用。僅支援 TRON（TRC20）USDT；1 USDT = 100 積分。先建立訂單，再向畫面地址發送完整精確金額。訂單在所選金額上增加不足 0.01 USDT 以識別付款，全部實際到帳金額均兌換積分，差額不是手續費。可使用支援完整金額的錢包或交易所；提幣費用扣除後須足額到帳，不要取整或拆分。儲值網路資源費由使用者承擔。訂單有效期 30 分鐘，精確金額不會重新分配給他人；按原金額支付的遲到款仍在核驗後計入原帳號。金額錯誤、訂單建立前付款、其他網路或代幣不自動入帳，請聯絡支援。最終確認及索引延遲可能影響入帳時間。",
-        "儲值積分用於打賞，打賞收入可提領。最低 1 USDT（100 積分），手續費 1%，不足 0.000001 USDT 向上取整；申請 1 USDT 到帳 0.99 USDT。平台另行承擔付款的 TRON 網路資源費用。提領須信箱驗證碼驗證、後台審核及人工付款，不承諾即時到帳。待審核可取消；處理中持續凍結至付款核驗或人工對帳。打賞確認後立即記帳，請核對對象與金額。"
+        "資金功能完成設定並開放後才可使用。僅支援 TRON（TRC20）USDT；1 USDT = 1 積分。先建立訂單，再向畫面地址發送完整精確金額。訂單在所選金額上增加不足 0.01 USDT 以識別付款，全部實際到帳金額均兌換積分，差額不是手續費。可使用支援完整金額的錢包或交易所；提幣費用扣除後須足額到帳，不要取整或拆分。儲值網路資源費由使用者承擔。訂單有效期 30 分鐘，精確金額不會重新分配給他人；按原金額支付的遲到款仍在核驗後計入原帳號。金額錯誤、訂單建立前付款、其他網路或代幣不自動入帳，請聯絡支援。最終確認及索引延遲可能影響入帳時間。",
+        "儲值積分用於打賞，打賞收入可提領。最低 1 USDT（1 積分），手續費 1%，不足 0.0001 USDT 向上取整；申請 1 USDT 到帳 0.99 USDT。平台另行承擔付款的 TRON 網路資源費用。提領須信箱驗證碼驗證、後台審核及人工付款，不承諾即時到帳。待審核可取消；處理中持續凍結至付款核驗或人工對帳。打賞確認後立即記帳，請核對對象與金額。"
       ]
     }
   },
@@ -651,8 +651,8 @@ const walletLegal:Record<Locale,{privacy:Section;terms:Section}>={
     "terms": {
       "title": "ポイント、チップ、出金",
       "paragraphs": [
-        "設定・有効化後に決済を利用できます。TRON（TRC20）USDT のみ対応し、1 USDT は 100 ポイントです。注文を作成してから表示の宛先へ正確な全額を送金してください。識別用に 0.01 USDT 未満を加算しますが、受取全額をポイントにするため手数料ではありません。正確な金額に対応するウォレットや取引所を利用し、取引所手数料控除後の受取額を一致させてください。丸めや分割はしないでください。入金ネットワーク費用は利用者負担です。注文は 30 分間有効です。金額は他の利用者に再割当てされず、元の金額の遅延入金も検証後に同じアカウントへ反映します。金額違い、注文作成前の送金、他ネットワークや通貨は自動反映されません。サポートへ連絡してください。最終確認や索引の遅延で反映が遅れる場合があります。",
-        "購入ポイントはチップに使用し、受け取ったチップを出金できます。最低額は 1 USDT（100 ポイント）、手数料は申請額の 1%（0.000001 USDT 単位で切り上げ）です。1 USDT の申請では 0.99 USDT を受け取ります。送金の TRON ネットワーク費用は別途プラットフォームが負担します。メール確認と管理者審査後に手動送金し、即時支払いは保証しません。審査前はキャンセルできますが、処理中は検証または手動照合まで保留します。チップは確定後すぐ記帳されます。"
+        "設定・有効化後に決済を利用できます。TRON（TRC20）USDT のみ対応し、1 USDT は 1 ポイントです。注文を作成してから表示の宛先へ正確な全額を送金してください。識別用に 0.01 USDT 未満を加算しますが、受取全額をポイントにするため手数料ではありません。正確な金額に対応するウォレットや取引所を利用し、取引所手数料控除後の受取額を一致させてください。丸めや分割はしないでください。入金ネットワーク費用は利用者負担です。注文は 30 分間有効です。金額は他の利用者に再割当てされず、元の金額の遅延入金も検証後に同じアカウントへ反映します。金額違い、注文作成前の送金、他ネットワークや通貨は自動反映されません。サポートへ連絡してください。最終確認や索引の遅延で反映が遅れる場合があります。",
+        "購入ポイントはチップに使用し、受け取ったチップを出金できます。最低額は 1 USDT（1 ポイント）、手数料は申請額の 1%（0.0001 USDT 単位で切り上げ）です。1 USDT の申請では 0.99 USDT を受け取ります。送金の TRON ネットワーク費用は別途プラットフォームが負担します。メール確認と管理者審査後に手動送金し、即時支払いは保証しません。審査前はキャンセルできますが、処理中は検証または手動照合まで保留します。チップは確定後すぐ記帳されます。"
       ]
     }
   },
@@ -667,8 +667,8 @@ const walletLegal:Record<Locale,{privacy:Section;terms:Section}>={
     "terms": {
       "title": "Puntos, propinas y retiros",
       "paragraphs": [
-        "Los pagos requieren configuración y activación. Solo admitimos USDT TRON (TRC20); 1 USDT equivale a 100 puntos. Crea una orden y envía el importe exacto completo a la dirección mostrada. Se añaden menos de 0,01 USDT para identificar el pago; todo lo recibido se convierte en puntos, por lo que no es una comisión. Usa una cartera o exchange que admita el importe completo, descontando las comisiones de retiro antes de calcular lo recibido. No redondees ni dividas el pago. Pagas los recursos de red. Las órdenes duran 30 minutos. Los importes nunca se reasignan a otra persona; un pago tardío del importe original se acredita a la misma cuenta tras verificarlo. Los importes incorrectos, envíos anteriores a la orden y otras redes o tokens no se acreditan automáticamente; contacta con soporte. La confirmación final y la indexación pueden retrasar el abono.",
-        "Los puntos comprados sirven para dar propinas; las propinas recibidas se pueden retirar. El mínimo es 1 USDT (100 puntos) y la comisión es el 1%, redondeada hacia arriba a 0,000001 USDT. Una solicitud de 1 USDT entrega 0,99 USDT. La plataforma cubre por separado los recursos de red TRON del pago. Los retiros requieren verificación por correo, revisión y transferencia manual; no son inmediatos. Se pueden cancelar mientras están pendientes; durante el procesamiento siguen retenidos hasta verificar o conciliar el pago. Las propinas se contabilizan al confirmar."
+        "Los pagos requieren configuración y activación. Solo admitimos USDT TRON (TRC20); 1 USDT equivale a 1 punto. Crea una orden y envía el importe exacto completo a la dirección mostrada. Se añaden menos de 0,01 USDT para identificar el pago; todo lo recibido se convierte en puntos, por lo que no es una comisión. Usa una cartera o exchange que admita el importe completo, descontando las comisiones de retiro antes de calcular lo recibido. No redondees ni dividas el pago. Pagas los recursos de red. Las órdenes duran 30 minutos. Los importes nunca se reasignan a otra persona; un pago tardío del importe original se acredita a la misma cuenta tras verificarlo. Los importes incorrectos, envíos anteriores a la orden y otras redes o tokens no se acreditan automáticamente; contacta con soporte. La confirmación final y la indexación pueden retrasar el abono.",
+        "Los puntos comprados sirven para dar propinas; las propinas recibidas se pueden retirar. El mínimo es 1 USDT (1 punto) y la comisión es el 1%, redondeada hacia arriba a 0,0001 USDT. Una solicitud de 1 USDT entrega 0,99 USDT. La plataforma cubre por separado los recursos de red TRON del pago. Los retiros requieren verificación por correo, revisión y transferencia manual; no son inmediatos. Se pueden cancelar mientras están pendientes; durante el procesamiento siguen retenidos hasta verificar o conciliar el pago. Las propinas se contabilizan al confirmar."
       ]
     }
   }
@@ -676,3 +676,32 @@ const walletLegal:Record<Locale,{privacy:Section;terms:Section}>={
 for(const locale of Object.keys(walletLegal) as Locale[]){legalCopy[locale].privacy.sections.push(walletLegal[locale].privacy);legalCopy[locale].terms.sections.push(walletLegal[locale].terms);}
 for(const locale of Object.keys(c2cLegal) as Locale[]){const c=c2cLegal[locale];legalCopy[locale].privacy.sections.push({title:c.title,paragraphs:[c.privacy]});legalCopy[locale].terms.sections.push({title:c.title,paragraphs:[c.terms]});}
 for(const locale of Object.keys(identityLegal) as Locale[]){const c=identityLegal[locale];legalCopy[locale].privacy.sections.push({title:c.title,paragraphs:[c.privacy]});legalCopy[locale].terms.sections.push({title:c.title,paragraphs:[c.terms]});}
+
+const predictionLegal = {
+  "zh-CN": {
+    "title": "预测份额与兑换比例",
+    "terms": "新充值订单按 1 USDT = 1 积分兑换，历史积分数量保持不变。调整前创建的订单仅首次到账按原报价兑换，后续重复付款按当前比例；以订单页面显示为准。小于 0.0001 积分的到账余数保留并累计。预测交易的正确结果每份结算 1 积分、错误结果 0 积分、无效市场 0.5 积分。结果按公布的规则和来源由 Teamcn 审核，经过公示与异议处理后最终确认。买卖及结算所得回到普通积分，不自动成为可提现的打赏收入。市场价格和成交预估不保证成交；预测份额交易不增加打赏等级。",
+    "privacy": "我们保存预测市场关注、订单、成交、持仓成本、异议及结算记录。公开展示市场、汇总订单簿、匿名成交和结果证据；个人余额、完整订单和关注仅对本人及获授权的管理员开放。主动分享订单时会创建公开快照，默认隐藏成交数量，可撤销分享；已被他人复制的信息无法保证收回。"
+  },
+  "en": {
+    "title": "Prediction shares and conversion",
+    "terms": "New deposit orders use 1 USDT = 1 point; historical point counts stay unchanged. Orders created before the change retain their quoted rate for the first payment only; subsequent payments use the current rate, as shown on the order page. Received fractions below 0.0001 point are carried forward. Winning prediction shares settle at 1 point, losing shares at 0, and void markets at 0.5 per share. Teamcn reviews the published rules and source, announces evidence, and handles disputes before final resolution. Trading and settlement proceeds return to ordinary points, not automatically to withdrawable tip earnings. Quotes and estimated execution do not guarantee fills. Prediction trades do not increase tipping levels.",
+    "privacy": "We store market follows, orders, trades, acquisition costs, disputes and settlements. Markets, aggregate order books, anonymous trades and resolution evidence are public. Balances, full orders and follows are available only to their owner and authorized administrators. Sharing an order creates a public snapshot with quantity hidden by default; sharing can be revoked, but copies made by others cannot necessarily be recalled."
+  },
+  "zh-TW": {
+    "title": "預測份額與兌換比例",
+    "terms": "新儲值訂單按 1 USDT = 1 積分兌換，歷史積分數量維持不變。調整前建立的訂單僅首次到帳按原報價兌換，之後重複付款按目前比例，以訂單頁顯示為準。小於 0.0001 積分的到帳餘數會保留累計。預測結果正確每份結算 1 積分、錯誤 0 積分、無效市場 0.5 積分。Teamcn 按公開規則和來源審核結果，經公示與異議處理後確認。交易與結算所得回到普通積分，不會自動成為可提領的打賞收入。報價與成交預估不保證成交，預測交易不增加打賞等級。",
+    "privacy": "我們儲存市場關注、訂單、成交、持倉成本、異議及結算紀錄。市場、彙總訂單簿、匿名成交與結果證據公開；個人餘額、完整訂單及關注僅供本人與獲授權管理員存取。主動分享訂單會建立公開快照，預設隱藏數量，可撤銷分享；他人已複製的內容不一定能收回。"
+  },
+  "ja": {
+    "title": "予測持分と交換比率",
+    "terms": "新規入金注文は 1 USDT = 1 ポイントです。過去のポイント数は変更しません。変更前の注文は初回入金のみ当初の比率を保持し、その後の入金には現在の比率を適用します。注文画面を確認してください。0.0001 ポイント未満の端数は繰り越します。予測的中は1口1ポイント、不的中は0、無効市場は1口0.5で決済します。Teamcn が公開ルールと情報源を審査し、根拠の公示と異議処理後に結果を確定します。売却・決済代金は通常ポイントに戻り、出金可能なチップ収入には自動で変わりません。参考価格や見積もりは約定を保証しません。予測取引はチップレベルに加算されません。",
+    "privacy": "市場フォロー、注文、取引、取得原価、異議、決済を保存します。市場、集計注文板、匿名取引と結果の根拠は公開します。残高、注文詳細とフォローは本人と権限を持つ管理者のみ閲覧できます。注文を共有すると公開スナップショットが作られ、数量は既定で非表示です。共有を解除できますが、第三者のコピーは回収できない場合があります。"
+  },
+  "es": {
+    "title": "Participaciones y conversión",
+    "terms": "Las nuevas órdenes de depósito usan 1 USDT = 1 punto; las cantidades históricas de puntos no cambian. Las órdenes anteriores conservan su tipo original solo para el primer pago; los posteriores usan el tipo actual mostrado en la orden. Las fracciones inferiores a 0,0001 punto se acumulan. Las participaciones ganadoras liquidan a 1 punto, las perdedoras a 0 y los mercados nulos a 0,5 por participación. Teamcn revisa las reglas y fuentes publicadas, presenta las pruebas y resuelve las disputas antes del resultado final. Los ingresos de venta y liquidación vuelven a puntos ordinarios, no automáticamente a propinas retirables. Los precios y estimaciones no garantizan ejecución. Estas operaciones no aumentan el nivel de propinas.",
+    "privacy": "Guardamos seguimientos de mercados, órdenes, operaciones, costes de adquisición, disputas y liquidaciones. Los mercados, libros agregados, operaciones anónimas y pruebas del resultado son públicos. Solo el titular y administradores autorizados pueden acceder a saldos, órdenes completas y seguimientos. Compartir una orden crea una instantánea pública que oculta la cantidad por defecto. Puedes revocar la publicación, pero puede ser imposible recuperar copias de terceros."
+  }
+};
+for(const locale of Object.keys(predictionLegal) as Locale[]){const c=predictionLegal[locale];legalCopy[locale].privacy.sections.push({title:c.title,paragraphs:[c.privacy]});legalCopy[locale].terms.sections.push({title:c.title,paragraphs:[c.terms]});}

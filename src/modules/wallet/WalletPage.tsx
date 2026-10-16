@@ -11,11 +11,12 @@ import {useApp} from '@/components/Provider';
 import {AccountGate} from '@/components/AccountGate';
 import {Modal} from '@/components/Shell';
 import {DepositDialog,VerifyPayout} from './Gateway';
+import {depositCopy} from './deposit-copy';
 import {gatewayCopy} from './gateway-copy';
 import {walletCopy} from './copy';
 import {useWallet,walletChanged} from './use-wallet';
 import {useWalletRows} from './use-wallet-rows';
-import {formatPoints,withdrawalFee,parsePoints,pointsToUsdt,isTronAddress,walletRequest,clearWalletRequest,type WalletSnapshot,type WalletEntry,type Withdrawal} from './money';
+import {formatUsdtMicros,formatPoints,withdrawalFee,parsePoints,pointsToUsdt,isTronAddress,walletRequest,clearWalletRequest,type WalletSnapshot,type WalletEntry,type Withdrawal} from './money';
 import './wallet.css';
 
 export function WalletPage(){const{user,profile,authStatus,t,setAuthOpen,locale}=useApp();if(authStatus!=='ready')return <AccountGate/>;
@@ -28,7 +29,7 @@ function Wallet(){const{locale}=useApp(),c=walletCopy[locale],wallet=useWallet()
  {!wallet.data?wallet.loading&&<p role="status">{c.loading}</p>:<><section className="wallet-balance" aria-label={c.available}><span>{c.available}</span><strong>{formatPoints(BigInt(wallet.data.purchased)+BigInt(wallet.data.earned),locale)}<small>{c.points}</small></strong><dl>{(['purchased','earned','held'] as const).map(k=><div key={k}><dt>{c[k]}</dt><dd>{formatPoints(wallet.data![k],locale)}</dd></div>)}<div><dt>{exchangeCopy[locale].held}</dt><dd>{formatPoints(wallet.data.prediction_held??'0',locale)}</dd></div></dl></section>
  <div className="wallet-actions"><button className="button" disabled={wallet.error||wallet.loading||wallet.data.frozen} onClick={()=>setDeposit(true)}><FiArrowDownLeft/>{c.deposit}</button><button className="button" disabled={wallet.error||wallet.loading||wallet.data.frozen||!wallet.data.withdrawals_enabled} onClick={()=>setWithdraw(true)}><FiArrowUpRight/>{c.withdraw}</button><Link className="button" href={`/${locale}/wallet/market/`}>{marketCopy[locale].title}</Link></div>
  {wallet.data.frozen?<p className="wallet-notice" role="status">{c.frozen}</p>:(!wallet.data.deposits_enabled||!wallet.data.withdrawals_enabled)&&<p className="wallet-notice" role="status">{c.paused}</p>}
- <p className="form-note">{c.withdrawalNote}</p><p className="form-note">{gatewayCopy[locale].feeNote}</p></>}
+ {!!wallet.data.deposit_remainder_micro&&<p className="form-note">{depositCopy[locale].dust}: {formatUsdtMicros(BigInt(wallet.data.deposit_remainder_micro))}</p>}<p className="form-note">{c.withdrawalNote}</p><p className="form-note">{gatewayCopy[locale].feeNote}</p></>}
  <nav className="wallet-tabs" aria-label={c.history}>{(['history','requests'] as const).map(k=><button key={k} aria-pressed={tab===k} onClick={()=>setTab(k)}>{c[k]}</button>)}</nav>
  {tab==='history'?<History/>:<WithdrawalList/>}<p className="form-note wallet-footnote">{c.historyNote} <a href="mailto:chentieshu520@gmail.com">{c.support}</a></p>
  {deposit&&<DepositDialog onClose={()=>setDeposit(false)}/>}
@@ -55,7 +56,7 @@ function WithdrawDialog({snapshot,onClose}:{snapshot:WalletSnapshot;onClose:()=>
  useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;};},[]);const points=parsePoints(amount),fee=withdrawalFee(points??0n,snapshot.withdrawal_fee_bps),minimum=BigInt(snapshot.withdrawal_min_units);
  async function submit(e:React.FormEvent){e.preventDefault();if(!points||pending.current||!db||!user||!online)return;pending.current=true;setBusy(true);setError('');
   try{if(points<minimum||points<=fee){setError(`${c.minimum}: ${formatPoints(minimum,locale)} ${c.points}`);return;}if(!await isTronAddress(address.trim())){setError(c.invalidAddress);return;}if(!review){setReview(true);return;}
-   const request=walletRequest(user.id,'withdraw',JSON.stringify([amount,address.trim()]));const result=await db.rpc('omni_wallet_withdraw',{request,amount:points.toString(),address:address.trim()}).abortSignal(AbortSignal.timeout(15000));if(result.error)throw result.error;
+   const request=walletRequest(user.id,'withdraw',JSON.stringify([amount,address.trim()]));const result=await db.rpc('omni_wallet_withdraw_v2',{request,amount:points.toString(),address:address.trim()}).abortSignal(AbortSignal.timeout(15000));if(result.error)throw result.error;
    clearWalletRequest(user.id,'withdraw');if(!mounted.current)return;walletChanged();notify(c.requested);onClose();
   }catch(e){if(mounted.current){const code=(e as {code?:string}).code;setUncertain(!code);setError(code==='PT401'?c.emailRequired:code==='PT402'?c.insufficient:code==='PT503'?c.paused:code==='PT409'?c.changed:c.unknown);}}finally{pending.current=false;if(mounted.current)setBusy(false);}
  }

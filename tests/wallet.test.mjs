@@ -12,7 +12,7 @@ test('point units and TRON checksum reject rounding and wrong-network addresses'
  for(const value of ['0.99','1.001','10000.01','1e3','-1','01','Infinity',' 1'])assert.equal(parseUsdt(value),null);
  assert.equal(parsePoints('1'),10000n);assert.equal(parsePoints('1000000000'),10000000000000n);assert.equal(parsePoints('0.0001'),1n);assert.equal(withdrawalFee(1010000n,100),10100n);assert.equal(formatPoints(10001n),'1.0001');assert.equal(formatPoints(10001n,'es'),'1,0001');assert.equal(withdrawalFee(1000001n,100),10001n);assert.equal(withdrawalFee(1000000n,100),10000n);
  for(const value of ['0','-1','0.00001','01','1e3','Infinity','1000000001',' 1'])assert.equal(parsePoints(value),null);
- assert.equal(pointsToUsdt('1010000'),'1.01');assert.equal(pointsToUsdt('10000000000000'),'10000000.00');
+ assert.equal(pointsToUsdt('1010000'),'101.00');assert.equal(pointsToUsdt('10000000000000'),'1000000000.00');
  assert.equal(await isTronAddress(address),true);assert.equal(await isTronAddress(address.slice(0,-1)+'8'),false);assert.equal(await isTronAddress('0x'+'1'.repeat(40)),false);
 });
 
@@ -138,7 +138,9 @@ test('wallet ledger is private, balanced, idempotent and holds prevent double sp
  await assert.rejects(as(b,`select omni_wallet_consume_challenge('${expired.id}')`),/expired/);
  await assert.rejects(gateway(`select omni_wallet_confirm_payer('${expired.id}','${address}')`),/Invalid challenge/);
  // Migrate the funded ledger in place. New deposits need no injected wallet.
- for(const f of migrations.slice(depositMigration))await root(await readFile('supabase/migrations/'+f,'utf8'));
+ // This scenario covers legacy 100:1 receipts and already-paid withdrawals.
+ // The separate conversion suite exercises the explicit 1:1 rollout and new rails.
+ for(const f of migrations.slice(depositMigration).filter(f=>!f.endsWith('_teamcn_points_one_to_one.sql')))await root(await readFile('supabase/migrations/'+f,'utf8'));
  const setup=async()=> (await as(owner,'select omni_wallet_admin_setup() s')).rows[0].s;
  assert.equal((await setup()).email_verified,false);
  await assert.rejects(as(owner,'select omni_wallet_admin_setup(null,true)'),/Recent email verification required/);

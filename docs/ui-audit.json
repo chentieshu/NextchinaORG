@@ -1,10 +1,10 @@
 {
   "totals": {
-    "files": 20,
-    "bytes": 192231,
-    "compactBytes": 151172,
-    "rules": 1902,
-    "declarations": 5556,
+    "files": 21,
+    "bytes": 194755,
+    "compactBytes": 153439,
+    "rules": 1933,
+    "declarations": 5638,
     "important": 20,
     "literalColors": 69,
     "widthBreakpoints": [
@@ -69,6 +69,12 @@
       "bytes": 2680,
       "compactBytes": 2132,
       "rules": 25
+    },
+    {
+      "file": "src/modules/predictions/product.css",
+      "bytes": 2524,
+      "compactBytes": 2267,
+      "rules": 31
     },
     {
       "file": "src/modules/predictions/reference.css",

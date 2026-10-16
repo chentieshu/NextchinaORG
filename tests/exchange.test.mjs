@@ -31,6 +31,7 @@ test('prediction exchange: collateral, matching, refunds, roles, resolution and 
  const buyer=await read(b,market);assert.equal(buyer.balance.held,'0');assert.equal(buyer.balance.purchased,'999976000','price improvement refunded');
  const sale=await order(a,'sell','yes',70,3);await order(c,'buy','yes',75,2,'ioc');
  state=await read(a,market);assert.equal(state.positions.find(p=>p.outcome==='yes').quantity,'4');assert.equal(state.positions.find(p=>p.outcome==='yes').reserved,'1');assert.equal((await read(c,market)).balance.purchased,'999986000');
+ assert.equal(state.positions.find(p=>p.outcome==='yes').cost_units,'24000');assert.equal(state.positions.find(p=>p.outcome==='yes').realized_units,'2000');assert.equal((await read(c,market)).positions[0].cost_units,'14000');
  await action(a,'cancel',{order:sale.id});await action(a,'cancel',{order:sale.id});
  assert.equal((await read(a,market)).positions.find(p=>p.outcome==='yes').reserved,'0');
  const publicData=await read(null,market);assert.ok(!('orders' in publicData));assert.ok(!('positions' in publicData));assert.ok(!('balance' in publicData));assert.equal(publicData.trades.length,2);assert.equal(publicData.rows[0].volume,'74000','volume counts actual points exchanged, not share face value');
@@ -59,6 +60,29 @@ test('prediction exchange: collateral, matching, refunds, roles, resolution and 
  assert.equal((await root("select balance::text n from omni_private.wallet_accounts where bucket='prediction_pool'"))[0].n,'0');
  assert.equal((await root(`select count(*)::integer n from omni_private.exchange_orders where remaining>0 and market_id='${market}'`))[0].n,0);
  await assert.rejects(root('update omni_private.exchange_trades set quantity=999'),/immutable/);
+ // FOK and post-only roll back trades, balances, candles and cost basis together.
+ const third=(await admin('create',{...definition,title:'Advanced execution conditions'})).id;
+ let thirdMarket=(await read(owner,third,'admin')).rows[0];
+ await admin('edit',{...definition,title:'Edited advanced execution conditions',market:third,expected:thirdMarket.updated_at});
+ thirdMarket=(await read(owner,third,'admin')).rows[0];assert.match(thirdMarket.title,/Edited/);
+ await admin('publish',{market:third,expected:thirdMarket.updated_at,note:'Publish advanced conditions'});
+ thirdMarket=(await read(owner,third,'admin')).rows[0];await assert.rejects(admin('edit',{...definition,market:third,expected:thirdMarket.updated_at}),/immutable/);
+ const advanced=(who,side,outcome,price,quantity,extra={})=>action(who,'order',{market:third,side,outcome,price:String(price),quantity:String(quantity),...extra});
+ await advanced(a,'buy','yes',60,10);
+ const quote=(who,outcome,quantity)=>as(who,`select omni_exchange_quote('${third}','buy','${outcome}',45,${quantity}) s`);
+ assert.equal((await quote(a,'no',12)).filled,'0','quote excludes own orders');
+ const q=await quote(b,'no',12);assert.equal(q.filled,'10');assert.equal(q.unfilled,'2');assert.equal(q.units,'40000');
+ const before=await read(b,third);
+ await assert.rejects(advanced(b,'buy','no',45,12,{tif:'fok'}),/Insufficient depth/);
+ await assert.rejects(advanced(b,'buy','no',45,2,{post_only:true}),/Post-only/);
+ assert.deepEqual((await read(b,third)).balance,before.balance);assert.equal((await read(null,third)).trades.length,0);assert.equal((await read(b,third)).positions.length,0);
+ await advanced(b,'buy','no',45,10,{tif:'fok'});assert.equal((await read(b,third)).positions[0].cost_units,'40000');
+ const watch=(who,enabled)=>as(who,`select omni_exchange_watch('${third}',${enabled}) s`);
+ await assert.rejects(watch(null,true),/permission denied/);await watch(a,true);await watch(a,true);
+ assert.equal((await read(a,null,'watchlist')).rows.length,1);assert.equal((await read(b,null,'watchlist')).rows.length,0);assert.equal((await read(a,third)).rows[0].watching,true);
+ await watch(a,false);assert.equal((await read(a,null,'watchlist')).rows.length,0);
+ await assert.rejects(as(a,'select * from omni_private.exchange_watchlist'),/permission denied/);
+ const events=(await read(null,third)).events;assert.equal(events[0].event,'publish');assert.equal(events[0].note,'','private admin reasons are not public');
  // Exercise the opposite matching direction, invalid payouts and administrative refunds.
  const second=(await admin('create',{...definition,title:'Will the next release be verified?'})).id;
  let secondMarket=(await read(owner,second,'admin')).rows[0];
@@ -98,7 +122,7 @@ test('prediction exchange: collateral, matching, refunds, roles, resolution and 
  assert.equal((await read(null,second)).rows[0].collateral,'0');
  secondMarket=(await read(owner,second,'admin')).rows[0];await assert.rejects(admin('result',{market:second,expected:secondMarket.updated_at,result:'yes',evidence_url:'https://example.test/result',note:'Cannot change settled result'}),/not closed/);
  assert.equal((await root('select sum(balance)::text net from omni_private.wallet_accounts'))[0].net,'0');
- assert.equal((await root("select sum(balance)::text n from omni_private.wallet_accounts where bucket in('prediction_pool','prediction_hold')"))[0].n,'0');
+ assert.equal((await root("select sum(balance)::text n from omni_private.wallet_accounts where bucket in('prediction_pool','prediction_hold')"))[0].n,'100000');
  // Large histories use bounded, non-overlapping cursor pages; refresh overlaps the last bucket.
  await root(`insert into omni_private.exchange_candles(market_id,step,bucket,open,high,low,close,volume,trades,first_at,first_id,last_at,last_id)
  select '${market}',60,date_trunc('minute',now())-make_interval(mins=>n),40,60,40,60,10000,1,now(),gen_random_uuid(),now(),gen_random_uuid() from generate_series(1,650) n on conflict do nothing;`);

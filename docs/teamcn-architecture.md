@@ -22,7 +22,7 @@
 - 商家就是已有用户，申请后状态为待审核。
 - 单独创建押金充值订单，按精确金额支付 TRC20 USDT；后台只接受 Worker 核验过的 solidified 转账。最低押金 **1,000 USDT**。
 - 押金进入 `collateral`，不生成可消费积分。总管理员审核通过后，商家才能上架报价、创建新交易和兑换码。
-- 商家出售自己的 `purchased + earned` 积分。`escrow + codes`（含预留手续费）不能超过押金等值额度；1 USDT = 100 积分。
+- 商家出售自己的 `purchased + earned` 积分。`escrow + codes`（含预留手续费）不能超过押金等值额度；1 USDT = 1 积分。
 - 已完成交易释放担保占用。押金限制的是同时未结清的交易与兑换码，不是累计营业额。
 - 停用商家停止新增交易；已完成订单保留历史，未完成订单继续按状态处理。钱包冻结会阻止放行和兑换。
 
@@ -75,3 +75,13 @@ Supabase Site URL 为 `https://teamcn.org`；仅列出前后台各语言的精�
 Resend 已验证的旧发件域名继续使用，避免未经 DNS 验证直接切换发件地址导致邮件中断。如需统一为 `login@mail.teamcn.org`，先在 Resend 验证该域名的全部 SPF/DKIM/MX 记录，再修改 Supabase SMTP sender；不把 Resend API Key 放到前端。
 
 参考： [Binance P2P 操作与安全机制](https://www.binance.com/en/academy/articles/what-is-binance-p2p-and-how-to-use-it)、[P2P 安全注意事项](https://www.binance.com/en/academy/articles/how-to-stay-safe-in-peer-to-peer-p2p-trading)、[Cloudflare Pages 多应用部署](https://developers.cloudflare.com/pages/configuration/monorepos/)。
+
+## 2026-10-16 积分兑换比例
+
+用户明确选择 1 USDT = 1 积分，历史积分数量保留。账本仍为每积分 10,000 整数单位，TRC20 USDT 为每 USDT 1,000,000 微单位；两种单位在充值和提现边界转换，钱包余额、历史凭证、头衔／等级阈值和已发行库存不缩放。
+
+新充值订单冻结 1:1 比例，精确金额偏移以 0.0001 USDT 为步长（每 0.01 USDT 区间 99 个永久归属槽位）。旧订单首笔付款保留创建时的 100:1 比例；重复向旧精确金额付款按新比例计入，防止永久复用旧兑换率。每笔链上收据持久化转换比例，订单分别保存收到的 USDT 微单位和实记积分单位。历史地址和精确金额归属不回收。
+
+不足 0.0001 积分的微额保存在账户余数中累积，不丢弃、不按浮点四舍五入；零积分收据只允许充值种类且必须有对应收据、无借贷分录。最低提现 1 积分（1 USDT），手续费 1%，向上取整至 0.0001 积分。后台与链上对账均以扣费后积分单位乘 100 得到 USDT 微单位。
+
+商家最低押金仍为 1,000 USDT，转换后对应 1,000 积分订单担保额；押金不发行积分，商家仍出售自有积分。迁移要求无历史提现和非零商家押金，若出现则停止，需先为旧义务添加比率快照。旧版充值／提现 RPC 拒绝并要求刷新；新版 v2 RPC 防止旧页面按 100:1 报价确认后执行 1:1 付款。

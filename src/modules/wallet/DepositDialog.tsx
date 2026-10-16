@@ -7,10 +7,10 @@ import {walletCopy} from './copy';
 import {gatewayCopy} from './gateway-copy';
 import {c2cCopy} from './c2c-copy';
 import {depositCopy} from './deposit-copy';
-import {clearMatchedWalletRequest,clearWalletRequest,formatPoints,parseUsdt,pointsToUsdt,walletRequest} from './money';
+import {clearMatchedWalletRequest,clearWalletRequest,formatPoints,parseUsdt,formatUsdtMicros,walletRequest} from './money';
 import {walletChanged} from './use-wallet';
 
-type Order={id:string;address:string;actual_micro:string;requested_micro:string;created_at:string;expires_at:string;status:'waiting'|'paid'|'expired';credited_micro:string;receipt_count:number};
+type Order={points_per_usdt?:number;expected_units?:string;credited_units?:string;id:string;address:string;actual_micro:string;requested_micro:string;created_at:string;expires_at:string;status:'waiting'|'paid'|'expired';credited_micro:string;receipt_count:number};
 type Status={enabled:boolean;healthy:boolean;server_time:string;order:Order|null};
 export function DepositDialog({onClose,collateral=false}:{onClose:()=>void;collateral?:boolean}){
  const{db,user,locale,online,notify}=useApp(),c=walletCopy[locale],g=gatewayCopy[locale],d=depositCopy[locale];
@@ -39,7 +39,7 @@ export function DepositDialog({onClose,collateral=false}:{onClose:()=>void;colla
   pending.current=true;sequence.current++;setBusy(true);setError('');
   try{
    const request=walletRequest(user.id,collateral?'collateral':'deposit',units.toString());
-   const result=await db.rpc(collateral?'omni_c2c_create_deposit':'omni_wallet_create_deposit',{request,amount:units.toString()}).abortSignal(AbortSignal.any([life.current.signal,AbortSignal.timeout(15000)]));
+   const result=await db.rpc(collateral?'omni_c2c_create_deposit_v2':'omni_wallet_create_deposit_v2',{request,amount:units.toString()}).abortSignal(AbortSignal.any([life.current.signal,AbortSignal.timeout(15000)]));
    if(result.error)throw result.error;
    if(!result.data?.id)throw Error('order');
    clearWalletRequest(user.id,collateral?'collateral':'deposit');
@@ -51,16 +51,16 @@ export function DepositDialog({onClose,collateral=false}:{onClose:()=>void;colla
  const waiting=order?.status==='waiting'&&remaining>0,available=online&&data?.enabled&&data.healthy;
  async function copy(kind:'address'|'amount'){
   if(!order||!waiting||!available)return;
-  try{await navigator.clipboard.writeText(kind==='address'?order.address:pointsToUsdt(order.actual_micro));notify(g.copied);}catch{setError(d.copyFailed);}
+  try{await navigator.clipboard.writeText(kind==='address'?order.address:formatUsdtMicros(order.actual_micro));notify(g.copied);}catch{setError(d.copyFailed);}
  }
  return <Modal title={collateral?c2cCopy(locale).deposit:c.deposit} onClose={onClose}><div className="wallet-form wallet-deposit"><h2>{collateral?c2cCopy(locale).deposit:c.deposit}</h2>{collateral&&<p>{c2cCopy(locale).minimum}</p>}<p>{g.network}</p>
  {loading&&<p role="status">{c.loading}</p>}{error&&<p role="alert" className="inline-error">{error}</p>}
  {data&&!available&&<p role="status" className="wallet-notice">{d.paused}</p>}
  {order&&<section className="wallet-order"><p className="wallet-order-state" role="status">{order.status==='paid'?d.paid:waiting?d.waiting:d.expired}</p>
- {order.status==='paid'&&<p>{collateral?c2cCopy(locale).collateral:d.received} <strong>{collateral?pointsToUsdt(order.credited_micro):formatPoints(order.credited_micro,locale)}</strong></p>}
- {waiting&&available&&<section className="wallet-deposit-target"><span>{d.exact}</span><strong className="wallet-exact" data-testid="deposit-amount">{pointsToUsdt(order.actual_micro)} <small>USDT</small></strong><button className="text-link" onClick={()=>void copy('amount')}>{d.copyAmount}</button>
+ {order.status==='paid'&&<p>{collateral?c2cCopy(locale).collateral:d.received} <strong>{collateral?formatUsdtMicros(order.credited_micro):formatPoints(order.credited_units??order.credited_micro,locale)}</strong></p>}
+ {waiting&&available&&<section className="wallet-deposit-target"><span>{d.exact}</span><strong className="wallet-exact" data-testid="deposit-amount">{formatUsdtMicros(order.actual_micro)} <small>USDT</small></strong><button className="text-link" onClick={()=>void copy('amount')}>{d.copyAmount}</button>
  <p className="wallet-notice">{d.precision}</p><div className="wallet-qr"><QRCodeSVG value={order.address} size={184} level="M" marginSize={4} title={d.qr}/></div><p className="form-note">{d.qrNote}</p><code className="wallet-address">{order.address}</code><button className="button" onClick={()=>void copy('address')}>{g.copy}</button>
- <dl className="wallet-quote"><div><dt>{collateral?c2cCopy(locale).collateral:d.receive}</dt><dd>{collateral?pointsToUsdt(order.actual_micro):formatPoints(order.actual_micro,locale)}</dd></div><div><dt>{d.remaining}</dt><dd>{Math.floor(remaining/60)}:{String(remaining%60).padStart(2,'0')}</dd></div></dl><p>{d.extra}</p><p>{d.confirmed}</p></section>}
+ <dl className="wallet-quote"><div><dt>{collateral?c2cCopy(locale).collateral:d.receive}</dt><dd>{collateral?formatUsdtMicros(order.actual_micro):formatPoints(order.expected_units??order.actual_micro,locale)}</dd></div><div><dt>{d.remaining}</dt><dd>{Math.floor(remaining/60)}:{String(remaining%60).padStart(2,'0')}</dd></div></dl><p>{d.extra}</p><p className="form-note">{d.rate}: 1 USDT = {order?.points_per_usdt??1} {c.points}</p><p>{d.confirmed}</p></section>}
  <small className="wallet-order-id">{d.id} {order.id}</small></section>}
  {data&&!waiting&&<form onSubmit={create}><p>{d.intro}</p><label>{d.amount}<input value={amount} inputMode="decimal" autoComplete="off" onChange={e=>setAmount(e.target.value)} disabled={busy||!available} aria-describedby="deposit-range" maxLength={8}/></label><small id="deposit-range">{d.range}</small><p>{d.extra}</p><button className="button primary" disabled={busy||!available||!parseUsdt(amount)}>{busy?d.creating:d.create}</button></form>}
  <button className="text-link" disabled={busy||!online} onClick={()=>{setError('');void load();}}>{g.refresh}</button><p className="form-note">{c.rate}</p><a href="mailto:chentieshu520@gmail.com">{g.support}</a></div></Modal>;
