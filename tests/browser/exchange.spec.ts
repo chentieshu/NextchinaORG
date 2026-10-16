@@ -16,6 +16,24 @@ async function setup(page:Page,role='member'){
  await page.route('**/rest/v1/rpc/omni_exchange_history',r=>{historyReads.push(r.request().postDataJSON());return r.fulfill({json:history});});
  return {f,state,requests,reads,history,historyReads,lose:()=>{uncertain=true;}};
 }
+
+test('official BTC permanent hub, current and next rounds work in five mobile languages without fake prices',async({page})=>{
+ const s=await setup(page),start=Math.floor(Date.now()/180000)*180000;
+ const current=market({series_id:'btc-3m',opens_at:new Date(start).toISOString(),closes_at:new Date(start+180000).toISOString(),opening_price:'65000.00000000',source_ready:true,title:'BTC 3m · UTC',last_yes:null,volume:'0'}),next=market({...current,id:'30000000-0000-4000-8000-000000000009',opens_at:new Date(start+180000).toISOString(),closes_at:new Date(start+360000).toISOString(),opening_price:null,source_ready:false});
+ s.state.rows=[current];s.state.trades=[];s.state.book=[];s.history.rows=[];
+ await page.route('**/rest/v1/rpc/omni_exchange_official_read',r=>r.fulfill({json:{id:'btc-3m',enabled:true,healthy:true,last_success:new Date().toISOString(),updated_at:new Date().toISOString(),server_time:new Date().toISOString(),current,next,history:[market({...current,id:'30000000-0000-4000-8000-000000000008',state:'resolved',result:'yes',opens_at:new Date(start-180000).toISOString(),closes_at:new Date(start).toISOString()})]}}));
+ await page.goto('/zh-CN/predictions/');await expect(page.locator('.official-series')).toContainText('Teamcn 官方');await page.locator('.official-series h2 a').click();await expect(page).toHaveURL(/series=btc-3m/);await expect(page.locator('.official-round-link')).toHaveCount(3);await expect(page.locator('.official-series')).toContainText('尚未开始');
+ for(const locale of ['zh-CN','en','ja','es','zh-TW']){await page.setViewportSize({width:320,height:844});await page.goto(`/${locale}/predictions/?series=btc-3m`);await expect(page.locator('.official-countdown b')).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
+ await page.setViewportSize({width:390,height:844});await page.goto('/zh-CN/predictions/?series=btc-3m');await page.screenshot({path:test.info().outputPath('official-btc-mobile.png'),fullPage:true});
+ await page.locator('.official-round-link').first().click();await expect(page.locator('.official-facts')).toContainText('65000.00000000');await expect(page.locator('.trade-ticket')).toContainText('上涨（含持平）');await expect(page.locator('.exchange-price-head strong')).toHaveText('—');expect(s.requests).toEqual([]);
+ s.state.rows=[next];await page.goto(`/zh-CN/predictions/?id=${next.id}`);await expect(page.locator('.trade-ticket')).toContainText('尚未开始');await expect(page.locator('.trade-ticket').getByRole('button',{name:'核对订单',exact:true})).toBeDisabled();
+});
+
+test('official series administration uses reason, version check and explicit confirmation',async({page})=>{
+ const s=await setup(page,'super_admin');s.f.emailVerified=true;s.f.emailExpires=Date.now()+600000;const updated=new Date().toISOString();
+ await page.route('**/rest/v1/rpc/omni_exchange_official_read',r=>r.fulfill({json:{id:'btc-3m',enabled:true,healthy:true,last_success:new Date().toISOString(),updated_at:updated,server_time:new Date().toISOString(),current:null,next:null,history:[]}}));
+ await page.goto('https://tree.teamcn.org/zh-CN/#predictions');const panel=page.locator('.official-admin');await expect(panel).toContainText('行情源正常');await expect(panel.getByRole('button',{name:'暂停新增交易',exact:true})).toBeDisabled();await panel.getByLabel('操作原因',{exact:true}).fill('暂停系列并核对行情');await panel.getByRole('button',{name:'暂停新增交易',exact:true}).click();expect(s.requests).toEqual([]);await expect(page.getByRole('dialog')).toContainText('BTC');await page.getByRole('dialog').getByRole('button',{name:'确认',exact:true}).click();await expect.poll(()=>s.requests.at(-1)?.action).toBe('official_config');expect(s.requests.at(-1).payload).toEqual({enabled:false,expected:updated,note:'暂停系列并核对行情'});
+});
 test('independent market discovery, detail, filters and five mobile languages show real data',async({page})=>{
  const s=await setup(page);await page.goto('/zh-CN/predictions/');await expect(page.locator('.exchange-market-tile')).toHaveCount(1);await expect(page.locator('.app-nav').getByRole('link',{name:'预测市场',exact:true})).toBeVisible();await expect(page.locator('.wallet-sections')).toHaveCount(0);
  await page.getByLabel('搜索预测市场').fill('不存在');await expect(page.locator('.exchange-market-tile')).toHaveCount(0);await page.getByLabel('搜索预测市场').fill('稳定');await expect(page.locator('.exchange-market-tile')).toHaveCount(1);

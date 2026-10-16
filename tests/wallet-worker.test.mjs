@@ -76,6 +76,6 @@ test('failed scheduled queries identify their stage without logging upstream bod
  globalThis.fetch=async()=>Response.json({message:'sensitive upstream response'},{status:401});
  console.error=value=>logs.push(JSON.parse(value));
  try{await worker.scheduled({},env,{waitUntil:promise=>{waits.push(promise);}});await Promise.all(waits);
-  assert.deepEqual(logs.sort((a,b)=>a.event.localeCompare(b.event)),[{event:'c2c_expiry_failed',stage:'omni_wallet_c2c_expire',http_status:401,reason:'http'},{event:'wallet_scan_failed',stage:'chain_head',http_status:401,reason:'http'}]);
+  assert.deepEqual(logs.sort((a,b)=>a.event.localeCompare(b.event)),[{event:'c2c_expiry_failed',stage:'omni_wallet_c2c_expire',http_status:401,reason:'http'},{event:'official_btc_failed',stage:'omni_exchange_official_plan',http_status:401,reason:'http'},{event:'wallet_scan_failed',stage:'chain_head',http_status:401,reason:'http'}]);
  }finally{globalThis.fetch=original;console.error=originalError;}
 });

@@ -21,6 +21,7 @@ export async function fixture(page:Page,role='member',startMfa=false){
   if(url.pathname==='/auth/v1/verify'){
    const input=request.postDataJSON();state.authWrites.push(input);if(input.token!=='08180412')return route.fulfill({status:403,json:{code:'otp_expired',error_code:'otp_expired',msg:'Code expired'}});state.emailVerified=true;state.emailExpires=Date.now()+600000;return route.fulfill({json:authSession()});
   }
+  if(resource==='omni_exchange_official_read')return route.fulfill({json:{id:'btc-3m',enabled:false,healthy:false,last_success:null,error:null,updated_at:new Date().toISOString(),server_time:new Date().toISOString(),current:null,next:null,history:[]}});
   if(resource==='omni_email_verification_status')return route.fulfill({json:{verified:state.emailVerified&&state.emailExpires>Date.now(),expires_at:state.emailVerified&&state.emailExpires>Date.now()?new Date(state.emailExpires).toISOString():null,available:!!user.email_confirmed_at}});
   if(resource==='token')return route.fulfill({json:authSession()});
   if(resource==='user'){if(method==='PUT'){const input=request.postDataJSON();state.authWrites.push(input);if(input.password&&state.passwordFailure)return route.fulfill({status:422,json:{code:state.passwordFailure,error_code:state.passwordFailure,msg:state.passwordFailure}});Object.assign(user,input);}data=user;}

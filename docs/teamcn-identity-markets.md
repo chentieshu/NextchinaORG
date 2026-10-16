@@ -19,9 +19,9 @@
 
 用户已确认使用现有钱包积分与份额交易。独立市场实现订单簿、整数是/否份额、限价与 IOC、撤单、原余额类型退款、结果公示/异议/最终确认、领取结算、帖子和文章引用。详见[预测交易说明](prediction-exchange.md)。用户提案审核通过只生成草稿，总管理员单独发布后才可下单。
 
-默认 BTC 五分钟功能保留为后台规则模板，尚无自动行情采集与轮次调度。没有伪造实时价格或自动创建实际市场。旧提案接口的 `trading_enabled: false` 仅表示审核提案不会直接开放交易；实际交易使用独立的 exchange RPC 和每个市场的状态。
+默认入口现为 Teamcn 官方 BTC 三分钟常驻系列，采用 Binance BTCUSDT 现货 K 线和自动轮次，具体规则与异常处理见 [预测市场](prediction-exchange.md#teamcn-官方-btc-三分钟系列)。旧提案接口的 `trading_enabled: false` 仅表示审核提案不会直接开放交易；实际交易使用独立的 exchange RPC 和每个市场的状态。
 
-Polymarket 的订单簿和结算是两个不同子系统。官方涨跌市场使用 Chainlink TWAP；本项目当前没有接入该行情服务，不应借用其名称声称已实现同样结算。价格源、UTC 五分钟边界、持平判定、封盘时点、行情缺失与争议处理须在首单之前确定并保存版本。
+Polymarket 的订单簿和结算是两个不同子系统。官方涨跌市场使用 Chainlink TWAP；本项目当前没有接入该行情服务，不应借用其名称声称已实现同样结算。价格源、UTC 期次边界、持平判定、封盘时点、行情缺失与争议处理须在首单之前确定并保存版本。
 
 参考：[Polymarket 价格与订单簿](https://docs.polymarket.com/concepts/prices-orderbook)、[结算规则](https://docs.polymarket.com/concepts/resolution)。运营主体此前声明位于新加坡；真实兑付积分预测功能上线前需由合适的专业人士确认适用许可与服务地区。[GRA 远程博彩说明](https://www.gra.gov.sg/harm-minimisation/unlawful-remote-gambling-activities)不等于针对本项目的法律认定。
 

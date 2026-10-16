@@ -1,0 +1,83 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile,readdir} from 'node:fs/promises';
+import {randomUUID} from 'node:crypto';
+import {PGlite} from '@electric-sql/pglite';
+import {pg_trgm} from '@electric-sql/pglite/contrib/pg_trgm';
+
+test('official BTC: recurring UTC rounds, gated source, refunds, immutable evidence, disputes and idempotent payouts',async()=>{
+ const db=new PGlite({extensions:{pg_trgm}});
+ try{
+  await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,phone text,raw_user_meta_data jsonb default '{}');create table auth.sessions(id uuid primary key,user_id uuid,not_after timestamptz);create table auth.mfa_amr_claims(session_id uuid,authentication_method text,updated_at timestamptz);create table auth.mfa_factors(id uuid,user_id uuid,status text);create table auth.identities(id uuid default gen_random_uuid(),user_id uuid references auth.users(id),provider text,provider_id text,identity_data jsonb default '{}');create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth,public to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;`);
+  for(const f of (await readdir('supabase/migrations')).filter(f=>f.endsWith('.sql')).sort())await db.exec(await readFile('supabase/migrations/'+f,'utf8'));
+  const owner=randomUUID(),a=randomUUID(),b=randomUUID(),key='a'.repeat(64),step=180000;
+  const root=async sql=>{await db.exec('reset role');return(await db.exec(sql)).at(-1).rows;};
+  const as=async(id,sql,gateway=false)=>{await db.exec(`reset role;set role ${id?'authenticated':'anon'};select set_config('request.jwt.claim.sub','${id??''}',false),set_config('request.jwt.claims','${JSON.stringify({session_id:id,email:id+'@example.test'})}',false),set_config('request.headers','${JSON.stringify(gateway?{'x-wallet-gateway-key':key}:{})}',false)`);return(await db.query(sql)).rows[0]?.s;};
+  const json=x=>JSON.stringify(x).replaceAll("'","''"),gateway=sql=>as(null,sql,true);
+  const call=(name,params='')=>gateway(`select omni_exchange_official_${name}(${params}) s`);
+  const series=before=>as(null,`select omni_exchange_official_read(${before?`'${before}'`:''}) s`);
+  const admin=(action,payload,who=owner)=>as(who,`select omni_exchange_admin('${randomUUID()}','${action}','${json(payload)}') s`);
+  const action=(who,act,p)=>as(who,`select omni_exchange_action('${randomUUID()}','${act}','${json(p)}') s`);
+  const read=(id,who=a)=>as(who,`select omni_exchange_read('public','${id}') s`);
+  const candle=(t,open='65000.00000000',close='65001.00000000')=>[t,open,'70000.00000000','60000.00000000',close,'50.00000000',t+step-1,'3250000.00000000',100,'20.00000000','1300000.00000000','0'];
+  await root(`insert into auth.users(id,email,email_confirmed_at) select id,id::text||'@example.test',now() from unnest(array['${owner}','${a}','${b}']::uuid[]) id;update omni_profiles set profile_completed_at=now();update omni_profiles set role='super_admin' where id='${owner}';insert into auth.sessions select id,id,null from auth.users;insert into auth.mfa_amr_claims select id,'otp',now() from auth.users;update omni_private.wallet_gateway set secret_hash=encode(sha256(convert_to('${key}','UTF8')),'hex');`);
+  for(const [act,payload] of [['issue',{amount:'20000000',note:'Local test funding'}],['grant',{user_id:a,amount:'10000000',note:'Local test grant'}],['grant',{user_id:b,amount:'10000000',note:'Local test grant'}]])await as(owner,`select omni_points_admin_action('${randomUUID()}','${act}','${json(payload)}') s`);
+  let s=await series();assert.equal(s.id,'btc-3m');assert.equal(s.enabled,false);assert.equal(s.current,null);
+  await assert.rejects(as(null,'select omni_exchange_official_plan() s'),/denied|gateway/i);
+  await assert.rejects(as(a,'select * from omni_private.exchange_official_series'),/permission denied/);
+  await assert.rejects(admin('official_config',{enabled:true,expected:s.updated_at,note:'Enable before source'}),/Source not ready/);
+  let now=Date.now(),start=Math.floor(now/step)*step;
+  for(const v of [null,[],{},candle(start).map((x,i)=>i===1?null:x),candle(start).map((x,i)=>i===4?'NaN':x),candle(start).map((x,i)=>i===8?0:x)])assert.equal((await root(`select omni_private.exchange_candle_valid('${json(v)}') v`))[0].v,false);
+  const plan=await call('plan');assert.ok(plan.lease);assert.equal((await call('plan')).lease,null);
+  await assert.rejects(call('tick',`null,${now},'${json(candle(start))}'`),/Lease/);
+  await call('tick',`'${plan.lease}',${now},'${json(candle(start))}'`);
+  assert.equal((await series()).healthy,true);assert.equal((await series()).current,null,'health probes do not auto-enable trading');
+  s=await series();await assert.rejects(admin('official_config',{enabled:true,expected:s.updated_at,note:'Member cannot enable'},a),/denied/);
+  await admin('official_config',{enabled:true,expected:s.updated_at,note:'Publish official continuous series'});
+  await call('tick',`'${plan.lease}',${now},'${json(candle(start))}'`);await call('tick',`'${plan.lease}',${now},'${json(candle(start))}'`);
+  s=await series();assert.ok(s.current&&s.next);assert.equal((await root('select count(*)::int n from omni_private.exchange_markets'))[0].n,2);assert.equal((await root('select count(*)::int n from omni_private.exchange_events'))[0].n,2);
+  assert.equal(s.current.series_id,'btc-3m');assert.equal(s.current.source_ready,true);assert.equal(s.next.source_ready,false);assert.equal(Date.parse(s.current.closes_at)-Date.parse(s.current.opens_at),step);assert.equal(Date.parse(s.next.opens_at),Date.parse(s.current.closes_at));
+  assert.equal((await as(null,"select omni_exchange_read('public') s")).rows.length,0,'rounds do not flood ordinary discovery');
+  const mid=s.current.id,next=s.next.id,order=(who,id,outcome,price,qty)=>action(who,'order',{market:id,side:'buy',outcome,price:String(price),quantity:String(qty)});
+  await assert.rejects(order(a,next,'yes',60,1),/closed/);
+  const resting=await order(a,mid,'yes',60,10);await order(b,mid,'no',40,6);
+  assert.equal((await read(mid)).balance.held,'24000');assert.equal((await read(mid)).positions[0].quantity,'6');
+  s=await series();await admin('official_config',{enabled:false,expected:s.updated_at,note:'Pause official series'});await assert.rejects(order(a,mid,'yes',60,1),/closed/);
+  s=await series();await admin('official_config',{enabled:true,expected:s.updated_at,note:'Resume healthy series'});
+  await root("update omni_private.exchange_official_series set last_success=now()-interval '3 minutes'");await assert.rejects(order(a,mid,'yes',60,1),/closed/);
+  await call('tick',`'${plan.lease}',${Date.now()},'${json(candle(start))}'`);
+  await call('finish',`'${plan.lease}'`);
+  // Move this isolated fixture to the preceding UTC interval, preserving all actual trading records.
+  const past=start-step;await root(`update omni_private.exchange_markets set opens_at=to_timestamp(${past}/1000.0),closes_at=to_timestamp(${start}/1000.0) where id='${mid}'`);
+  assert.equal((await call('advance',`'${mid}','close'`)).status,'closed');await call('advance',`'${mid}','close'`);
+  let r=await read(mid);assert.equal(r.balance.held,'0');assert.equal(r.orders.find(o=>o.id===resting.id).state,'cancelled');assert.equal(r.positions[0].quantity,'6');
+  let m=r.rows[0];await assert.rejects(admin('result',{market:mid,expected:m.updated_at,result:'yes',evidence_url:'https://example.test',note:'Cannot override official source'}),/Official result/);
+  await assert.rejects(admin('result',{market:mid,expected:m.updated_at,result:'void',evidence_url:'https://example.test',note:'Too early to void'}),/Official result/);
+  const bar=candle(past,'65000.00000000','65000.00000000');
+  await assert.rejects(call('advance',`'${mid}','observe',${Date.now()},'${json(candle(start))}'`),/Invalid closed/);
+  // A test clock at +11s guarantees the close safety margin even when the test starts at a boundary.
+  const observed=Math.max(Date.now(),start+11000);
+  assert.equal((await call('advance',`'${mid}','observe',${observed},'${json(bar)}'`)).status,'confirming');
+  assert.equal((await call('advance',`'${mid}','observe',${observed},'${json(bar)}'`)).status,'confirming');
+  await root(`update omni_private.exchange_oracle_evidence set first_seen=now()-interval '31 seconds' where market_id='${mid}'`);
+  assert.equal((await call('advance',`'${mid}','observe',${observed},'${json(bar)}'`)).status,'review');
+  m=(await read(mid)).rows[0];assert.equal(m.result,'yes','exact decimal ties count as up');assert.ok(m.oracle.confirmed_at);assert.equal(m.oracle.open,bar[1]);
+  assert.equal((await call('advance',`'${mid}','finalize'`)).status,'review');
+  await action(b,'dispute',{market:mid,note:'Please review the candle evidence.'});await root(`update omni_private.exchange_markets set resolve_after=now()-interval '1 minute' where id='${mid}'`);
+  assert.equal((await call('advance',`'${mid}','finalize'`)).status,'review','unhandled dispute stops finalization');
+  m=(await read(mid)).rows[0];await admin('review_disputes',{market:mid,expected:m.updated_at,note:'Verified original source and documented review'});
+  await root(`update omni_private.exchange_markets set resolve_after=now()-interval '1 minute' where id='${mid}'`);
+  assert.equal((await call('advance',`'${mid}','finalize'`)).status,'resolved');assert.equal((await call('advance',`'${mid}','finalize'`)).status,'resolved');
+  assert.equal((await action(a,'claim',{market:mid})).units,'60000');assert.equal((await action(a,'claim',{market:mid})).units,'0');assert.equal((await action(b,'claim',{market:mid})).units,'0');
+  assert.equal((await root('select sum(balance)::text n from omni_private.wallet_accounts'))[0].n,'0');
+  // Contradictory observations cannot silently change or finalize a result.
+  const other=past-step;await root(`update omni_private.exchange_markets set opens_at=to_timestamp(${other}/1000.0),closes_at=to_timestamp(${past}/1000.0) where id='${next}'`);
+  await call('advance',`'${next}','observe',${Date.now()},'${json(candle(other))}'`);
+  assert.equal((await call('advance',`'${next}','observe',${Date.now()},'${json(candle(other,'65000.00000000','65002.00000000'))}'`)).status,'source_conflict');
+  assert.equal((await call('advance',`'${next}','observe',${Date.now()},'${json(candle(other))}'`)).status,'source_conflict');
+  const p2=await call('plan');assert.ok(!p2.tasks.some(t=>t.id===next));
+  await call('finish',`'${p2.lease}','rate_limited',600`);assert.equal((await series()).healthy,false);assert.equal((await call('plan')).lease,null,'source backoff prevents hot polling');
+  assert.equal((await series()).history.length,2);assert.equal((await series(new Date(past).toISOString())).history.length,1);
+  await assert.rejects(as(a,'select * from omni_private.exchange_oracle_evidence'),/permission denied/);
+ }finally{await db.close();}
+});
