@@ -74,7 +74,7 @@ test('post and article editors insert verified market and own-order references',
  page.once('dialog',d=>d.accept());await page.goto('/zh-CN/write/?kind=news');await page.getByRole('button',{name:'插入市场／订单',exact:true}).click();await page.getByRole('dialog').getByRole('button',{name:'我的分享卡片',exact:true}).click();await page.getByRole('dialog').getByRole('button').filter({hasText:s.state.rows[0].title}).click();const confirm=page.getByRole('dialog',{name:'核对操作'});await expect(confirm).toContainText('数量已隐藏');await confirm.getByRole('button',{name:'确认',exact:true}).click();await expect(page.locator('.editor-embed')).toContainText(shareId);expect(s.requests[0].payload.show_amount).toBe(false);
 });
 test('a shared market opens in the writer and cards render in post lists and details',async({page})=>{
- const s=await setup(page);const url=`https://omniremix.pages.dev/zh-CN/predictions/?id=${marketId}`;
+ const s=await setup(page);const url=`https://pg520.app/zh-CN/predictions/?id=${marketId}`;
  await page.goto('/zh-CN/write/?prediction='+encodeURIComponent(url));await expect(page.locator('.editor-embed')).toContainText(marketId);
  s.f.articles.push(story(articleId,'关于预测市场的讨论',{media:[{type:'embed',url}],translations:{'zh-CN':{title:'',summary:'关于预测市场的讨论',body:'关于预测市场的讨论',document:{type:'doc',content:[{type:'paragraph',content:[{type:'text',text:'关于预测市场的讨论'}]},{type:'embed',attrs:{url}}]}}}}));
  await page.goto('/zh-CN/square/');await expect(page.locator('.prediction-reference-compact')).toContainText(s.state.rows[0].title);await page.locator('.post-excerpt').click();await expect(page.locator('.prediction-reference').first()).toContainText('64%');

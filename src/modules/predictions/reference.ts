@@ -3,7 +3,7 @@ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export type PredictionReference={kind:'market'|'order';id:string};
 export function predictionReference(value:unknown):PredictionReference|null{
  if(typeof value!=='string')return null;
- try{const u=new URL(value);if(u.protocol!=='https:'||u.port||u.username||u.password||![new URL(SITE_ORIGIN).hostname,'teamcn.org','www.teamcn.org','chinateam.org','www.chinateam.org','nextchina.org','www.nextchina.org'].includes(u.hostname))return null;
+ try{const u=new URL(value);if(u.protocol!=='https:'||u.port||u.username||u.password||![new URL(SITE_ORIGIN).hostname,'pg520.app','www.pg520.app','omniremix.pages.dev','teamcn.org','www.teamcn.org','chinateam.org','www.chinateam.org','nextchina.org','www.nextchina.org'].includes(u.hostname))return null;
  if(!/^\/(zh-CN|en|ja|es|zh-TW)\/predictions\/?$/.test(u.pathname))return null;
  const order=u.searchParams.get('share'),market=u.searchParams.get('id');
  return order&&uuid.test(order)?{kind:'order',id:order}:market&&uuid.test(market)?{kind:'market',id:market}:null;

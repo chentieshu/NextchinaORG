@@ -45,7 +45,7 @@
   "vars": {
     "SUPABASE_URL": "https://cznhnupwojmydttdattb.supabase.co",
     "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_S64GsjK-R_CGycTdquKVxw_17Y13ZlL",
-    "ALLOWED_ORIGINS": "https://omniremix.pages.dev,https://teamcn-admin.pages.dev,https://omniremix.chentieshu520.chatgpt.site"
+    "ALLOWED_ORIGINS": "https://pg520.app,https://www.pg520.app,https://omniremix.pages.dev,https://teamcn-admin.pages.dev,https://omniremix.chentieshu520.chatgpt.site"
   },
   "secrets": {
     "required": [

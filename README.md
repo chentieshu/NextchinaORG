@@ -1,6 +1,6 @@
 # Teamcn
 
-当前入口以 [Cloudflare 默认部署说明](docs/default-cloudflare-deployment.md) 为准。主站为 https://omniremix.pages.dev，独立后台为 https://teamcn-admin.pages.dev。
+当前入口以 [pg520.app 域名说明](docs/pg520-domains.md) 为准。主站为 https://pg520.app，www.pg520.app 同时可用；独立后台为 https://teamcn-admin.pages.dev。
 
 当前部署与 C2C 规则见 [架构与运营说明](docs/teamcn-architecture.md)。前台与后台已切换为 Cloudflare 默认域名。商家是用户，最低押金 1,000 USDT，出售自有积分；订单和兑换码共享押金限额。旧新增发行入口已停用。
 
@@ -17,7 +17,7 @@
 
 开放论坛与新闻社区。Next.js 16 App Router、React 19、Tailwind CSS v4、React Icons、Supabase。
 
-网站：[Teamcn](https://omniremix.pages.dev)。canonical 使用该默认主站地址。
+网站：[Teamcn](https://pg520.app)。canonical 使用该主站地址，Cloudflare 默认地址仍可访问。
 
 域名迁移、Google / X / GitHub、Supabase 与 Resend 的逐项填写指南见 [登录与域名配置](docs/auth-and-domains.md)。全部 13 类品牌邮件的 [配置说明](supabase/templates/README.md) 与 [可视化复制页面](supabase/templates/preview.html) 已备齐；需单独保存到 Supabase Auth，不会随网站部署自动生效。
 

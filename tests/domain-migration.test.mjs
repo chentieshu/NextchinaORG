@@ -17,7 +17,8 @@ test('historical media and references resolve to the default origin without trus
  for(const url of [`https://media.teamcn.org.evil.test/${key}`,`https://user@media.teamcn.org/${key}`,`https://media.teamcn.org/${key}?next=x`])assert.equal(storedImageKey(url),null);
  const ref={kind:'market',id:'20000000-0000-4000-8000-000000000001'};
  assert.deepEqual(predictionReference(predictionUrl('en',ref)),ref);
- assert.deepEqual(predictionReference(`https://teamcn.org/en/predictions/?id=${ref.id}`),ref);
+ for(const host of ['pg520.app','www.pg520.app','omniremix.pages.dev','teamcn.org'])assert.deepEqual(predictionReference(`https://${host}/en/predictions/?id=${ref.id}`),ref);
+ assert.equal(predictionReference(`https://pg520.app.evil.test/en/predictions/?id=${ref.id}`),null);
  assert.equal(predictionReference(`https://omniremix.pages.dev.evil.test/en/predictions/?id=${ref.id}`),null);
 });
 test('image-only posts accept current and historical origins while empty posts and excess photos remain rejected',async()=>{
